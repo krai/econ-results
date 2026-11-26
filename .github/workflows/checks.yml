@@ -1,0 +1,40 @@
+# What every pull request and every push to main must pass: the files copied from econ are unedited, the tests pass
+# (node runs the page's own arithmetic against econ's numbers), every record under runs/ is a valid public record
+# with nothing forbidden in it, and the site builds. The built page is kept as an artifact, so a pull request that
+# adds a run can be looked at before it is merged.
+name: checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: The files copied from econ are unedited
+        run: python -m tools.vendor
+      - name: Tests
+        run: python -m unittest discover -s tests -t .
+      - name: Every record is a valid public record
+        run: python -m tools.validate runs --public --allow-empty
+      - name: The site builds
+        run: python -m tools.build runs --out site
+      - name: Nothing built is committed
+        run: test -z "$(git ls-files site)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site
+          retention-days: 14
