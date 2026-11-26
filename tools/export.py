@@ -41,8 +41,8 @@ CURVE_KEYS = ("x", "y", "ttft", "y_ci", "ttft_ci", "rate", "probe", "power_w", "
               "final", "kind", "target", "margin")
 SYSTEM_KEYS = ("os", "kernel", "cpu", "sockets", "cores", "threads", "ram_gib", "driver", "cuda", "docker", "python")
 ACCURACY_KEYS = ("benchmark", "shots", "items", "seed", "correct", "accuracy", "ci95", "strict_accuracy", "failed")
-SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "node", "family",
-             "variant", "precision", "tp", "dp", "job", "data_dir", "gentic_commit", "econ_commit", "engine_version",
+SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "node", "cluster",
+             "family", "variant", "precision", "tp", "dp", "job", "data_dir", "gentic_commit", "econ_commit", "engine_version",
              "engine_build", "engine_commit", "digest", "weights_gb", "public")
 
 
@@ -262,7 +262,7 @@ def record(rep, results, files, spec, econ):
         "hardware": {"gpu": setup.get("gpu_name") or "GPU", "gpus": setup["gpus"],
                      "gpus_on_node": power.get("gpus_on_node") or (len(checks[0].get("gpus") or []) if checks else None),
                      "driver": setup.get("driver"), "power_limit_w": setup.get("power_limit_w"),
-                     "memory_mib": src.get("memory_mib"), "node": node},
+                     "memory_mib": src.get("memory_mib"), "node": node, "cluster": spec.get("cluster")},
         "workload": setup["workload"], "method": method,
         "power": {"scope": power.get("scope"), "gpus_seen": power.get("gpus_seen"),
                   "notes": list((power.get("sources") or {}).get("notes") or [])} if power else None,
@@ -350,6 +350,7 @@ def parser():
     ap.add_argument("--rent", dest="rents", type=float, action="append", help="USD per GPU-hour; repeat it")
     ap.add_argument("--aliases", help="with --visibility public: a JSON object {node's name: alias}")
     ap.add_argument("--node", help="the node's name, when the measurement does not say it")
+    ap.add_argument("--cluster", help="the cluster or site the node belongs to, as its people call it")
     ap.add_argument("--family", help="recipe, S0, S1 or stock (default: from the label)")
     ap.add_argument("--variant", help="what sets the configuration apart inside its family")
     ap.add_argument("--precision", help="the weights' quantisation, when the model's name does not say")

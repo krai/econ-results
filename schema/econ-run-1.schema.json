@@ -77,7 +77,8 @@
     "driver": {"type": ["string", "null"]},
     "power_limit_w": {"type": ["number", "null"], "exclusiveMinimum": 0},
     "memory_mib": {"type": ["number", "null"], "exclusiveMinimum": 0},
-    "node": {"type": "string", "minLength": 1, "description": "The node's name as the measurement says it; in a public record, an alias."}
+    "node": {"type": "string", "minLength": 1, "description": "The node's name as the measurement says it; in a public record, an alias."},
+    "cluster": {"type": ["string", "null"], "description": "The cluster or site the node belongs to, as its people call it. Stated when the run is exported; a public record does not have it."}
    }
   },
   "workload": {"type": "object", "description": "econ's workload: mix, lengths, prompts, seed, arrival."},

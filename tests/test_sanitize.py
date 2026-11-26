@@ -21,6 +21,9 @@ class TestSanitize(unittest.TestCase):
         self.assertNotIn("provenance", self.pub)
         self.assertEqual(self.pub["visibility"], "public")
         self.assertEqual(self.pub["id"], self.rec["id"])
+        self.assertEqual(self.rec["hardware"]["cluster"], "Test cluster")
+        self.assertNotIn("cluster", self.pub["hardware"])
+        self.assertNotIn("Test cluster", json.dumps(self.pub))
 
     def test_the_measured_and_priced_numbers_stay(self):
         self.assertEqual(self.pub["points"], self.rec["points"])

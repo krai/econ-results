@@ -5,6 +5,7 @@
 What it does:
 - drops the provenance (host, job, data folder, command line, commits of private repositories);
 - names the node by its alias, in its hardware and wherever a text mentions it; a node with no alias is an error;
+- drops the cluster's name: it says whose machines they are;
 - keeps only the file name of every path;
 - drops the names of the price list's providers: the arithmetic needs the prices, not who charges them;
 - names an image from a personal namespace by what it is ("vLLM nightly 6e780d14 (custom build)");
@@ -71,6 +72,7 @@ def public(record, aliases, words=frozenset()):
     rec = copy.deepcopy(record)
     rec.pop("provenance", None)
     rec["visibility"] = "public"
+    rec["hardware"].pop("cluster", None)
     rec["engine"]["image"] = image_name(rec["engine"])
     prices = rec.get("prices")
     if prices:

@@ -97,7 +97,7 @@ def record(label="sample-tp2", created="2026-01-05T10:00:00", gpus=2, family="re
                    "flags": ["--tensor-parallel-size", str(gpus)], "env": None, "patch": None,
                    "server_config": "sample.yaml"},
         "hardware": {"gpu": "NVIDIA H200", "gpus": gpus, "gpus_on_node": 8, "driver": "595.58.03", "power_limit_w": 700.0,
-                     "memory_mib": 143771.0, "node": host},
+                     "memory_mib": 143771.0, "node": host, "cluster": "Test cluster"},
         "workload": {"mix": "chat-mix", "lengths": "log-normal lengths", "prompts": "random token ids", "seed": 0,
                      "arrival": "Poisson"},
         "method": {"warmup": 45.0, "window": 120.0, "repeats": 2, "min_requests": 400, "search_window": 60.0,
