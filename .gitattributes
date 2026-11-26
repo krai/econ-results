@@ -9,3 +9,5 @@
 *.svg text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
+# The original files of the runs are kept byte for byte, whatever their line ends: the records cite their hashes.
+sources/** -text
