@@ -1,9 +1,8 @@
 """The exporter: what it reads of a run's files, and econ's real files of every version in the registry.
 
-The second half needs two things that a public repository cannot hold: econ itself (ECON_SRC: the src folder of a
-gentic checkout at the pinned commit) and the registry's original files (ECON_RUNS: a checkout of the private
-registry, with its sources/ folder; by default the econ-runs folder next to this repository). Without them those
-tests are skipped, and say why."""
+The second half needs econ itself (ECON_SRC: the src folder of a gentic checkout at the commit of ECON_REF) and the
+registry's original files, which are in this repository under sources/. Without them those tests are skipped, and
+say why."""
 import os
 import tempfile
 import unittest
@@ -12,9 +11,8 @@ from tools import export, patterns, read_json, sanitize, validate, write_json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ECON_SRC = os.environ.get("ECON_SRC")
-ECON_RUNS = os.environ.get("ECON_RUNS") or os.path.join(os.path.dirname(ROOT), "econ-runs")
-REAL = bool(ECON_SRC) and os.path.isfile(os.path.join(ECON_RUNS, "manifest.json"))
-WHY = "needs ECON_SRC (the src folder of a gentic checkout) and ECON_RUNS (the private registry, with sources/)"
+REAL = bool(ECON_SRC) and os.path.isfile(os.path.join(ROOT, "manifest.json"))
+WHY = "needs ECON_SRC (the src folder of a gentic checkout) and the registry's own files (manifest.json, sources/)"
 
 
 class TestPieces(unittest.TestCase):
@@ -127,11 +125,11 @@ class TestRealFiles(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.econ = export.Econ(ECON_SRC)
-        cls.aliases = read_json(os.path.join(ECON_RUNS, "aliases.json"))
-        cls.specs = export.manifest_specs(os.path.join(ECON_RUNS, "manifest.json"))[0]
+        cls.aliases = read_json(os.path.join(ROOT, "aliases.json"))
+        cls.specs = export.manifest_specs(os.path.join(ROOT, "manifest.json"))[0]
 
     def source(self, *parts):
-        return os.path.join(ECON_RUNS, "sources", *parts)
+        return os.path.join(ROOT, "sources", *parts)
 
     def export(self, **spec):
         rec = export.export(spec, self.econ, self.aliases)
@@ -207,20 +205,20 @@ class TestRealFiles(unittest.TestCase):
 
     def test_the_registry_is_what_the_manifest_exports(self):
         """Every record of the registry, and every public form, is byte for byte what its sources give today."""
-        words = patterns.load_words(os.path.join(ECON_RUNS, "private-words.txt"))
+        words = patterns.load_words(os.path.join(ROOT, "private-words.txt"))
         seen = set()
         for spec in self.specs:
             rec = export.export(spec, self.econ, self.aliases)
             seen.add(rec["id"])
             with self.subTest(rec["id"]):
-                self.assertEqual(rec, read_json(os.path.join(ECON_RUNS, "runs", rec["id"] + ".json")))
-                twin = os.path.join(ECON_RUNS, "public", rec["id"] + ".json")
+                self.assertEqual(rec, read_json(os.path.join(ROOT, "runs", rec["id"] + ".json")))
+                twin = os.path.join(ROOT, "public", rec["id"] + ".json")
                 self.assertEqual(os.path.isfile(twin), bool(spec.get("public")))
                 if spec.get("public"):
                     pub = sanitize.public(rec, self.aliases, words)
                     self.assertEqual(pub, read_json(twin))
                     self.assertEqual(validate.check_record(pub, public=True, words=words), [])
-        on_disk = {n[:-5] for n in os.listdir(os.path.join(ECON_RUNS, "runs")) if n.endswith(".json")}
+        on_disk = {n[:-5] for n in os.listdir(os.path.join(ROOT, "runs")) if n.endswith(".json")}
         self.assertEqual(seen, on_disk)
 
 
