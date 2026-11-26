@@ -1,0 +1,272 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://krai.github.io/econ-results/schema/econ-run-1.schema.json",
+ "title": "econ-run/1",
+ "description": "One run of econ: one serving configuration, on one node, in one measurement. Written by tools/export.py from econ's own files (measure.json, check.json, accuracy.json) with econ's own report code, so the points carry econ's names and units. Throughputs are tokens per second for the whole server, latencies are milliseconds, power is watts, prices are USD per million tokens and rents are USD per GPU-hour.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema", "id", "created", "visibility", "econ", "model", "engine", "config", "hardware", "workload",
+              "method", "results", "points", "prices", "rents", "files"],
+ "properties": {
+  "schema": {"const": "econ-run/1"},
+  "id": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}_[a-z0-9][a-z0-9.-]*_[0-9a-f]{8}$",
+         "description": "The measurement's date, the configuration's label and eight hex digits of the SHA-256 of label|created|model|gpus."},
+  "created": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$",
+              "description": "When econ wrote the measurement, in the node's local time."},
+  "visibility": {"enum": ["internal", "public"],
+                 "description": "internal: the full record, with its provenance. public: the sanitised form, the only one a public site may hold."},
+  "econ": {
+   "type": "object", "additionalProperties": false, "required": ["version", "exporter"],
+   "properties": {
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "The econ that measured."},
+    "commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$", "description": "Its commit, where the run recorded one."},
+    "exporter": {
+     "type": "object", "additionalProperties": false, "required": ["version", "source"],
+     "properties": {
+      "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "The econ whose report code computed the points."},
+      "commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{7,40}$"},
+      "source": {"enum": ["measure.json", "report.json"], "description": "The file the points were read from."},
+      "source_version": {"type": ["string", "null"], "description": "The econ that wrote that file."}
+     }
+    }
+   }
+  },
+  "model": {
+   "type": "object", "additionalProperties": false, "required": ["id", "name"],
+   "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "precision": {"type": ["string", "null"], "description": "The weights' quantisation as served, e.g. FP8; null when the model is served as released."},
+    "max_model_len": {"type": ["integer", "null"], "minimum": 1, "description": "The context limit, tokens."},
+    "priced_as": {"type": ["string", "null"], "description": "The model whose price list the run is priced with."}
+   }
+  },
+  "engine": {
+   "type": "object", "additionalProperties": false, "required": ["name"],
+   "properties": {
+    "name": {"type": "string", "minLength": 1},
+    "version": {"type": ["string", "null"]},
+    "build": {"enum": ["release", "nightly", "custom", null]},
+    "commit": {"type": ["string", "null"]},
+    "image": {"type": ["string", "null"]},
+    "digest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "inside": {"type": ["object", "null"], "additionalProperties": {"type": "string"},
+               "description": "Versions read inside the image: vllm, torch, cuda."}
+   }
+  },
+  "config": {
+   "type": "object", "additionalProperties": false, "required": ["label", "family"],
+   "properties": {
+    "label": {"type": "string", "minLength": 1, "description": "econ's --label."},
+    "family": {"type": "string", "minLength": 1, "description": "recipe, S0, S1 or stock."},
+    "variant": {"type": ["string", "null"], "description": "What sets it apart inside its family, e.g. a context limit."},
+    "tp": {"type": ["integer", "null"], "minimum": 1, "description": "Tensor-parallel size."},
+    "dp": {"type": ["integer", "null"], "minimum": 1, "description": "Data-parallel size."},
+    "flags": {"type": ["array", "null"], "items": {"type": ["string", "number"]}},
+    "env": {"type": ["array", "null"], "items": {"type": "string"}},
+    "patch": {"type": ["string", "null"]},
+    "server_config": {"type": ["string", "null"], "description": "The file name of the serving configuration."}
+   }
+  },
+  "hardware": {
+   "type": "object", "additionalProperties": false, "required": ["gpu", "gpus", "node"],
+   "properties": {
+    "gpu": {"type": "string", "minLength": 1},
+    "gpus": {"type": "integer", "minimum": 1, "description": "The GPUs that served."},
+    "gpus_on_node": {"type": ["integer", "null"], "minimum": 1},
+    "driver": {"type": ["string", "null"]},
+    "power_limit_w": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "memory_mib": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "node": {"type": "string", "minLength": 1, "description": "An alias of the node, never its host name."}
+   }
+  },
+  "workload": {"type": "object", "description": "econ's workload: mix, lengths, prompts, seed, arrival."},
+  "method": {"type": "object", "description": "econ's method: windows, repeats, search."},
+  "power": {
+   "type": ["object", "null"], "additionalProperties": false,
+   "properties": {
+    "scope": {"type": ["string", "null"], "description": "What the counted power covers, in econ's words."},
+    "gpus_seen": {"type": ["integer", "null"]},
+    "notes": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "results": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/result"}},
+  "points": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/point"}},
+  "curve": {
+   "type": ["object", "null"], "required": ["name", "points"],
+   "properties": {"name": {"type": "string"}, "points": {"type": "array", "items": {"$ref": "#/$defs/curve_point"}}}
+  },
+  "stability": {
+   "type": ["object", "null"], "required": ["verdict", "rows"],
+   "properties": {
+    "verdict": {"enum": ["PASS", "WARN", "FAIL"]},
+    "warnings": {"type": ["integer", "null"], "minimum": 0},
+    "samples": {"type": ["integer", "null"], "minimum": 0},
+    "seconds": {"$ref": "#/$defs/amount"},
+    "interval_s": {"$ref": "#/$defs/amount"},
+    "from": {"type": ["string", "null"]},
+    "rows": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+   }
+  },
+  "health": {
+   "type": ["object", "null"], "additionalProperties": false,
+   "properties": {
+    "check": {
+     "type": ["object", "null"], "required": ["verdict", "status", "rows"],
+     "properties": {
+      "version": {"type": ["string", "null"]},
+      "created": {"type": ["string", "null"]},
+      "verdict": {"enum": ["PASS", "WARN", "FAIL"]},
+      "warnings": {"type": ["integer", "null"], "minimum": 0},
+      "gpus": {"type": ["integer", "null"], "minimum": 0},
+      "status": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+      "rows": {"type": "array", "items": {"$ref": "#/$defs/row"}, "description": "The rows that did not pass."},
+      "system": {"type": ["object", "null"], "description": "The node's operating system, CPU, memory and driver."}
+     }
+    },
+    "accuracy": {
+     "type": ["object", "null"], "required": ["benchmark", "items", "correct", "accuracy"],
+     "properties": {
+      "benchmark": {"type": "string"},
+      "shots": {"type": ["integer", "null"], "minimum": 0},
+      "items": {"type": "integer", "minimum": 1},
+      "seed": {"type": ["integer", "null"]},
+      "correct": {"type": "integer", "minimum": 0},
+      "accuracy": {"type": "number", "minimum": 0, "maximum": 1},
+      "ci95": {"type": ["array", "null"], "items": {"type": "number", "minimum": 0, "maximum": 1}},
+      "strict_accuracy": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+      "failed": {"type": ["integer", "null"], "minimum": 0}
+     }
+    }
+   }
+  },
+  "prices": {
+   "type": ["object", "null"], "required": ["model", "taken", "by_endpoint"],
+   "description": "The price snapshot the run was priced with, as econ's report writes it.",
+   "properties": {
+    "model": {"type": "string"},
+    "taken": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}Z$"},
+    "source": {"type": ["string", "null"]},
+    "endpoints": {"type": "integer", "minimum": 0},
+    "providers": {"type": ["integer", "null"], "minimum": 0},
+    "common": {"type": ["object", "null"]},
+    "by_endpoint": {"type": "array", "items": {"$ref": "#/$defs/endpoint"}}
+   }
+  },
+  "rents": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}, "description": "USD per GPU-hour."},
+  "findings": {"type": ["array", "null"], "items": {"type": "object", "required": ["level", "text"]}},
+  "not_covered": {"type": ["array", "null"], "items": {"type": "string"}},
+  "provenance": {
+   "type": "object", "description": "Internal only: where the run happened and where its files are.",
+   "properties": {
+    "host": {"type": ["string", "null"]},
+    "job": {"type": ["string", "null"]},
+    "data_dir": {"type": ["string", "null"]},
+    "command": {"type": ["string", "null"]},
+    "gentic_commit": {"type": ["string", "null"]},
+    "image": {"type": ["string", "null"]}
+   }
+  },
+  "files": {
+   "type": "array", "minItems": 1,
+   "items": {
+    "type": "object", "additionalProperties": false, "required": ["role", "name", "sha256", "bytes"],
+    "properties": {
+     "role": {"enum": ["measure", "check", "accuracy", "prices", "report", "power"]},
+     "name": {"type": "string", "pattern": "^[^/\\\\]+$"},
+     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+     "bytes": {"type": "integer", "minimum": 1}
+    }
+   }
+  }
+ },
+ "$defs": {
+  "amount": {"type": ["number", "null"], "minimum": 0},
+  "interval": {"type": ["array", "null"], "items": {"type": ["number", "null"]}},
+  "row": {
+   "type": "object", "required": ["check", "result", "status"],
+   "properties": {"check": {"type": "string"}, "result": {"type": "string"},
+                  "status": {"enum": ["PASS", "WARN", "INFO", "FAIL"]}}
+  },
+  "slo": {
+   "type": "object", "required": ["label", "tpot_p99_ms", "ttft_p99_ms"],
+   "properties": {"label": {"type": "string"}, "tpot_p99_ms": {"type": "number", "exclusiveMinimum": 0},
+                  "ttft_p99_ms": {"type": "number", "exclusiveMinimum": 0}}
+  },
+  "window": {
+   "type": "object", "required": ["rate_rps", "output_tok_s"],
+   "description": "One confirmation window of a met target.",
+   "properties": {
+    "rate_rps": {"$ref": "#/$defs/amount"}, "measured": {"$ref": "#/$defs/amount"}, "failed": {"$ref": "#/$defs/amount"},
+    "input_tok_s": {"$ref": "#/$defs/amount"}, "output_tok_s": {"$ref": "#/$defs/amount"},
+    "p50_tpot_ms": {"$ref": "#/$defs/amount"}, "p90_tpot_ms": {"$ref": "#/$defs/amount"},
+    "p99_tpot_ms": {"$ref": "#/$defs/amount"}, "p99_ttft_ms": {"$ref": "#/$defs/amount"},
+    "p99_tpot_ci_ms": {"$ref": "#/$defs/interval"}, "p99_ttft_ci_ms": {"$ref": "#/$defs/interval"},
+    "node_power_w": {"$ref": "#/$defs/amount"}, "tok_per_j": {"$ref": "#/$defs/amount"},
+    "window_s": {"$ref": "#/$defs/amount"}, "steady": {"type": ["boolean", "null"]}
+   }
+  },
+  "result": {
+   "type": "object", "required": ["slo", "met"],
+   "description": "One latency target: whether it was met, at what rate, and its confirmation windows.",
+   "properties": {
+    "slo": {"$ref": "#/$defs/slo"},
+    "met": {"type": "boolean"},
+    "rate_rps": {"$ref": "#/$defs/amount"},
+    "note": {"type": ["string", "null"]},
+    "probes": {"type": ["integer", "null"], "minimum": 0},
+    "windows": {"type": ["array", "null"], "items": {"$ref": "#/$defs/window"}}
+   }
+  },
+  "point": {
+   "type": "object", "required": ["config", "slo", "met", "gpus", "tpot_limit"],
+   "description": "One (configuration, target) of econ's report.json, with the same names and units.",
+   "properties": {
+    "config": {"type": "string"}, "slo": {"type": "string"}, "source": {"type": ["string", "null"], "pattern": "^[^/\\\\]*$"},
+    "met": {"type": ["boolean", "null"]}, "note": {"type": ["string", "null"]},
+    "gpus": {"type": "integer", "minimum": 1},
+    "tpot_limit": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "ttft_limit": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "rate_rps": {"$ref": "#/$defs/amount"}, "request_s": {"$ref": "#/$defs/amount"},
+    "input_tok_s": {"$ref": "#/$defs/amount"}, "output_tok_s": {"$ref": "#/$defs/amount"},
+    "p50_ttft_ms": {"$ref": "#/$defs/amount"}, "p90_ttft_ms": {"$ref": "#/$defs/amount"},
+    "p99_ttft_ms": {"$ref": "#/$defs/amount"}, "p50_tpot_ms": {"$ref": "#/$defs/amount"},
+    "p90_tpot_ms": {"$ref": "#/$defs/amount"}, "p99_tpot_ms": {"$ref": "#/$defs/amount"},
+    "mean_input_tokens": {"$ref": "#/$defs/amount"}, "mean_output_tokens": {"$ref": "#/$defs/amount"},
+    "node_power_w": {"$ref": "#/$defs/amount"}, "tok_per_j": {"$ref": "#/$defs/amount"},
+    "tok_per_j_total": {"$ref": "#/$defs/amount"},
+    "failed": {"$ref": "#/$defs/amount"}, "repeats": {"type": ["integer", "null"], "minimum": 0},
+    "requests_served": {"$ref": "#/$defs/amount"}, "requests_failed": {"$ref": "#/$defs/amount"},
+    "sm_clock_mhz": {"$ref": "#/$defs/amount"}, "temp_max_c": {"type": ["number", "null"]},
+    "steady": {"type": ["boolean", "null"]}, "client_busy": {"type": ["boolean", "null"]},
+    "input_known": {"type": ["boolean", "null"]},
+    "spread_pct": {"type": ["object", "null"]}, "pooled": {"type": ["object", "null"]},
+    "server": {"type": ["object", "null"]}, "power": {"type": ["object", "null"]},
+    "worth": {"type": ["object", "null"]}, "cost": {"type": ["array", "null"]},
+    "output_tokens_30d": {"$ref": "#/$defs/amount"},
+    "health": {"type": ["object", "null"]}, "accuracy": {"type": ["object", "null"]},
+    "mbu_pct": {"$ref": "#/$defs/amount"}
+   }
+  },
+  "curve_point": {
+   "type": "object", "required": ["x", "rate"],
+   "description": "A probe, a confirmation window or a confirmed median: x output tok/s per GPU, y p99 TPOT in ms.",
+   "properties": {
+    "x": {"type": "number", "minimum": 0}, "y": {"$ref": "#/$defs/amount"}, "ttft": {"$ref": "#/$defs/amount"},
+    "y_ci": {"$ref": "#/$defs/interval"}, "ttft_ci": {"$ref": "#/$defs/interval"},
+    "rate": {"type": "number", "minimum": 0}, "kind": {"enum": ["probe", "window", "confirmed", null]},
+    "final": {"type": ["boolean", "null"]}, "target": {"type": ["string", "null"]},
+    "power_w": {"$ref": "#/$defs/amount"}, "failed": {"$ref": "#/$defs/amount"}
+   }
+  },
+  "endpoint": {
+   "type": "object", "required": ["input", "output"],
+   "properties": {
+    "provider": {"type": ["string", "null"]}, "tag": {"type": ["string", "null"]},
+    "quantization": {"type": ["string", "null"]},
+    "input": {"type": "number", "minimum": 0}, "output": {"type": "number", "exclusiveMinimum": 0},
+    "cached_input": {"type": ["number", "null"], "minimum": 0}
+   }
+  }
+ }
+}
