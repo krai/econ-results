@@ -1,7 +1,5 @@
-/* The Market section's own look: the search box and the table of every model on every GPU, with a mark, a value and a
-   meter in each cell. Colour says a status only next to its mark (a tick or a cross); text keeps the ink colours. */
-.search { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--border);
-          border-radius: 6px; padding: 4px 8px; width: min(240px, 100%); }
+/* The Market section's own look: the table of every model on every GPU, with a mark, a value and a meter in each
+   cell. Colour says a status only next to its mark (a tick or a cross); text keeps the ink colours. */
 .linkish.chosen { color: var(--ink); font-weight: 600; text-decoration: none; }
 .linkish.chosen::after { content: " ←"; color: var(--muted); }
 

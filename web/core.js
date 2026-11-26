@@ -53,7 +53,7 @@
     at: "explore", model: "", prec: "all", eng: "all",
     x: "p50", y: "out", asof: "latest", every: 0, log: 0, front: 0, tl: 1, unc: 1, view: "chart", hide: "",
     price: "run", pin: 0, pout: 0, rent: "a", u: 100, cached: 0, kwh: 0.1, pue: 1.3,
-    lbm: "out", lbt: "loosest", per: "all", more: 0, blog: 0, hist: "", hm: "out", pm: "", run: ""};
+    lbm: "out", lbt: "loosest", per: "all", more: 0, blog: 0, hist: "", hm: "out", pm: "", run: "", rq: ""};
   const rentOf = {};
   for (const g of R.gpus) {
     const first = records.find((r) => r.hardware.gpu === g && (r.rents || []).length) || {rents: []};

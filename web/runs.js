@@ -8,7 +8,11 @@
   if (!R) return;
   const el = D.el, fmt = D.fmt, has = M.has, S = R.S;
   const card = R.section("runs", "Runs", "Every run in scope, the latest first. A row opens the run below the table.");
-  const detail = el("div", {class: "rundetail", id: "run"});
+  const listing = el("div", {}), detail = el("div", {class: "rundetail", id: "run"});
+  card.body.append(listing, detail);
+  // What the box finds a run by: every word typed must be in its date, model, hardware, place, engine or configuration
+  const words = (r) => [R.dateText(r.created), R.day(r), r.model.name, r.model.id, R.hw(r), R.where(r), R.engine(r), R.config(r), r.config.label, r.id].join(" ").toLowerCase();
+  const found = (scope) => { const q = S.rq.toLowerCase().split(/\s+/).filter(Boolean); return scope.filter((r) => q.every((w) => words(r).includes(w))); };
 
   const verdict = (v) => (v ? D.tag(v, v === "PASS" ? "pass" : "warn") : el("span", {class: "muted", text: "-"}));
   const kv = (pairs) => el("dl", {class: "kv"}, pairs.filter((p) => p && has(p[1]) && p[1] !== "").map(([k, v]) => [el("dt", {text: k}), el("dd", {}, v)]));
@@ -16,8 +20,8 @@
   const list = (items) => (items && items.length ? el("ul", {class: "plain"}, items.map((t) => el("li", {text: t}))) : null);
   const ci = (v, pair, d) => (has(v) ? fmt.ms(v, d) + (pair && has(pair[0]) ? ` (${fmt.n(pair[0], d)} to ${has(pair[1]) ? fmt.n(pair[1], d) : "no upper bound"})` : "") : "-");
 
-  function table(scope) {
-    const rows = scope.slice().reverse().map((r) => {
+  function table(runs, of) {
+    const rows = runs.slice().reverse().map((r) => {
       const p = M.at(r, "loosest"), x = p ? R.sums(r, p) : null, check = (r.health || {}).check, acc = (r.health || {}).accuracy;
       return {_slot: R.slot(r), _r: r, date: R.dateText(r.created), created: r.created, model: r.model.name, hw: R.hw(r), where: R.where(r),
               engine: R.engine(r), config: R.config(r),
@@ -39,7 +43,7 @@
       {key: "tpot", label: "TPOT p99", num: true, cell: (v) => fmt.ms(v, 1)}, {key: "tokj", label: "Output tok/J", num: true, cell: (v) => fmt.n(v, 2)},
       {key: "usd", label: "USD per GPU-hour", num: true, cell: fmt.usd, title: "Revenue at full load, at the prices chosen under Assumptions"},
       {key: "check", label: "Check", cell: verdict}, {key: "acc", label: "Accuracy", num: true, cell: (v) => (has(v) ? fmt.n(100 * v, 1) + " %" : "-")},
-      {key: "open", label: "", cell: open}], rows, {caption: `${R.count(rows.length, "run")} of ${S.model}`});
+      {key: "open", label: "", cell: open}], rows, {caption: (rows.length < of ? `${rows.length} of the ` : "") + `${R.count(of, "run")} of ${S.model}`});
   }
 
   function targets(r) {
@@ -131,9 +135,18 @@
       targets(r), curve(r), about(r));
   }
 
-  function render() {
-    const scope = R.scope(), run = scope.find((r) => r.id === S.run) || R.records.find((r) => r.id === S.run) || scope[scope.length - 1];
-    D.replace(card.body, scope.length ? table(scope) : el("p", {class: "muted", text: "No runs in scope."}), detail);
+  function drawChoices() {
+    const box = el("input", {type: "search", class: "search", placeholder: "A date, node, engine, configuration…", "aria-label": "Find runs", value: S.rq, "data-k": "rq"});
+    box.addEventListener("input", () => { S.rq = box.value; R.update("typing"); });
+    D.replace(card.controls, D.control("Find runs", box));
+  }
+  function render(reason) {
+    const scope = R.scope(), runs = found(scope);
+    D.replace(listing, !scope.length ? el("p", {class: "muted", text: "No runs in scope."})
+      : runs.length ? table(runs, scope.length) : el("p", {class: "muted", text: `None of the ${R.count(scope.length, "run")} of ${S.model} matches.`}));
+    if (reason === "typing") return;  // the box is being typed in: it and the run opened stay as they are
+    drawChoices();
+    const run = scope.find((r) => r.id === S.run) || R.records.find((r) => r.id === S.run) || scope[scope.length - 1];
     if (run) drawDetail(run); else D.replace(detail);
   }
   R.views.push({id: "runs", title: "Runs", icon: "runs", root: card.root, render});
