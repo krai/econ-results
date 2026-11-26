@@ -1,0 +1,26 @@
+/* Rankings and History: the leaderboard in two columns, the treemap's tiles, bars, and lines that take the ordered
+   ramp. */
+.card h3.sub { margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--grid); }
+ol.board { list-style: none; margin: 4px 0 8px; padding: 0; column-count: 2; column-gap: 28px; }
+ol.board li { break-inside: avoid; margin: 0; }
+.entry { display: grid; grid-template-columns: 22px 16px minmax(0, 1fr) auto; align-items: center; gap: 4px; width: 100%; font: inherit; color: var(--ink);
+         background: none; border: 0; border-bottom: 1px solid var(--grid); padding: 9px 4px; cursor: pointer; text-align: left; }
+.entry:hover { background: var(--wash); }
+.entry .rank { color: var(--muted); font-size: 13px; text-align: right; padding-right: 6px; }
+.entry .key { margin: 0; }
+.who { min-width: 0; display: flex; flex-direction: column; }
+.bname { font-weight: 600; font-size: 14px; overflow-wrap: anywhere; }
+.bsub { color: var(--ink2); font-size: 12px; }
+.score { display: flex; flex-direction: column; align-items: flex-end; text-align: right; padding-left: 10px; }
+.bval { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.bunit { color: var(--muted); font-size: 11px; }
+.tile { stroke: none; }
+svg .glabel { fill: var(--ink2); font-size: 12px; font-weight: 600; }
+svg .tname { font-size: 12px; font-weight: 600; }
+svg .tvalue2 { font-size: 13px; }
+svg .tsub { font-size: 11px; opacity: .85; }
+.bar { stroke: none; }
+.line.o1, .line.o2, .line.o3, .line.o4 { fill: none; }
+.line.o1 { stroke: var(--o1); } .line.o2 { stroke: var(--o2); } .line.o3 { stroke: var(--o3); } .line.o4 { stroke: var(--o4); }
+.dot.o1 { fill: var(--o1); } .dot.o2 { fill: var(--o2); } .dot.o3 { fill: var(--o3); } .dot.o4 { fill: var(--o4); }
+@media (max-width: 720px) { ol.board { column-count: 1; } }

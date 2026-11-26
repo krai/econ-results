@@ -1,5 +1,5 @@
 {
  "title": "KRAI econ results",
- "styles": ["vendor/shell.css", "registry.css", "explore.css"],
- "scripts": ["vendor/shell.js", "vendor/math.js", "regmath.js", "core.js", "charts.js", "chart-frontier.js", "explore.js", "assumptions.js", "app.js"]
+ "styles": ["vendor/shell.css", "registry.css", "explore.css", "rankings.css"],
+ "scripts": ["vendor/shell.js", "vendor/math.js", "regmath.js", "core.js", "charts.js", "chart-frontier.js", "chart-ordinal.js", "chart-treemap.js", "explore.js", "assumptions.js", "rankings.js", "app.js"]
 }
