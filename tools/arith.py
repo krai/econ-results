@@ -13,6 +13,7 @@ import math
 
 DAYS = 30  # econ's month of cost and tokens
 TOLERANCE = 1e-9
+SPEED_SPAN = 2.0  # econ's report.SPEED_SPAN
 
 
 def revenue(input_tok_s, output_tok_s, input_price, output_price, gpus):
@@ -39,6 +40,19 @@ def pct(values, q):
     pos = (len(v) - 1) * q / 100
     lo, hi = math.floor(pos), math.ceil(pos)
     return v[lo] + (v[hi] - v[lo]) * (pos - lo)
+
+
+def at_speed(pts, speed):
+    """[value, measured] of a curve at a speed per user, from its (speed, value) points sorted by speed: its own point
+    there, or the straight line between its two neighbours; None outside its points, or between two that are more
+    than SPEED_SPAN apart in speed. econ's report.at_speed, and the page's RegMath.atSpeed."""
+    for s, v in pts:
+        if abs(s - speed) <= 1e-9 * speed:
+            return [v, True]
+    for (s0, v0), (s1, v1) in zip(pts, pts[1:]):
+        if s0 < speed < s1:
+            return [v0 + (v1 - v0) * (speed - s0) / (s1 - s0), False] if s1 <= s0 * SPEED_SPAN else None
+    return None
 
 
 def same(got, want):
