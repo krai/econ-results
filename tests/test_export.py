@@ -4,6 +4,7 @@ The second half needs econ itself (ECON_SRC: the src folder of a gentic checkout
 registry's original files, which are in this repository under sources/. Without them those tests are skipped, and
 say why."""
 import os
+import sys
 import tempfile
 import unittest
 
@@ -120,6 +121,26 @@ class TestPieces(unittest.TestCase):
         self.assertEqual(export.prune(os.path.dirname(folder), {"keep"}), ["stale"])
         self.assertEqual(sorted(os.listdir(os.path.dirname(folder))), ["keep.json", "notes.txt"])
         self.assertEqual(export.prune(self.path("missing", "x")[:-2], set()), [])
+
+    def test_an_econ_that_cannot_export_says_which_one_can(self):
+        mine = [k for k in sys.modules if k == "econ" or k.startswith("econ.")]
+        saved, path = {k: sys.modules.pop(k) for k in mine}, list(sys.path)
+
+        def restore():  # the real econ, if another test imported it, is back as it was
+            for k in [k for k in sys.modules if k == "econ" or k.startswith("econ.")]:
+                del sys.modules[k]
+            sys.modules.update(saved)
+            sys.path[:] = path
+        self.addCleanup(restore)
+        for name, text in (("report.py", ""), ("__init__.py", "__version__ = '0.0.1'\n")):
+            with open(self.path("old", "econ", name), "w", encoding="utf-8") as f:
+                f.write(text)
+        with self.assertRaises(SystemExit) as caught:
+            export.Econ(os.path.join(self.tmp.name, "old"))
+        self.assertIn("ECON_REF", str(caught.exception))
+        with self.assertRaises(SystemExit) as caught:
+            export.Econ(self.tmp.name)  # not the src folder of a checkout at all
+        self.assertIn("no econ/report.py", str(caught.exception))
 
     def test_a_file_entry_is_the_name_the_hash_and_the_size(self):
         path = self.path("measure.json")

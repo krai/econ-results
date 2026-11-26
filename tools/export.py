@@ -58,12 +58,16 @@ class Econ:
         if not os.path.isfile(os.path.join(src, "econ", "report.py")):
             raise SystemExit(f"--econ-src {src}: no econ/report.py there (give the src folder of a gentic checkout)")
         sys.path.insert(0, src)
-        self.report = importlib.import_module("econ.report")
-        self.economics = importlib.import_module("econ.economics")
-        self.evaluation = importlib.import_module("econ.evaluation")
-        self.prices = importlib.import_module("econ.prices")
-        self.finite = importlib.import_module("econ.stats").finite
-        self.version = importlib.import_module("econ").__version__
+        try:
+            self.report = importlib.import_module("econ.report")
+            self.economics = importlib.import_module("econ.economics")
+            self.evaluation = importlib.import_module("econ.evaluation")
+            self.prices = importlib.import_module("econ.prices")
+            self.finite = importlib.import_module("econ.stats").finite
+            self.version = importlib.import_module("econ").__version__
+        except (ImportError, AttributeError) as e:
+            raise SystemExit(f"--econ-src {src}: this econ cannot export a run ({e}). Give a checkout of gentic at the "
+                             "commit of the registry's ECON_REF, or a later one") from None
         self.commit = _git_head(src)
 
 
