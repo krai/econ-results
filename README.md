@@ -6,8 +6,7 @@
 
 The registry of KRAI's **econ** runs and the dashboard that shows them together.
 
-**Internal.** This repository is private, and nothing in it is cleared to leave KRAI: not the runs, not the page, not
-its link. See [`LICENSE`](LICENSE).
+**→ [krai.github.io/econ-results](https://krai.github.io/econ-results/)**
 
 econ measures what a serving configuration can sell within a latency target (the 99th percentile of the time to
 first token and of the time per output token), with the power of the GPU boards, and prices it at what providers
@@ -18,18 +17,14 @@ Whoever runs econ at KRAI, on any node or cluster, adds the run here with one co
 
 ## The dashboard
 
-The dashboard is one HTML file that works offline. **[Download the latest](https://github.com/krai/econ-results/releases/latest/download/econ-results.html)**
-and open it: it is rebuilt on every push to `main`, so it always holds every run that has been merged.
+The dashboard is one page, rebuilt on every push to `main`, so it always holds every run that has been merged.
 
 | How | What you get |
 |---|---|
-| **The link above** | The page of `main`, as the file of this repository's release `dashboard`. Only who can see this repository can download it |
+| **On the web** | [krai.github.io/econ-results](https://krai.github.io/econ-results/): the page of `main` |
+| **As a file** | [econ-results.html](https://github.com/krai/econ-results/releases/latest/download/econ-results.html): the same page as one file that works offline, from this repository's release `dashboard` |
 | **A pull request's page** | Every run of the `checks` workflow keeps the page built from its branch as the artifact `page`: Actions → the run → Artifacts |
 | **A checkout** | `python -m tools.build runs --out site`, then open `site/index.html` |
-
-It is a file and not a web page because this repository is private: GitHub Pages does not serve a private repository
-on krai's plan, and a Pages site has no sign-in, so its address would be open to anyone who had it or guessed it.
-[How the dashboard is published](#how-the-dashboard-is-published) says how it can also be a web page without that.
 
 | Section | Contents |
 |---|---|
@@ -118,10 +113,10 @@ One JSON file per run: one configuration, on one node, in one measurement.
 | Files | The SHA-256 of each original file |
 | Provenance | Host, job, data folder, command |
 
-The records here are `internal`. A record also has a `public` form, for the day one must leave KRAI:
-[`tools/sanitize.py`](tools/sanitize.py) drops the provenance and the cluster, names the node by an alias, keeps only
-the file name of a path and drops the providers' names. It fails closed: whatever
-[`tools/patterns.py`](tools/patterns.py) still finds is an error. Nothing here is published in that form today.
+The records here are the full form, `internal`: with their provenance. A record also has a `public` form, which
+says less: [`tools/sanitize.py`](tools/sanitize.py) drops the provenance and the cluster, names the node by an alias,
+keeps only the file name of a path and drops the providers' names. It fails closed: whatever
+[`tools/patterns.py`](tools/patterns.py) still finds is an error. No page is built from that form today.
 
 ## Tools
 
@@ -158,15 +153,18 @@ goes to econ first. Everything else under `web/` is the registry's: its arithmet
 
 ## How the dashboard is published
 
-On every push to `main`, [`site.yml`](.github/workflows/site.yml) validates the registry, builds the page and
-replaces the file of the release `dashboard` with it. That is all it takes today, and it needs no setting.
+On every push to `main`, [`site.yml`](.github/workflows/site.yml) validates the registry and builds the page. It
+replaces the file of the release `dashboard` with it and, while GitHub Pages is on for this repository (Settings →
+Pages → Source: GitHub Actions), deploys it there. Nothing built is committed.
 
-**As a web page too (not set up).** A page on GitHub Pages can be reached by anyone who has its address, and these
-runs are internal. So the workflow can also publish the page locked: compressed and encrypted with AES-256-GCM, inside
-a small page that opens it in the browser. Only that locked page leaves this repository. It goes to a second
-repository, which holds nothing else and serves it with Pages; without the key it shows a box to paste the link in,
-and nothing of the registry. It is turned on by naming that repository in the variable `SITE_REPOSITORY`, with the
-secrets `SITE_KEY` and `SITE_DEPLOY_KEY`.
+A Pages site has no sign-in: whoever has its address can open it. GitHub serves Pages for a public repository, or
+for a private one on a paid plan.
+
+**Locked (not set up).** For a registry that is to stay internal, the workflow can publish the page locked instead:
+compressed and encrypted with AES-256-GCM, inside a small page that opens it in the browser. The locked page goes to a
+second repository, which holds nothing else and serves it with Pages; without the key it shows a box to paste the
+link in, and nothing of the registry. It is turned on by naming that repository in the variable `SITE_REPOSITORY`,
+with the secrets `SITE_KEY` and `SITE_DEPLOY_KEY`.
 
 The key is in no file. It travels in the link, after the `#`, which a browser never sends to a server. A browser that
 opened the page keeps the key, so the address alone works there afterwards; the page's About forgets it. Whoever has
@@ -176,4 +174,4 @@ pages published after it.
 
 ---
 
-<sub>© KRAI · [krai.ai](https://krai.ai) · proprietary, for internal use</sub>
+<sub>© KRAI · [krai.ai](https://krai.ai) · see [`LICENSE`](LICENSE)</sub>
