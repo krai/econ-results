@@ -59,8 +59,6 @@
   function drawAbout() {
     const v = site.vendored || {}, by = {};
     for (const r of R.records) by[r.econ.version] = (by[r.econ.version] || 0) + 1;
-    const who = site.audience === "public" ? null
-      : ["Who it is for", "KRAI's internal use. Its runs are not cleared to leave the company: do not pass on the page, its link or what it shows."];
     const key = keyKept() ? ["This browser", ["It keeps the key of this page, so the address alone opens it here. ", forget]] : null;
     D.replace(about.body,
       D.notice(ok ? "good" : "critical", ok
@@ -72,7 +70,7 @@
         ["Records", `${R.count(R.records.length, "run")} in the econ-run/1 format (${site.audience}); measured with econ ` +
           Object.entries(by).map(([ver, n]) => `${ver} (${n})`).join(", ") + ". Each run's record downloads from its detail under Runs."],
         ["The page", `One file that works offline: nothing is fetched. Its shell and arithmetic are econ's own, copied from econ ${v.econ || "?"} at commit ${(v.commit || "?").slice(0, 10)}; the sections are the registry's.`],
-        ["Built", site.built || "-"], who, key,
+        ["Built", site.built || "-"], key,
       ].filter(Boolean).map(([k, t]) => [el("dt", {text: k}), el("dd", {}, t)])));
   }
   R.views.push({id: "about", title: "About", icon: "about", root: about.root, render: drawAbout});
