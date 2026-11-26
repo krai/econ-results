@@ -1,0 +1,21 @@
+/* Explore: the chart with the panel of its curves beside it, and under it on a narrow screen. */
+.explore { display: grid; grid-template-columns: minmax(0, 1fr) 268px; gap: 18px; align-items: start; }
+.exmain { min-width: 0; }
+.panel { border: 1px solid var(--border); border-radius: 8px; background: var(--page); padding: 10px 12px; font-size: 13px; }
+.phead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.phead h3 { margin: 0; }
+.serieslist { list-style: none; margin: 0 0 10px; padding: 0; }
+.serieslist li { margin: 0; }
+.serieslist label { display: flex; align-items: flex-start; gap: 7px; padding: 4px 0; cursor: pointer; }
+.serieslist input { margin: 2px 0 0; accent-color: var(--c1); }
+.serieslist .lk { margin-top: 4px; }
+.serieslist .sname { display: block; color: var(--ink); overflow-wrap: anywhere; }
+.serieslist .ssub { display: block; color: var(--muted); font-size: 12px; }
+.serieslist li.old .sname { color: var(--ink2); }
+.quick { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 6px 0; }
+.quick .clabel { min-width: 48px; }
+.switches { display: grid; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--grid); }
+.readout { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; min-height: 38px; margin-top: 6px; font-size: 13px; }
+.read { display: inline-flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+.read strong { font-variant-numeric: tabular-nums; }
+@media (max-width: 1040px) { .explore { grid-template-columns: minmax(0, 1fr); } }
