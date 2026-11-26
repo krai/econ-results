@@ -1,0 +1,57 @@
+{
+ "tool": "econ",
+ "version": "0.0.7",
+ "status": "experimental",
+ "kind": "accuracy",
+ "label": "recipe-tp4-v0.34",
+ "created": "2026-11-17T20:52:55",
+ "command": "econ accuracy --endpoint http://127.0.0.1:18000/v1 --label recipe-tp4-v0.34 --data /home/users/e70293/econ_exp/gsm8k --out /hpelustre/krai/krai_gentic/econ/exp3/recipe-tp4-v0.34_j50320/accuracy",
+ "endpoint": "http://127.0.0.1:18000/v1",
+ "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+ "benchmark": "gsm8k",
+ "shots": 5,
+ "items": 50,
+ "seed": 0,
+ "correct": 47,
+ "accuracy": 0.94,
+ "ci95": [
+  0.8378265662912299,
+  0.9793854036353695
+ ],
+ "strict_correct": 47,
+ "strict_accuracy": 0.94,
+ "failed": 0,
+ "seconds": 6.804033041000366,
+ "prompt": {
+  "shot": "Question: {question}\nAnswer: {answer}\n\n",
+  "item": "Question: {question}\nAnswer:",
+  "shots_from": "train",
+  "shot_indices": [
+   373,
+   2765,
+   7031,
+   1489,
+   858
+  ],
+  "max_tokens": 256,
+  "temperature": 0,
+  "stop": [
+   "Question:",
+   "</s>",
+   "<|im_end|>"
+  ]
+ },
+ "scoring": "the number after the last '####' of the completion, else its last number, equal as a number to the gold answer after '####' (commas, '$' and a trailing period ignored)",
+ "data": {
+  "test": {
+   "source": "/home/users/e70293/econ_exp/gsm8k/test.jsonl",
+   "sha256": "3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14",
+   "items": 1319
+  },
+  "train": {
+   "source": "/home/users/e70293/econ_exp/gsm8k/train.jsonl",
+   "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+   "items": 7473
+  }
+ }
+}

@@ -1,0 +1,5 @@
+job=50320 host=sith2 arm=recipe label=recipe-tp4-v0.34 start=2026-11-17T20:43:27-06:00
+econ=/home/users/e70293/econ_exp/econ_31ea28b tree=0f0ee2f1
+image=vllm/vllm-openai:v0.34.0 digest=vllm/vllm-openai@sha256:20fdb089454afbb324efa4110a2c025ff7b27cc1a086e07aa580b18df8ad1ce1
+inside: vllm 0.34.0 | torch 2.14.0+cu130 | CUDA 13.0
+config=/home/users/e70293/econ_exp/econ_31ea28b/src/econ/configs/dsv41f_h200_recipe_tp4.yaml gpus=0,1,2,3

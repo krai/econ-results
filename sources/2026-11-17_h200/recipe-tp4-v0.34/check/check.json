@@ -1,0 +1,1101 @@
+{
+ "tool": "econ",
+ "version": "0.0.7",
+ "status": "experimental",
+ "kind": "check",
+ "label": "recipe-tp4-v0.34",
+ "created": "2026-11-17T20:43:57",
+ "command": "econ check --gpus 0,1,2,3,4,5,6,7 --image vllm/vllm-openai:v0.34.0 --timeout 1500 --offline --disk /hpelustre/krai/krai_gentic/econ --disk-mib 1024 --label recipe-tp4-v0.34 --out /hpelustre/krai/krai_gentic/econ/exp3/recipe-tp4-v0.34_j50320/check",
+ "host": {
+  "hostname": "sith2",
+  "os": "Red Hat Enterprise Linux 9.4 (Plow)",
+  "kernel": "5.14.0-427.13.1.el9_4.x86_64",
+  "python": "3.14.8",
+  "cpu": "INTEL(R) XEON(R) PLATINUM 8562Y+",
+  "sockets": 2,
+  "cores": 64,
+  "threads": 128,
+  "ram_gib": 2014.9619178771973,
+  "driver": "595.58.03",
+  "cuda": "13.2",
+  "docker": "27.4.1",
+  "disk": {
+   "path": "/hpelustre/krai/krai_gentic/econ",
+   "mib": 1024,
+   "mb_s": 2288.3389417171197,
+   "free_gb": 724955.060867072,
+   "total_gb": 1113716.312858624
+  },
+  "download": null
+ },
+ "gpus": [
+  {
+   "uuid": "GPU-98cb9ec0-77c1-7694-9950-c28264f29c27",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 27.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 0,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-7190428a-5006-bb51-93eb-ac986260c298",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 24.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 1,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-566dba8a-7237-ebd8-78f7-b86c394205b5",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 22.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 2,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-3ad958f8-4614-ed8e-5d14-de45ade5b462",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 28.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 3,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-5316252b-3087-63f4-9098-4b8c13eba87b",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 26.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 4,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-75367d6f-f917-0775-c643-1b91699b5dd0",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 23.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 5,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-2690c812-35a4-887b-b066-011ab2ef9185",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 24.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 6,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  },
+  {
+   "uuid": "GPU-5a00b5d0-233d-0f47-daff-34208e5b8ac3",
+   "name": "NVIDIA H200",
+   "driver_version": "595.58.03",
+   "memory.total": 143771.0,
+   "memory.used": 0.0,
+   "temperature.gpu": 26.0,
+   "power.limit": 700.0,
+   "power.default_limit": 700.0,
+   "power.max_limit": 700.0,
+   "clocks.max.sm": 1980.0,
+   "pcie.link.gen.current": 5.0,
+   "pcie.link.gen.max": 5.0,
+   "pcie.link.width.current": 16.0,
+   "pcie.link.width.max": 16.0,
+   "ecc.mode.current": "Enabled",
+   "ecc.errors.corrected.volatile.total": 0.0,
+   "ecc.errors.uncorrected.volatile.total": 0.0,
+   "ecc.errors.corrected.aggregate.total": 0.0,
+   "ecc.errors.uncorrected.aggregate.total": 0.0,
+   "remapped_rows.correctable": 0.0,
+   "remapped_rows.uncorrectable": 0.0,
+   "remapped_rows.pending": "No",
+   "remapped_rows.failure": "No",
+   "retired_pages.pending": null,
+   "index": 7,
+   "datasheet": {
+    "model": "H200 SXM",
+    "bf16_tflops": 989.0,
+    "memory_gb_s": 4800.0
+   }
+  }
+ ],
+ "processes": [],
+ "probe": {
+  "how": "docker image vllm/vllm-openai:v0.34.0",
+  "seconds": 15.0
+ },
+ "probes": {
+  "0": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 672.1552732023936,
+   "gemm_peak_tflops": 717.6422355133847,
+   "copy_tb_s": 4.1594618204729725,
+   "h2d_gb_s": 27.83703781616803,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1491.0,
+    "sm_mhz_min": 1470.0,
+    "power_w_mean": 691.5586666666666,
+    "temp_c_max": 56.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "1": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 681.3750777337408,
+   "gemm_peak_tflops": 724.9950267322212,
+   "copy_tb_s": 4.155006494674745,
+   "h2d_gb_s": 27.82270824977953,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1508.0,
+    "sm_mhz_min": 1485.0,
+    "power_w_mean": 691.4813333333333,
+    "temp_c_max": 55.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "2": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 683.8404193996497,
+   "gemm_peak_tflops": 731.8025354795033,
+   "copy_tb_s": 4.155623151729235,
+   "h2d_gb_s": 27.808022669457223,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1516.0,
+    "sm_mhz_min": 1485.0,
+    "power_w_mean": 691.76,
+    "temp_c_max": 54.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "3": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 671.8177264093392,
+   "gemm_peak_tflops": 711.7481364242227,
+   "copy_tb_s": 4.158654197102577,
+   "h2d_gb_s": 27.80776069281184,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1480.0,
+    "sm_mhz_min": 1440.0,
+    "power_w_mean": 692.7293333333333,
+    "temp_c_max": 58.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "4": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 671.4671610107918,
+   "gemm_peak_tflops": 728.0866805634828,
+   "copy_tb_s": 4.1559936166486375,
+   "h2d_gb_s": 27.814204288831586,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1477.0,
+    "sm_mhz_min": 1455.0,
+    "power_w_mean": 691.7846666666667,
+    "temp_c_max": 57.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "5": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 679.2309599725951,
+   "gemm_peak_tflops": 714.5282059392695,
+   "copy_tb_s": 4.150274668109426,
+   "h2d_gb_s": 27.81824485227569,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1506.0,
+    "sm_mhz_min": 1470.0,
+    "power_w_mean": 691.592,
+    "temp_c_max": 55.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "6": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 672.1375817572374,
+   "gemm_peak_tflops": 714.5860044003484,
+   "copy_tb_s": 4.157252333796566,
+   "h2d_gb_s": 27.81754967806219,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1480.0,
+    "sm_mhz_min": 1455.0,
+    "power_w_mean": 691.5020000000001,
+    "temp_c_max": 63.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  },
+  "7": {
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0",
+   "device": "NVIDIA H200",
+   "error": null,
+   "gemm_n": 8192,
+   "gemm_tflops": 676.6464214164574,
+   "gemm_peak_tflops": 711.5226730983633,
+   "copy_tb_s": 4.160958293552521,
+   "h2d_gb_s": 27.819024868756063,
+   "load": {
+    "samples": 15,
+    "sm_mhz_mean": 1489.0,
+    "sm_mhz_min": 1455.0,
+    "power_w_mean": 691.0360000000001,
+    "temp_c_max": 57.0,
+    "reasons": {
+     "sw_power_cap": 1.0
+    }
+   },
+   "pcie_gen": 5.0,
+   "pcie_width": 16.0
+  }
+ },
+ "disk": {
+  "path": "/hpelustre/krai/krai_gentic/econ",
+  "mib": 1024,
+  "mb_s": 2288.3389417171197,
+  "free_gb": 724955.060867072,
+  "total_gb": 1113716.312858624
+ },
+ "download": null,
+ "model": null,
+ "power_sources": {
+  "rapl": [],
+  "meter": null,
+  "nvswitch": null,
+  "notes": [
+   "CPU packages: the RAPL counters are root-only on this kernel",
+   "Node: no ACPI power meter (hwmon power_meter) to read the whole node from",
+   "NvSwitches: no dcgmi on this machine (DCGM is not installed)"
+  ],
+  "scope": "GPU boards",
+  "gpus_seen": 8,
+  "gpus_on_node": 8
+ },
+ "rows": [
+  {
+   "gpu": 0,
+   "check": "GPU 0: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Clocks under load",
+   "result": "SM clock 1,491 MHz during the matmul, 75 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: BF16 matmul",
+   "result": "672.2 TFLOPS, 84 % of the reference (8,192-square, sustained; peak 717.6)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 0,
+   "check": "GPU 0: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Clocks under load",
+   "result": "SM clock 1,508 MHz during the matmul, 76 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: BF16 matmul",
+   "result": "681.4 TFLOPS, 85 % of the reference (8,192-square, sustained; peak 725.0)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 1,
+   "check": "GPU 1: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Clocks under load",
+   "result": "SM clock 1,516 MHz during the matmul, 77 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: BF16 matmul",
+   "result": "683.8 TFLOPS, 85 % of the reference (8,192-square, sustained; peak 731.8)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 2,
+   "check": "GPU 2: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Clocks under load",
+   "result": "SM clock 1,480 MHz during the matmul, 75 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: BF16 matmul",
+   "result": "671.8 TFLOPS, 84 % of the reference (8,192-square, sustained; peak 711.7)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 3,
+   "check": "GPU 3: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Clocks under load",
+   "result": "SM clock 1,477 MHz during the matmul, 75 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: BF16 matmul",
+   "result": "671.5 TFLOPS, 84 % of the reference (8,192-square, sustained; peak 728.1)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 4,
+   "check": "GPU 4: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Clocks under load",
+   "result": "SM clock 1,506 MHz during the matmul, 76 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: BF16 matmul",
+   "result": "679.2 TFLOPS, 85 % of the reference (8,192-square, sustained; peak 714.5)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Memory copy",
+   "result": "4.15 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 5,
+   "check": "GPU 5: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Clocks under load",
+   "result": "SM clock 1,480 MHz during the matmul, 75 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: BF16 matmul",
+   "result": "672.1 TFLOPS, 84 % of the reference (8,192-square, sustained; peak 714.6)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 6,
+   "check": "GPU 6: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Free at start",
+   "result": "no process on it; 0 of 143,771 MiB in use",
+   "reference": "no process and under 5 % of the memory in use",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Power limit",
+   "result": "700 W (default 700 W, max 700 W)",
+   "reference": "the board's default; WARN below it",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Clocks under load",
+   "result": "SM clock 1,489 MHz during the matmul, 75 % of the maximum",
+   "reference": "the GPU's maximum, 1,980 MHz; WARN under 50 % of it (a collapse)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Throttling under load",
+   "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+   "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+   "status": "INFO"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: BF16 matmul",
+   "result": "676.6 TFLOPS, 84 % of the reference (8,192-square, sustained; peak 711.5)",
+   "reference": "801.1 TFLOPS: 81 % of the datasheet's 989.0 (dense), the share a healthy H200 reaches; PASS from 80 % of it (640.9)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Memory copy",
+   "result": "4.16 TB/s, 102 % of the reference (device to device, reads and writes)",
+   "reference": "4.08 TB/s: 85 % of the datasheet's 4.800 TB/s, the share a healthy H200 reaches; PASS from 80 % of it (3.26)",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Host to GPU copy",
+   "result": "27.8 GB/s from pinned memory, 44 % of the link",
+   "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+   "status": "WARN"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: PCIe link",
+   "result": "Gen5 x16 under load (most: Gen5 x16)",
+   "reference": "the most the GPU and the slot allow",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Memory errors",
+   "result": "ECC on; 0 uncorrected and 0 corrected errors since the driver loaded",
+   "reference": "no uncorrected error",
+   "status": "PASS"
+  },
+  {
+   "gpu": 7,
+   "check": "GPU 7: Remapped rows",
+   "result": "none pending, no failure (0 correctable and 0 uncorrectable so far)",
+   "reference": "none pending, no failure",
+   "status": "PASS"
+  },
+  {
+   "check": "Power sources",
+   "result": "GPU boards (NVML); CPU packages: the RAPL counters are root-only on this kernel; NvSwitches: not read (see NvSwitch power); node: no ACPI power meter (hwmon power_meter) to read the whole node from. A measurement counts GPU boards",
+   "reference": "the node's own meter for the node's power; RAPL for the CPU packages and DCGM for the NvSwitches; each readable without root",
+   "status": "INFO",
+   "gpu": null
+  },
+  {
+   "check": "NvSwitch power",
+   "result": "not read: no dcgmi on this machine (DCGM is not installed)",
+   "reference": "each NvSwitch's three rails from DCGM (fields 705 to 707) with its host engine running; each GPU's own NVLink ports are in its board power already, the NvSwitches are not",
+   "status": "INFO",
+   "gpu": null
+  },
+  {
+   "check": "GPUs visible",
+   "result": "nvidia-smi sees all 8 GPUs of the node",
+   "reference": "every GPU of the node, so its idle boards count too",
+   "status": "PASS",
+   "gpu": null
+  },
+  {
+   "check": "Disk",
+   "result": "2,288 MB/s sequential write (1,024 MiB with fsync in /hpelustre/krai/krai_gentic/econ); 724,955 GB free of 1,113,716",
+   "reference": "PASS from 200 MB/s and 20 GB free",
+   "status": "PASS",
+   "gpu": null
+  },
+  {
+   "check": "Download",
+   "result": "not measured (no --hf-model or --hf-url, or --offline)",
+   "reference": "",
+   "status": "INFO",
+   "gpu": null
+  }
+ ],
+ "verdict": "WARN",
+ "warnings": 8
+}
