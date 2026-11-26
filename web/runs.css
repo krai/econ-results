@@ -1,0 +1,11 @@
+/* Runs: the run opened under the table. */
+.rundetail { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--grid); scroll-margin-top: 70px; display: grid; gap: 16px; min-width: 0; }
+.rundetail:empty { display: none; }
+.rundetail > * { min-width: 0; }
+.runhead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.runhead h3 { font-size: 16px; margin: 0; }
+.rundetail .meta { margin: -8px 0 0; }
+.rundetail .meta .tag { margin-left: 4px; }
+.rundetail .setup { min-width: 0; }
+.rundetail .setup ul.plain { font-size: 13px; color: var(--ink2); margin-top: 6px; }
+.rundetail .setup ul.plain li { margin: 3px 0; overflow-wrap: anywhere; }
