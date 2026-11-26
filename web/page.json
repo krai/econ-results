@@ -2,6 +2,6 @@
  "title": "KRAI econ results",
  "styles": ["vendor/shell.css", "registry.css", "explore.css", "rankings.css", "runs.css", "market.css"],
  "scripts": ["vendor/shell.js", "vendor/math.js", "regmath.js", "core.js", "charts.js", "chart-frontier.js", "chart-ordinal.js",
-             "chart-treemap.js", "explore.js", "assumptions.js", "rankings.js", "history.js", "prices.js", "runs.js",
-             "market-math.js", "market.js", "market-detail.js", "market-more.js", "app.js"]
+             "chart-treemap.js", "explore.js", "assumptions.js", "rankings.js", "history.js", "prices.js", "compare.js",
+             "runs.js", "market-math.js", "market.js", "market-detail.js", "market-more.js", "app.js"]
 }

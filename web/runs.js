@@ -1,7 +1,8 @@
 /* Runs: every run in scope as a row, and one of them in full: what was served and how, each target with its numbers,
    every probe of its search, the node's check, stability and accuracy, what the measurement does not cover, its
    files, and the record itself to download. Runs come from more than one node and cluster, so each row says where
-   it ran; an internal registry also shows the run's provenance. */
+   it ran; an internal registry also shows the run's provenance. A box finds runs by any word of their row, and the
+   runs ticked are set side by side between the table and the run opened (web/compare.js). */
 (function (root) {
   "use strict";
   const D = root.Dash, R = root.Reg, M = root.RegMath;
@@ -9,7 +10,7 @@
   const el = D.el, fmt = D.fmt, has = M.has, S = R.S;
   const card = R.section("runs", "Runs", "Every run in scope, the latest first. A row opens the run below the table.");
   const listing = el("div", {}), detail = el("div", {class: "rundetail", id: "run"});
-  card.body.append(listing, detail);
+  card.body.append(listing, R.compare.box, detail);
   // What the box finds a run by: every word typed must be in its date, model, hardware, place, engine or configuration
   const words = (r) => [R.dateText(r.created), R.day(r), r.model.name, r.model.id, R.hw(r), R.where(r), R.engine(r), R.config(r), r.config.label, r.id].join(" ").toLowerCase();
   const found = (scope) => { const q = S.rq.toLowerCase().split(/\s+/).filter(Boolean); return scope.filter((r) => q.every((w) => words(r).includes(w))); };
@@ -23,7 +24,7 @@
   function table(runs, of) {
     const rows = runs.slice().reverse().map((r) => {
       const p = M.at(r, "loosest"), x = p ? R.sums(r, p) : null, check = (r.health || {}).check, acc = (r.health || {}).accuracy;
-      return {_slot: R.slot(r), _r: r, date: R.dateText(r.created), created: r.created, model: r.model.name, hw: R.hw(r), where: R.where(r),
+      return {_slot: R.slot(r), _r: r, pick: R.compare.has(r) ? 0 : 1, date: R.dateText(r.created), created: r.created, model: r.model.name, hw: R.hw(r), where: R.where(r),
               engine: R.engine(r), config: R.config(r),
               rates: r.points.map((q) => `${fmt.n(q.tpot_limit)} ms: ${q.met ? fmt.n(q.rate_rps, 2) : "missed"}`).join(" · "),
               out: p ? p.output_tok_s / p.gpus : null, tpot: p ? p.p99_tpot_ms : null, tokj: p ? p.tok_per_j : null, usd: x ? x.rev : null,
@@ -34,7 +35,12 @@
       b.addEventListener("click", () => { S.run = row._r.id; R.update(); document.getElementById("run").scrollIntoView({block: "start"}); });
       return b;
     };
-    return D.table([
+    const tick = (_, row) => {
+      const c = el("input", {type: "checkbox", checked: R.compare.has(row._r), "aria-label": `Compare the run of ${row.date}: ${row.config}, ${row.engine}, ${row.where}`, "data-k": "cmp:" + row._r.id});
+      c.addEventListener("change", () => R.compare.toggle(row._r));
+      return c;
+    };
+    return D.table([{key: "pick", label: "Compare", cell: tick, title: "Tick two to four runs to set them side by side under the table"},
       {key: "created", label: "Measured", cell: (_, row) => row.date}, {key: "model", label: "Model"}, {key: "hw", label: "GPU × N"},
       {key: "where", label: "Cluster · node"},
       {key: "engine", label: "Engine"}, {key: "config", label: "Configuration"},
@@ -146,8 +152,9 @@
       : runs.length ? table(runs, scope.length) : el("p", {class: "muted", text: `None of the ${R.count(scope.length, "run")} of ${S.model} matches.`}));
     if (reason === "typing") return;  // the box is being typed in: it and the run opened stay as they are
     drawChoices();
+    R.compare.draw();
     const run = scope.find((r) => r.id === S.run) || R.records.find((r) => r.id === S.run) || scope[scope.length - 1];
     if (run) drawDetail(run); else D.replace(detail);
   }
-  R.views.push({id: "runs", title: "Runs", icon: "runs", root: card.root, render});
+  R.views.push({id: "runs", title: "Runs", icon: "runs", root: card.root, also: ["compare"], render});
 })(typeof window !== "undefined" ? window : globalThis);
