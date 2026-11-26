@@ -1,0 +1,16 @@
+# Words a public form of a record must never hold, one per line, lower case: the names of hosts, accounts and
+# storage trees, on top of the patterns of tools/patterns.py. tools.sanitize and tools.validate --public take this
+# file with --words. The registry's own records are internal and may hold them.
+sith
+leia
+vader
+chai
+hpelustre
+krai_gentic
+e70293
+wongcannan
+crissmath
+cristian
+# outside companies a public page does not name
+runpod
+tokenwatt
