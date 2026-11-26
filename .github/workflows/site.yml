@@ -1,11 +1,17 @@
-# The dashboard: on every push to main the registry is validated, the page is built, locked with the site's key and
-# published to the site's repository, from which GitHub Pages serves it.
+# The dashboard: on every push to main the registry is validated and the page is built. Then it is published in two
+# ways.
 #
-# This repository is private, and Pages serves a private repository only on a paid plan. So the page goes, locked, to
-# a second repository that holds nothing else: the one named by the repository variable SITE_REPOSITORY (OWNER/NAME).
-# What is public there is the locked page, which shows nothing of the registry without its key. The key is the secret
-# SITE_KEY, and it travels in the link people are given. SITE_DEPLOY_KEY is a deploy key of the site's repository:
-# it can write there and nowhere else. Until the variable is set, this workflow builds the page and stops.
+# Always: as the file of this repository's release "dashboard" (econ-results.html), in the clear. A release of a
+# private repository is for who can see the repository, so the link
+#     https://github.com/OWNER/REPO/releases/latest/download/econ-results.html
+# is the dashboard for them: it downloads one file that works offline.
+#
+# When the repository variable SITE_REPOSITORY (OWNER/NAME) is set: as a web page. This repository is private, and
+# GitHub Pages serves a private repository only on a paid plan, and then to anyone who has the address. So the page
+# goes, locked, to a second repository that holds nothing else and serves it with Pages. What is public there is the
+# locked page, which shows nothing of the registry without its key. The key is the secret SITE_KEY, and it travels
+# in the link people are given. SITE_DEPLOY_KEY is a deploy key of the site's repository: it can write there and
+# nowhere else.
 name: site
 
 on:
@@ -14,7 +20,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # the release's file
 
 concurrency:
   group: site
@@ -34,6 +40,18 @@ jobs:
         run: python -m tools.validate runs --sources sources
       - name: Build the page
         run: python -m tools.build runs --out site --audience internal
+      - name: Keep the page as the file of the release "dashboard"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp site/index.html econ-results.html
+          notes="The dashboard as one file that works offline: download econ-results.html and open it. Built from ${GITHUB_SHA::7} on $(date -u +%Y-%m-%d) at $(date -u +%H:%M) UTC. Internal: do not pass it on."
+          if gh release view dashboard >/dev/null 2>&1; then
+            gh release upload dashboard econ-results.html --clobber
+            gh release edit dashboard --notes "$notes"
+          else
+            gh release create dashboard econ-results.html --title "Dashboard" --notes "$notes"
+          fi
       - name: Lock it with the site's key
         if: ${{ vars.SITE_REPOSITORY != '' }}
         env:
