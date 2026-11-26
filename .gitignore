@@ -1,0 +1,4 @@
+# what tools/build.py writes: the site is built in CI, never committed
+site/
+__pycache__/
+*.pyc
