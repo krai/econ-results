@@ -1,0 +1,46 @@
+# The site on GitHub Pages: on every push to main the records are validated, the page is built and it is deployed.
+# The source of Pages is GitHub Actions (Settings > Pages > Build and deployment > Source), so nothing built is
+# ever committed: there is no gh-pages branch.
+name: pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The files copied from econ are unedited
+        run: python -m tools.vendor
+      - name: Every record is a valid public record
+        run: python -m tools.validate runs --public --allow-empty
+      - name: Build the site
+        run: python -m tools.build runs --out site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
