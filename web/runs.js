@@ -129,8 +129,10 @@
     const tile = (label, value, note) => el("div", {class: "tile"}, el("div", {class: "tlabel", text: label}), el("div", {class: "tvalue", text: value}), note ? el("div", {class: "tnote", text: note}) : null);
     const save = R.button("Download the record (JSON)", "down", () => R.download(r.id + ".json", "application/json", JSON.stringify(r, null, 1) + "\n"), "text");
     const link = R.button("Copy the link to this run", "link", () => R.copy(R.linkTo("runs"), link));
+    const on = R.market && R.market.ofRun(r);  // the run's model is one of the Market tab's: a way there, to its GPU
+    const market = on ? R.button(`${on.model.name} on the market`, "market", () => R.market.choose(on.model.model, on.gpu ? on.gpu.chip : null, "market-detail"), "text") : null;
     D.replace(detail,
-      el("div", {class: "runhead"}, el("h3", {}, D.swatch(R.slot(r)), R.runName(r)), el("div", {class: "btnrow"}, link, save)),
+      el("div", {class: "runhead"}, el("h3", {}, D.swatch(R.slot(r)), R.runName(r)), el("div", {class: "btnrow"}, market, link, save)),
       el("p", {class: "meta"}, `${r.model.id} · measured ${R.dateText(r.created)} on ${R.where(r)} · `, el("code", {text: r.id}), " ",
         D.tag(`econ ${r.econ.version}`), D.tag(r.visibility, r.visibility === "internal" ? "solid" : ""), hc ? D.tag(`check ${hc.verdict}`, hc.verdict === "PASS" ? "pass" : "warn") : null),
       p ? el("div", {class: "tiles"}, tile("Requests/s", fmt.n(p.rate_rps, 2), `within ${R.target(p)}`), tile("Output tok/s per GPU", fmt.n(p.output_tok_s / p.gpus), `${fmt.n(p.output_tok_s)} on ${R.hw(r)}`),

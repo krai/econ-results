@@ -121,13 +121,10 @@
   const ours = R.section("market-ours", "Our runs on this market",
     "The registry's runs of models that are in the table above, at what econ measured: chat-length prompts with no cache hits, within a p99 latency target. " +
     "The benchmark runs of this section are agentic and mostly cached input, so their revenues do not compare with these; the cost of the GPU does.");
-  const slug = (t) => String(t).toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
   function drawOurs() {
-    const known = new Map(market.models.map((m) => [m.model, m]));
-    const rows = R.records.filter((r) => known.has(slug(r.model.name))).map((r) => {
-      const p = M.at(r, "loosest"), gpu = market.gpus.find((g) => slug(r.hardware.gpu).endsWith(g.chip)), w = p && p.worth && p.worth.common;
-      const cost = gpu ? K.cost(gpu, S.mb) : null, rev = w ? w.revenue : null;
-      return {_r: r, _slot: R.slot(r), created: r.created, model: known.get(slug(r.model.name)).name, run: `${R.config(r)} · ${R.engine(r)}`, where: R.where(r), hw: R.hw(r),
+    const rows = R.records.map((r) => ({r, on: X.ofRun(r)})).filter((o) => o.on).map(({r, on}) => {
+      const p = M.at(r, "loosest"), w = p && p.worth && p.worth.common, cost = on.gpu ? K.cost(on.gpu, S.mb) : null, rev = w ? w.revenue : null;
+      return {_r: r, _slot: R.slot(r), created: r.created, model: on.model.name, run: `${R.config(r)} · ${R.engine(r)}`, where: R.where(r), hw: R.hw(r),
               target: p ? p.tpot_limit : null, rate: p ? p.rate_rps : null, out: p ? p.output_tok_s / p.gpus : null, inp: p ? p.input_tok_s / p.gpus : null,
               tpot: p ? p.p99_tpot_ms : null, rev, cost, breakeven: has(rev) && has(cost) && rev > 0 ? cost / rev : null};
     }).sort((a, b) => (a.created < b.created ? 1 : -1));

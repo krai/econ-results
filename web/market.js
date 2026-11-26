@@ -44,6 +44,12 @@
   X.source = (m) => (m.cost_source === "measured" ? D.tag("measured", "solid", "Benchmark runs of this very model")
     : m.cost_source === "proxy" ? D.tag("estimated", "dotted", "From the runs of " + m.proxy_of + ", a model of the same architecture")
       : D.tag("prices only", "", "No public benchmark of this model on these GPUs"));
+  // A run of the registry on this market: the market's model of that name and its GPU, or null when it has no such model
+  const slug = (t) => String(t).toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "");
+  X.ofRun = function (r) {
+    const model = X.model(slug(r.model.name));
+    return model ? {model, gpu: market.gpus.find((g) => slug(r.hardware.gpu).endsWith(g.chip)) || null} : null;
+  };
   X.choose = function (model, chip, land) {
     S.mm = model;
     if (chip) S.mg = chip;
