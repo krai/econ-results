@@ -28,3 +28,9 @@ svg .strong { font-weight: 600; }
 .lk .dot.hollow { fill: var(--surface); stroke: var(--c1); stroke-width: 2; }
 .mspace { margin: 20px 0 14px; }
 .card .lead .tag { margin-left: 2px; }
+
+/* The rest of the section: the worked sums of the reference case, the notes under a chart and the method's list. */
+.math { font: 12px ui-monospace, SFMono-Regular, Consolas, monospace; color: var(--ink2); background: var(--wash); border-radius: 6px;
+        padding: 8px 10px; margin: 12px 0 0; white-space: pre-wrap; overflow-x: auto; }
+.note { color: var(--ink2); font-size: 12px; margin: 10px 0 0; max-width: 110ch; }
+ul.method li { margin: 7px 0; max-width: 112ch; font-size: 13px; }
