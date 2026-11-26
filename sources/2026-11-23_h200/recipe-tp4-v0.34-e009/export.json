@@ -1,0 +1,9 @@
+{
+ "prices": "report/report.json",
+ "rents": [
+  5.29,
+  3.59
+ ],
+ "cluster": "HPE",
+ "note": "23 Nov. Its price list is the one its own report kept (taken that day)."
+}

@@ -1,0 +1,5 @@
+job=55021 host=sith3 label=recipe-tp4-v0.34-e009 start=2026-11-23T16:45:40-06:00
+econ=/home/users/e70293/econ_exp/econ_bfc3bc7 commit=bfc3bc75dee20c8a0a99d3b57534b85380ab1296 tree=d950207da4f84e295750755ed0de9cf5e0f4036d
+image=vllm/vllm-openai:v0.34.0 digest=vllm/vllm-openai@sha256:20fdb089454afbb324efa4110a2c025ff7b27cc1a086e07aa580b18df8ad1ce1
+inside: vllm 0.34.0 | torch 2.14.0+cu130 | CUDA 13.0
+config=/home/users/e70293/econ_exp/econ_bfc3bc7/src/econ/configs/dsv41f_h200_recipe_tp4.yaml gpus=0,1,2,3 prices=/hpelustre/krai/krai_gentic/econ/exp4/prices_deepseek-v4.1-flash_2026-11-23.json s0=/hpelustre/krai/krai_gentic/econ/exp3/s0-tp8-v0.34_j50319/measure/measure.json
