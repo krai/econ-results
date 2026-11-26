@@ -142,7 +142,7 @@ def main(argv=None):
     met = sum(1 for p in rec["points"] if p["met"])
     print(f"added to the registry:\n  {rel(dest)}/   (its files and its export.json)\n  {rel(path)}   "
           f"({met} of {len(rec['points'])} latency targets met, econ {rec['econ']['version']})\n"
-          f"look at it:\n  python -m tools.build runs --out site --audience internal    then open site/index.html\n"
+          f"look at it:\n  python -m tools.build runs --out site    then open site/index.html\n"
           f"and put it in a pull request:\n  git switch -c runs/{rec['id']}\n  git add {rel(dest)} {rel(path)}\n"
           f"  git commit -m \"runs: add {rec['id']}\"\n  git push -u origin runs/{rec['id']}")
     return 0

@@ -35,7 +35,7 @@ class TestBuild(unittest.TestCase):
 
     def test_the_site_is_one_page_with_the_records_inside(self):
         self.put(self.public)
-        done = build.build([self.runs], self.out, built=STAMP)
+        done = build.build([self.runs], self.out, audience="public", built=STAMP)
         self.assertEqual(done["records"], 2)
         data = json.loads(DATA.search(self.page()).group(1))
         self.assertEqual((data["schema"], data["audience"], data["built"]), ("econ-site/1", "public", STAMP))
@@ -50,7 +50,7 @@ class TestBuild(unittest.TestCase):
 
     def test_the_page_fetches_nothing(self):
         self.put(self.public)
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         text = DATA.sub("", self.page())
         for needle in ("<link", "<img", "<iframe", " src=", "@import", "fetch(", "XMLHttpRequest", "import(", "sendBeacon"):
             self.assertNotIn(needle, text, needle)
@@ -60,7 +60,7 @@ class TestBuild(unittest.TestCase):
 
     def test_every_file_of_the_page_is_inside_it(self):
         self.put(self.public)
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         text, spec = self.page(), read_json(os.path.join(build.WEB, "page.json"))
         for name in spec["scripts"] + spec["styles"]:
             self.assertTrue(os.path.isfile(os.path.join(build.WEB, name)), name)
@@ -73,7 +73,7 @@ class TestBuild(unittest.TestCase):
         rec = sample.record()
         rec["not_covered"].append("</script><script>alert(1)</script> & more   lines")
         self.put([sanitize.public(rec, sample.ALIASES)])
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         text = self.page()
         self.assertNotIn("</script><script>alert(1)", text)
         self.assertNotIn(" ", text)
@@ -83,7 +83,7 @@ class TestBuild(unittest.TestCase):
     def test_a_public_site_takes_no_internal_record(self):
         self.put([self.public[0], self.internal[1]])
         with self.assertRaises(SystemExit) as caught:
-            build.build([self.runs], self.out, built=STAMP)
+            build.build([self.runs], self.out, audience="public", built=STAMP)
         self.assertIn("internal", str(caught.exception))
         self.assertFalse(os.path.exists(os.path.join(self.out, "index.html")))
 
@@ -91,9 +91,9 @@ class TestBuild(unittest.TestCase):
         rec = sample.record()
         rec["not_covered"].append("ran in the zzlab room")
         self.put([sanitize.public(rec, sample.ALIASES)])
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         with self.assertRaises(SystemExit):
-            build.build([self.runs], self.out, built=STAMP, words=frozenset({"zzlab"}))
+            build.build([self.runs], self.out, audience="public", built=STAMP, words=frozenset({"zzlab"}))
 
     def test_an_internal_page_takes_every_record(self):
         self.put([self.internal[0], self.public[1]])
@@ -104,17 +104,26 @@ class TestBuild(unittest.TestCase):
 
     def test_the_same_records_and_stamp_give_the_same_bytes(self):
         self.put(self.public)
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         first = self.page()
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         self.assertEqual(self.page(), first)
 
     def test_a_record_that_left_the_registry_leaves_the_site(self):
         self.put(self.public)
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         os.remove(os.path.join(self.runs, self.public[0]["id"] + ".json"))
-        build.build([self.runs], self.out, built=STAMP)
+        build.build([self.runs], self.out, audience="public", built=STAMP)
         self.assertEqual(os.listdir(os.path.join(self.out, "runs")), [self.public[1]["id"] + ".json"])
+
+    def test_the_page_is_the_internal_one_unless_a_public_one_is_asked_for(self):
+        self.put(self.internal)
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(build.main([self.runs, "--out", self.out, "--built", STAMP]), 0)
+        self.assertIn("2 records", out.getvalue())
+        self.assertEqual(json.loads(DATA.search(self.page()).group(1))["audience"], "internal")
+        with self.assertRaises(SystemExit):
+            build.main([self.runs, "--out", self.out, "--built", STAMP, "--audience", "public"])
 
     def test_no_records_still_builds_a_page(self):
         with contextlib.redirect_stdout(io.StringIO()):

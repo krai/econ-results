@@ -1,8 +1,8 @@
-"""Build the site from records: one HTML page that works offline, with the records inside it.
+"""Build the page from records: one HTML file that works offline, with the records inside it.
 
-    python -m tools.build runs --out site                       the public site, from the public records
-    python -m tools.build ../econ-runs/runs --out site --audience internal [--words WORDS]
-                                                                the private page, from every record
+    python -m tools.build runs --out site                       the page, from the registry's records
+    python -m tools.build PUBLIC_DIR --out site --audience public [--words WORDS]
+                                                                a public page, from public forms only
 
 It writes, in --out:
     index.html                  the whole site in one file: styles, scripts and data inline, nothing fetched
@@ -11,9 +11,11 @@ It writes, in --out:
     schema/econ-run-1.schema.json
     .nojekyll                   so that GitHub Pages serves the folder as it is
 
-Every record is validated first (tools/validate.py), and a public site takes only public records: one internal record,
-or anything forbidden in a public one, stops the build. Standard library only. The page's files and their order are
-web/page.json; the files copied from econ must be the pinned ones (tools/vendor.py).
+Every record is validated first (tools/validate.py). The page is the internal one unless a public one is asked for,
+and a public page takes only public forms: one internal record, or anything forbidden in a public one, stops the
+build. The internal page says that it is internal; to put it where anyone can reach it, lock it (tools/lock.py).
+Standard library only. The page's files and their order are web/page.json; the files copied from econ must be the
+pinned ones (tools/vendor.py).
 """
 from __future__ import annotations
 
@@ -79,7 +81,7 @@ def load(paths, audience, words=frozenset()):
     return [read_json(path) for path in validate.record_files(paths)]
 
 
-def build(paths, out, audience="public", built=None, words=frozenset(), title=None):
+def build(paths, out, audience="internal", built=None, words=frozenset(), title=None):
     """Write the site to `out`; returns {records, bytes} of index.html."""
     problems = vendor.check()
     if problems:
@@ -106,8 +108,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m tools.build", description="Build the site from econ-run/1 records.")
     ap.add_argument("paths", nargs="+", help="folders of records (or record files)")
     ap.add_argument("--out", default="site", help="the folder to write the site to (default: site)")
-    ap.add_argument("--audience", choices=("public", "internal"), default="public",
-                    help="public (default): only public records, checked for what is forbidden")
+    ap.add_argument("--audience", choices=("internal", "public"), default="internal",
+                    help="internal (default): every record. public: only public forms, checked for what is forbidden")
     ap.add_argument("--words", help="a private list of words a public record must not hold")
     ap.add_argument("--built", help="the build's time stamp, to make two builds the same bytes")
     ap.add_argument("--title", help="the page's title")
