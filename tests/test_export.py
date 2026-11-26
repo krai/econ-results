@@ -102,6 +102,15 @@ class TestPieces(unittest.TestCase):
         with self.assertRaises(SystemExit):
             export.snapshot(path)
 
+    def test_pruning_removes_only_the_records_that_were_not_exported(self):
+        folder = self.path("runs", "keep.json")
+        for name in ("keep.json", "stale.json", "notes.txt"):
+            with open(self.path("runs", name), "w", encoding="utf-8") as f:
+                f.write("{}")
+        self.assertEqual(export.prune(os.path.dirname(folder), {"keep"}), ["stale"])
+        self.assertEqual(sorted(os.listdir(os.path.dirname(folder))), ["keep.json", "notes.txt"])
+        self.assertEqual(export.prune(self.path("missing", "x")[:-2], set()), [])
+
     def test_a_file_entry_is_the_name_the_hash_and_the_size(self):
         path = self.path("measure.json")
         with open(path, "wb") as f:

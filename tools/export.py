@@ -7,6 +7,7 @@
                                                                     measure.json is not at hand
     python -m tools.export --manifest MANIFEST.json --econ-src GENTIC/src --out RUNS_DIR [--public-out PUBLIC_DIR]
                                                                     every run of a manifest (a list of the options)
+    ... --manifest MANIFEST.json --prune                            and remove the records the manifest no longer gives
     ... --visibility public --public-out PUBLIC_DIR                 also the sanitised form (tools/sanitize.py)
 
 The points are computed by econ's own code, imported from --econ-src (a checkout of gentic, pinned in the registry):
@@ -327,6 +328,14 @@ def manifest_specs(path):
     return specs, aliases
 
 
+def prune(folder, keep):
+    """Remove the records of a folder that were not just exported; returns their ids."""
+    gone = sorted(n[:-5] for n in os.listdir(folder) if n.endswith(".json") and n[:-5] not in keep) if os.path.isdir(folder) else []
+    for run in gone:
+        os.remove(os.path.join(folder, run + ".json"))
+    return gone
+
+
 def parser():
     ap = argparse.ArgumentParser(prog="python -m tools.export", description="Export runs of econ as econ-run/1 records.")
     ap.add_argument("run", nargs="?", help="a run folder: measure.json, check.json, accuracy.json, provenance.txt")
@@ -355,6 +364,8 @@ def parser():
                     help="public: also write the sanitised form to --public-out")
     ap.add_argument("--out", required=True, help="the folder for the internal records")
     ap.add_argument("--public-out", help="the folder for the public forms")
+    ap.add_argument("--prune", action="store_true",
+                    help="with --manifest: remove from --out and --public-out the records it no longer gives")
     return ap
 
 
@@ -372,12 +383,20 @@ def main(argv=None):
         raise SystemExit("--aliases is needed: the aliases the records name the nodes by")
     if any(s.get("public") for s in specs) and not a.public_out:
         raise SystemExit("--public-out is needed for the runs to be written in their public form")
-    aliases = read_json(aliases_path)
+    if a.prune and not a.manifest:
+        raise SystemExit("--prune goes with --manifest: only a manifest says what the whole registry is")
+    aliases, internal, public = read_json(aliases_path), set(), set()
     for spec in specs:
         rec = export(spec, econ, aliases)
+        internal.add(rec["id"])
         print(f"{write(rec, a.out)}  ({len(rec['points'])} targets, econ {rec['econ']['version']})")
         if spec.get("public"):
+            public.add(rec["id"])
             print(f"{write(sanitize.public(rec, aliases), a.public_out)}  (public form)")
+    if a.prune:
+        for folder, keep in ((a.out, internal), (a.public_out, public)):
+            for run in prune(folder, keep) if folder else []:
+                print(f"{os.path.join(folder, run + '.json')}  removed: the manifest does not give it")
 
 
 if __name__ == "__main__":
