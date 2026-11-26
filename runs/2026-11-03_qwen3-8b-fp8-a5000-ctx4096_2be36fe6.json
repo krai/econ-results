@@ -1,0 +1,599 @@
+{
+ "schema": "econ-run/1",
+ "id": "2026-11-03_qwen3-8b-fp8-a5000-ctx4096_2be36fe6",
+ "created": "2026-11-03T04:36:17",
+ "visibility": "internal",
+ "econ": {
+  "version": "0.0.3",
+  "commit": null,
+  "exporter": {
+   "version": "0.0.9",
+   "commit": "bfc3bc75dee20c8a0a99d3b57534b85380ab1296",
+   "source": "measure.json",
+   "source_version": "0.0.3"
+  }
+ },
+ "model": {
+  "id": "Qwen/Qwen3-8B-FP8",
+  "name": "Qwen3-8B-FP8",
+  "precision": "FP8",
+  "max_model_len": 4096,
+  "priced_as": "qwen/qwen3-14b"
+ },
+ "engine": {
+  "name": "vLLM",
+  "version": "0.31.0",
+  "build": "release",
+  "commit": null,
+  "image": null,
+  "digest": null,
+  "inside": null
+ },
+ "config": {
+  "label": "qwen3-8b-fp8-a5000-ctx4096",
+  "family": "stock",
+  "variant": "context 4096",
+  "tp": 1,
+  "dp": null,
+  "flags": null,
+  "env": null,
+  "patch": null,
+  "server_config": null
+ },
+ "hardware": {
+  "gpu": "NVIDIA RTX A5000",
+  "gpus": 1,
+  "gpus_on_node": null,
+  "driver": "580.178.04",
+  "power_limit_w": 230.0,
+  "memory_mib": 24564.0,
+  "node": "chai",
+  "cluster": "CHAI"
+ },
+ "workload": {
+  "mix": "chat-mix",
+  "lengths": "log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens",
+  "prompts": "random token ids in [1000, 100000): no prefix-cache hits",
+  "seed": 0,
+  "temperature": null,
+  "arrival": "Poisson"
+ },
+ "method": {
+  "warmup": 45.0,
+  "window": 120.0,
+  "search_warmup": 30.0,
+  "search_window": 60.0,
+  "min_requests": 100,
+  "min_search_requests": 30,
+  "max_window": 600.0,
+  "repeats": 2,
+  "start_rps": 1.0,
+  "growth": 2.0,
+  "bisect_steps": 3,
+  "drain": 300.0,
+  "client_busy_above": {
+   "cpu_pct": 70.0,
+   "loop_lag_p99_ms": 20.0
+  }
+ },
+ "power": null,
+ "results": [
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 50.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms"
+   },
+   "met": true,
+   "rate_rps": 0.4585020216023356,
+   "note": "",
+   "probes": 6,
+   "windows": [
+    {
+     "rate_rps": 0.4585020216023356,
+     "measured": 119,
+     "failed": 0,
+     "input_tok_s": 708.6102893661937,
+     "output_tok_s": 266.6235105819742,
+     "p50_tpot_ms": 23.197960067581345,
+     "p90_tpot_ms": 33.07870376982879,
+     "p99_tpot_ms": 44.55233087693215,
+     "p99_ttft_ms": 1278.236136436462,
+     "p99_tpot_ci_ms": null,
+     "p99_ttft_ci_ms": null,
+     "node_power_w": 209.80363207547168,
+     "tok_per_j": 1.2708240936747128,
+     "window_s": 218.10154653305153,
+     "steady": null
+    },
+    {
+     "rate_rps": 0.4585020216023356,
+     "measured": 94,
+     "failed": 0,
+     "input_tok_s": 604.1222636632374,
+     "output_tok_s": 193.70334906633872,
+     "p50_tpot_ms": 19.211596583727722,
+     "p90_tpot_ms": 25.161055645099072,
+     "p99_tpot_ms": 32.33754432693703,
+     "p99_ttft_ms": 1110.7667207717866,
+     "p99_tpot_ci_ms": null,
+     "p99_ttft_ci_ms": null,
+     "node_power_w": 211.91660377358505,
+     "tok_per_j": 0.9140546121307905,
+     "window_s": 218.10154653305153,
+     "steady": null
+    }
+   ]
+  }
+ ],
+ "points": [
+  {
+   "rate_rps": 0.4585020216023356,
+   "request_s": 0.49288967322251076,
+   "input_tok_s": 656.3662765147155,
+   "output_tok_s": 230.16342982415645,
+   "p50_ttft_ms": 360.5803847312927,
+   "p99_ttft_ms": 1194.5014286041242,
+   "p50_tpot_ms": 21.204778325654534,
+   "p99_tpot_ms": 38.44493760193459,
+   "mean_input_tokens": 1350.2166100482746,
+   "mean_output_tokens": 471.0286518862864,
+   "node_power_w": 210.86011792452837,
+   "tok_per_j": 1.0924393529027516,
+   "failed": 0.0,
+   "client_cpu_pct": 4.668666258831607,
+   "client_busy": false,
+   "inflight_mean": null,
+   "inflight_growth": null,
+   "steady": null,
+   "sm_clock_mhz": 1355.4127358490566,
+   "temp_max_c": 88.0,
+   "power": {
+    "gpus_w": 210.8601179245283,
+    "all_gpus_w": 238.65379716981133,
+    "gpus_seen": 2,
+    "cpu_w": null,
+    "nvswitch_w": null,
+    "nvswitches": null,
+    "meter_w": null,
+    "total_w": 238.65379716981133,
+    "scope": "GPU boards"
+   },
+   "tok_per_j_total": 0.9644239167935231,
+   "config": "qwen3-8b-fp8-a5000-ctx4096",
+   "source": "measure.json",
+   "gpus": 1,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+   "tpot_limit": 50.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 31.681906014064033,
+    "p99_tpot_ms": 31.77215860373893,
+    "p99_ttft_ms": 14.02002640217664
+   },
+   "input_known": true,
+   "pooled": null,
+   "server": null,
+   "requests_failed": 0,
+   "requests_served": 213,
+   "worth": {
+    "endpoints": 2,
+    "rents": [
+     {
+      "rent": 0.27,
+      "break_even_common": 0.6450359884735801,
+      "break_even_median": 0.5993389086807023,
+      "endpoints_above_rent": 2,
+      "margin_common": {
+       "1": 0.14858129596602948,
+       "0.7": 0.023006907176220615,
+       "0.5": -0.06070935201698527
+      },
+      "cost_per_m_output": {
+       "1": 0.32585541524689465,
+       "0.7": 0.4655077360669924,
+       "0.5": 0.6517108304937893
+      }
+     },
+     {
+      "rent": 0.16,
+      "break_even_common": 0.3822435487250845,
+      "break_even_median": 0.3551637977367124,
+      "endpoints_above_rent": 2,
+      "margin_common": {
+       "1": 0.2585812959660295,
+       "0.7": 0.13300690717622063,
+       "0.5": 0.049290647983014746
+      },
+      "cost_per_m_output": {
+       "1": 0.19309950533149312,
+       "0.7": 0.27585643618784733,
+       "0.5": 0.38619901066298623
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.4185812959660295,
+     "p25": 0.43453883068012916,
+     "median": 0.4504963653942289,
+     "p75": 0.46645390010832855,
+     "max": 0.4824114348224282
+    },
+    "common": {
+     "input": 0.1,
+     "output": 0.22,
+     "endpoints": 1,
+     "revenue": 0.4185812959660295
+    }
+   },
+   "cost": [
+    {
+     "rent": 0.27,
+     "node_hour": 0.27,
+     "node_30d": 194.4,
+     "per_m_output": {
+      "1": 0.32585541524689465,
+      "0.5": 0.6517108304937893
+     }
+    },
+    {
+     "rent": 0.16,
+     "node_hour": 0.16,
+     "node_30d": 115.19999999999999,
+     "per_m_output": {
+      "1": 0.19309950533149312,
+      "0.5": 0.38619901066298623
+     }
+    }
+   ],
+   "output_tokens_30d": 596583610.1042135,
+   "accuracy": null,
+   "health": {
+    "verdict": "WARN",
+    "warnings": 1,
+    "how": "watched during the measurement"
+   },
+   "mbu_pct": null,
+   "mbu_basis": null,
+   "p90_tpot_ms": 29.11987970746393,
+   "p90_ttft_ms": 1017.7662134170532
+  }
+ ],
+ "curve": {
+  "name": "qwen3-8b-fp8-a5000-ctx4096",
+  "points": [
+   {
+    "x": 504.2,
+    "y": 69.67978740901269,
+    "ttft": 2027.4385833740248,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 1.0,
+    "probe": 0,
+    "power_w": 223.19551724137932,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 245.66666666666666,
+    "y": 65.12074889363464,
+    "ttft": 1617.2014141082761,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.5,
+    "probe": 1,
+    "power_w": 214.99135593220336,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 100.75,
+    "y": 19.841961279916706,
+    "ttft": 1063.4871792793276,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.25,
+    "probe": 2,
+    "power_w": 202.22060344827588,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 87.75195154525056,
+    "y": 28.901905296268044,
+    "ttft": 1142.6539611816406,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.3535533905932738,
+    "probe": 3,
+    "power_w": 191.25597560975612,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 227.9389882947736,
+    "y": 43.9596911708704,
+    "ttft": 1534.6549987792969,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.4204482076268573,
+    "probe": 4,
+    "power_w": 204.3084057971014,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 173.5735819779242,
+    "y": 27.54077762229257,
+    "ttft": 1076.8929719924924,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.4585020216023356,
+    "probe": 5,
+    "power_w": 208.17468750000003,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 266.6235105819742,
+    "y": 44.55233087693215,
+    "ttft": 1278.236136436462,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.4585020216023356,
+    "probe": 6,
+    "power_w": 209.80363207547168,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 193.70334906633872,
+    "y": 32.33754432693703,
+    "ttft": 1110.7667207717866,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.4585020216023356,
+    "probe": 7,
+    "power_w": 211.91660377358505,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 230.16342982415645,
+    "y": 38.44493760193459,
+    "ttft": 1194.5014286041242,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.4585020216023356,
+    "probe": null,
+    "power_w": 210.86011792452837,
+    "failed": 0.0,
+    "steady": null,
+    "client_busy": false,
+    "final": true,
+    "kind": "confirmed",
+    "target": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+    "margin": null
+   }
+  ]
+ },
+ "stability": {
+  "verdict": "WARN",
+  "warnings": 1,
+  "samples": 1406,
+  "seconds": 1444.6630001068115,
+  "interval_s": 1.0282298933144567,
+  "from": "power.csv",
+  "rows": [
+   {
+    "check": "Power limit",
+    "result": "held at 230 W",
+    "status": "PASS"
+   },
+   {
+    "check": "Board power",
+    "result": "213 W on average under load (92 % of the limit), peak 231 W",
+    "status": "INFO"
+   },
+   {
+    "check": "SM clock under load",
+    "result": "1,361 MHz on average, lowest 1,140 MHz",
+    "status": "INFO"
+   },
+   {
+    "check": "Throttling",
+    "result": "sw thermal slowdown in 83 % of the samples under load",
+    "status": "WARN"
+   },
+   {
+    "check": "Temperature",
+    "result": "peak 89 °C, 87 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "PCIe link",
+    "result": "not sampled under load",
+    "status": "INFO"
+   },
+   {
+    "check": "Memory errors",
+    "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+    "status": "INFO"
+   },
+   {
+    "check": "Remapped rows",
+    "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+    "status": "INFO"
+   }
+  ]
+ },
+ "health": null,
+ "prices": {
+  "endpoints": 2,
+  "providers": 2,
+  "input": {
+   "min": 0.1,
+   "p25": 0.10500000000000001,
+   "median": 0.11,
+   "p75": 0.11499999999999999,
+   "max": 0.12
+  },
+  "output": {
+   "min": 0.22,
+   "p25": 0.225,
+   "median": 0.22999999999999998,
+   "p75": 0.235,
+   "max": 0.24
+  },
+  "common": {
+   "input": 0.1,
+   "output": 0.22,
+   "endpoints": 1
+  },
+  "by_quantization": {
+   "fp8": {
+    "endpoints": 1,
+    "median_output": 0.24
+   },
+   "int4": {
+    "endpoints": 1,
+    "median_output": 0.22
+   }
+  },
+  "model": "qwen/qwen3-14b",
+  "taken": "2026-11-03T05:13Z",
+  "source": "https://openrouter.ai/api/v1/models/qwen/qwen3-14b/endpoints",
+  "by_endpoint": [
+   {
+    "provider": "NextBit",
+    "tag": "nextbit/int4",
+    "quantization": "int4",
+    "input": 0.1,
+    "output": 0.22,
+    "cached_input": null
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8",
+    "quantization": "fp8",
+    "input": 0.12,
+    "output": 0.24,
+    "cached_input": null
+   }
+  ]
+ },
+ "rents": [
+  0.27,
+  0.16
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "text": "During the measurement of qwen3-8b-fp8-a5000-ctx4096: Throttling, sw thermal slowdown in 83 % of the samples under load. The clocks fell because of heat or a hardware signal, so the capacity is the cooled node's, not the GPU's: check the airflow, the fans and the inlet temperature, then measure again."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: the capacity was measured with quick settings (120 s confirmation windows, 2 repeats). Longer windows meet more of the rare slow requests, so a full measurement (--window 600 --repeats 5) can confirm a lower rate: plan with headroom."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096 (TTFT ≤ 2 s, TPOT ≤ 50 ms): at capacity the TPOT target binds first (p99 38.4 ms, 77 % of its limit; TTFT at 60 %). Decode sets the capacity: more tokens per step (a larger batch, speculative decoding) or faster decode kernels are where to look."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: the power counted is every GPU board (2 GPUs), 239 W at capacity against 211 W on the serving GPU boards; with no node meter readable here, the node's CPUs, memory, any NvSwitches, fans, disks, NICs and PSU losses are not in it."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: at the most common price ($0.10 / $0.22 per M tokens) it earns $0.42 per GPU-hour at full load; the $0.27 rent is paid from 65 % utilisation."
+  },
+  {
+   "level": "INFO",
+   "text": "The node was not checked (econ check): its power limit, clocks under load, matmul and copy probes, PCIe link, memory errors, disk and download are not in this evaluation."
+  },
+  {
+   "level": "INFO",
+   "text": "Accuracy was not measured (econ accuracy): this evaluation cannot tell a configuration that breaks the model from one that does not."
+  }
+ ],
+ "not_covered": [
+  "Accuracy: the outputs are not scored (run the accuracy check of the config separately)",
+  "Lengths: log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens, context limit 4096 tokens",
+  "Power: GPU board power only (NVML): no CPUs, memory, NICs, fans or PSU losses",
+  "Prompts: random token ids, so no prefix-cache hits (real chat and agent traffic has them)",
+  "Quick settings (120 s windows, 2 repeats): for comparisons, not for publishing"
+ ],
+ "provenance": {
+  "host": "chai",
+  "job": null,
+  "data_dir": null,
+  "command": null,
+  "gentic_commit": null,
+  "image": null,
+  "server_config": null,
+  "started": null
+ },
+ "files": [
+  {
+   "role": "measure",
+   "name": "measure.json",
+   "sha256": "44c29a65871bf36354bb3e8f2b1b4908727797b8a51fd955b9a0c63c2ef5c97e",
+   "bytes": 14302
+  },
+  {
+   "role": "power",
+   "name": "power.csv",
+   "sha256": "63d2b2c62c40101bb184bb81db8a52b42d6c18e292e7dc302491d2bff46a79ef",
+   "bytes": 305716
+  },
+  {
+   "role": "prices",
+   "name": "prices_qwen3-14b.json",
+   "sha256": "9fae098b6583bc25af1a7fb03dcb1b2c275530b843733994bdadc01379526c77",
+   "bytes": 704
+  }
+ ]
+}

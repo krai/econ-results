@@ -1,0 +1,14 @@
+{
+ "prices": "../prices_qwen3-14b.json",
+ "rents": [
+  0.27,
+  0.16
+ ],
+ "cluster": "CHAI",
+ "family": "stock",
+ "variant": "context 4096",
+ "tp": 1,
+ "engine_version": "0.31.0",
+ "engine_build": "release",
+ "note": "3 Nov. As context-8192, with the context limited to 4,096 tokens."
+}
