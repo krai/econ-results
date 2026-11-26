@@ -1,6 +1,7 @@
-"""The tools of econ-results: export a run of econ as an econ-run/1 record, check records, build the site from them
-and prepare a record's public form. Every module runs as `python -m tools.NAME` from the repository's root, and all of
-them but the exporter need only Python's standard library."""
+"""The tools of econ-results: export a run of econ as an econ-run/1 record, add it to the registry, check records,
+build the page from them, lock it, and write a record's public form. Every module runs as `python -m tools.NAME` from
+the repository's root on Python's standard library; the two that export (export, add) also import econ from a gentic
+checkout."""
 import hashlib
 import json
 import re

@@ -1,5 +1,5 @@
-"""A made-up run for the tests, in the shape the exporter writes. No number here was measured on any node: the tests
-of this public repository hold no real results. Its priced numbers are computed with tools/arith.py, so a sample
+"""A made-up run for the tests, in the shape the exporter writes. No number here was measured on any node: the unit
+tests must not change when the registry's runs do. Its priced numbers are computed with tools/arith.py, so a sample
 record is consistent the way an exported one is."""
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""The public form of a record: what may leave the private registry.
+"""The public form of a record: what may leave KRAI.
 
     pub = public(record, aliases)       a new record, visibility "public"; the internal one is not changed
     python -m tools.sanitize runs/ID.json [...] --aliases aliases.json [--words WORDS] --out PUBLIC_DIR

@@ -1,3 +1,4 @@
 """The tests of econ-results. `python -m unittest discover -s tests -t .` from the repository's root runs them all on
-the standard library; the exporter's tests on real files also need a checkout of gentic (ECON_SRC) and the private
-registry's source files (ECON_RUNS), and say so when they are skipped."""
+the standard library. The ones that export the registry's runs from their original files also need econ itself
+(ECON_SRC: the src folder of a gentic checkout at the commit of ECON_REF), and the two that run the page's own
+JavaScript need node; each says so when it is skipped."""

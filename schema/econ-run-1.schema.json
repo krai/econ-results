@@ -1,6 +1,6 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
- "$id": "https://krai.github.io/econ-results/schema/econ-run-1.schema.json",
+ "$id": "https://github.com/krai/econ-results/blob/main/schema/econ-run-1.schema.json",
  "title": "econ-run/1",
  "description": "One run of econ: one serving configuration, on one node, in one measurement. Written by tools/export.py from econ's own files (measure.json, check.json, accuracy.json) with econ's own report code, so the points carry econ's names and units. Throughputs are tokens per second for the whole server, latencies are milliseconds, power is watts, prices are USD per million tokens and rents are USD per GPU-hour.",
  "type": "object",
@@ -14,7 +14,7 @@
   "created": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$",
               "description": "When econ wrote the measurement, in the node's local time."},
   "visibility": {"enum": ["internal", "public"],
-                 "description": "internal: the full record, with its provenance. public: the sanitised form, the only one a public site may hold."},
+                 "description": "internal: the full record, with its provenance, as the registry holds it. public: the sanitised form, for a record that leaves KRAI."},
   "econ": {
    "type": "object", "additionalProperties": false, "required": ["version", "exporter"],
    "properties": {
