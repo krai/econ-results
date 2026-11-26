@@ -26,14 +26,19 @@ The dashboard is one page, rebuilt on every push to `main`, so it always holds e
 | **A pull request's page** | Every run of the `checks` workflow keeps the page built from its branch as the artifact `page`: Actions → the run → Artifacts |
 | **A checkout** | `python -m tools.build runs --out site`, then open `site/index.html` |
 
-| Section | Contents |
+The page's sections are tabs: one is on the page at a time, and every choice made in it is kept in the address, so any
+view is a link.
+
+| Tab | Contents |
 |---|---|
 | Explore | Every configuration as a curve through its met latency targets: a value of your choice against the tokens per second one user gets. The run-date control shows the registry as it stood on a day; a cursor reads every curve at the same speed |
 | Rankings | Each configuration by its latest run, with the change against the run before it; a treemap by latency target; bars by run date |
 | History | One configuration across its runs: other days, other engine versions, other versions of econ |
 | Prices | The model's price list on each day it was taken, against the rent that a million output tokens carries |
 | Market | What providers charge for the twenty most-used open-weight models against what a GPU-hour of serving them costs on nine GPUs: which model and GPU pairs pay, one model on every GPU, hardware against software, and KRAI's own runs of those models. From a dated snapshot of public data: [The Market tab](#the-market-tab) |
-| Runs | Every run in a table, with the cluster and node it ran on, and one of them in full: targets, every probe of the search, the node's check, stability, accuracy, what it does not cover, its provenance, and its record to download |
+| Runs | Every run in a table, with the cluster and node it ran on, and a box that finds runs by any word of their row. Two to four runs ticked are set side by side, each number against a baseline. One run in full: targets, every probe of the search, the node's check, stability, accuracy, what it does not cover, its provenance, and its record to download |
+| Assumptions | What the arithmetic assumes, to edit: prices, rent, utilisation, cached input, electricity; and what the runs' own numbers were counted from |
+| About | What the page is, its self-check, and the econ it was built with |
 
 Throughput, latency, power and accuracy are measured and never change on the page. Revenue, margins and costs are
 arithmetic on them with the assumptions you can edit: rent, prices, utilisation, cached input, electricity. When the
