@@ -141,7 +141,10 @@ class TestRealFiles(unittest.TestCase):
         cls.specs = export.registry_specs(os.path.join(ROOT, "sources"))
 
     def source(self, *parts):
-        return os.path.join(ROOT, "sources", *parts)
+        path = os.path.join(ROOT, "sources", *parts)
+        if not os.path.exists(path):
+            self.skipTest("the registry does not hold " + "/".join(parts))
+        return path
 
     def export(self, **spec):
         rec = export.export(spec, self.econ)
