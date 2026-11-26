@@ -19,6 +19,7 @@
     : [r.engine.name, r.engine.build, r.engine.commit].filter(Boolean).join(" "));
   R.gpu = (r) => r.hardware.gpu.replace(/^NVIDIA /, "");
   R.hw = (r) => `${R.gpu(r)} × ${r.hardware.gpus}`;
+  R.where = (r) => (r.hardware.cluster ? `${r.hardware.cluster} · ${r.hardware.node}` : r.hardware.node);  // cluster and node
   R.config = (r) => {
     const base = (FAMILY[r.config.family] || r.config.family) + (r.config.tp && r.hardware.gpus > 1 ? ` TP${r.config.tp}` : "");
     return r.config.variant ? `${base}, ${r.config.variant}` : base;

@@ -1,6 +1,7 @@
 /* Runs: every run in scope as a row, and one of them in full: what was served and how, each target with its numbers,
    every probe of its search, the node's check, stability and accuracy, what the measurement does not cover, its
-   files, and the record itself to download. An internal registry also shows where the run happened. */
+   files, and the record itself to download. Runs come from more than one node and cluster, so each row says where
+   it ran; an internal registry also shows the run's provenance. */
 (function (root) {
   "use strict";
   const D = root.Dash, R = root.Reg, M = root.RegMath;
@@ -18,7 +19,8 @@
   function table(scope) {
     const rows = scope.slice().reverse().map((r) => {
       const p = M.at(r, "loosest"), x = p ? R.sums(r, p) : null, check = (r.health || {}).check, acc = (r.health || {}).accuracy;
-      return {_slot: R.slot(r), _r: r, date: R.dateText(r.created), created: r.created, model: r.model.name, hw: R.hw(r), engine: R.engine(r), config: R.config(r),
+      return {_slot: R.slot(r), _r: r, date: R.dateText(r.created), created: r.created, model: r.model.name, hw: R.hw(r), where: R.where(r),
+              engine: R.engine(r), config: R.config(r),
               rates: r.points.map((q) => `${fmt.n(q.tpot_limit)} ms: ${q.met ? fmt.n(q.rate_rps, 2) : "missed"}`).join(" · "),
               out: p ? p.output_tok_s / p.gpus : null, tpot: p ? p.p99_tpot_ms : null, tokj: p ? p.tok_per_j : null, usd: x ? x.rev : null,
               check: check ? check.verdict : null, acc: acc ? acc.accuracy : null};
@@ -30,6 +32,7 @@
     };
     return D.table([
       {key: "created", label: "Measured", cell: (_, row) => row.date}, {key: "model", label: "Model"}, {key: "hw", label: "GPU × N"},
+      {key: "where", label: "Cluster · node"},
       {key: "engine", label: "Engine"}, {key: "config", label: "Configuration"},
       {key: "rates", label: "Req/s by target (TPOT p99)"},
       {key: "out", label: "Output tok/s per GPU", num: true, cell: (v) => fmt.n(v), title: "At the loosest met target"},
@@ -86,7 +89,8 @@
         ["Inside the image", e.inside ? Object.entries(e.inside).map(([k, v]) => `${k} ${v}`).join(" · ") : null],
         ["Configuration", `${R.config(r)} (${c.label})` + (c.dp ? `, DP ${c.dp}` : "")], ["Flags", flags], ["Environment", c.env ? c.env.join(" ") : null], ["Patch", c.patch],
         ["Priced as", r.model.priced_as]])),
-      block("Where", kv([["Hardware", `${h.gpus} × ${h.gpu}` + (h.gpus_on_node ? ` of the node's ${h.gpus_on_node}` : "")], ["Node", h.node], ["Driver", h.driver],
+      block("Where", kv([["Hardware", `${h.gpus} × ${h.gpu}` + (h.gpus_on_node ? ` of the node's ${h.gpus_on_node}` : "")], ["Cluster", h.cluster], ["Node", h.node],
+        ["Driver", h.driver],
         ["Power limit", has(h.power_limit_w) ? `${fmt.n(h.power_limit_w)} W per board` : null], ["Memory", has(h.memory_mib) ? `${fmt.n(h.memory_mib / 1024, 1)} GiB per board` : null],
         ["Power counted", r.power && r.power.scope ? r.power.scope + (r.power.gpus_seen ? ` (${r.power.gpus_seen} boards seen)` : "") : "the serving GPU boards"]]),
         r.power ? list(r.power.notes) : null),
@@ -117,7 +121,7 @@
     const link = R.button("Copy the link to this run", "link", () => R.copy(R.linkTo("runs"), link));
     D.replace(detail,
       el("div", {class: "runhead"}, el("h3", {}, D.swatch(R.slot(r)), R.runName(r)), el("div", {class: "btnrow"}, link, save)),
-      el("p", {class: "meta"}, `${r.model.id} · measured ${R.dateText(r.created)} on ${r.hardware.node} · `, el("code", {text: r.id}), " ",
+      el("p", {class: "meta"}, `${r.model.id} · measured ${R.dateText(r.created)} on ${R.where(r)} · `, el("code", {text: r.id}), " ",
         D.tag(`econ ${r.econ.version}`), D.tag(r.visibility, r.visibility === "internal" ? "solid" : ""), hc ? D.tag(`check ${hc.verdict}`, hc.verdict === "PASS" ? "pass" : "warn") : null),
       p ? el("div", {class: "tiles"}, tile("Requests/s", fmt.n(p.rate_rps, 2), `within ${R.target(p)}`), tile("Output tok/s per GPU", fmt.n(p.output_tok_s / p.gpus), `${fmt.n(p.output_tok_s)} on ${R.hw(r)}`),
         tile("Tokens/s per user", fmt.n(M.speed(p, "p50"), 1), "the median request"), tile("TPOT p99", fmt.ms(p.p99_tpot_ms, 1), `limit ${fmt.n(p.tpot_limit)} ms`),
