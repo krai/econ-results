@@ -4,6 +4,8 @@ import io
 import json
 import os
 import re
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -68,6 +70,17 @@ class TestBuild(unittest.TestCase):
         self.assertEqual(text.count("<script>"), len(spec["scripts"]) + 1)  # and the one that sets the stored theme
         self.assertNotIn("@@", DATA.sub("", text))
         self.assertNotIn("\r", text)
+
+    def test_every_script_of_the_page_parses(self):
+        node = shutil.which("node")
+        if not node:
+            if os.environ.get("CI"):
+                self.fail("node is needed to parse the page's scripts, and CI has none")
+            self.skipTest("needs node (CI has it)")
+        spec = read_json(os.path.join(build.WEB, "page.json"))
+        for name in spec["scripts"] + ["lock.js"]:  # a section with a syntax error would leave the page blank
+            done = subprocess.run([node, "--check", os.path.join(build.WEB, name)], capture_output=True, text=True, timeout=60)
+            self.assertEqual(done.returncode, 0, f"{name}: {done.stderr}")
 
     def test_a_text_of_a_record_cannot_break_out_of_the_page(self):
         rec = sample.record()
