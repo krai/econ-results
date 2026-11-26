@@ -1,0 +1,2646 @@
+{
+ "schema": "econ-run/1",
+ "id": "2026-11-17_s0-tp8-v0.34_cdca8947",
+ "created": "2026-11-17T20:52:25",
+ "visibility": "internal",
+ "econ": {
+  "version": "0.0.7",
+  "commit": "31ea28b",
+  "exporter": {
+   "version": "0.0.9",
+   "commit": "bfc3bc75dee20c8a0a99d3b57534b85380ab1296",
+   "source": "measure.json",
+   "source_version": "0.0.7"
+  }
+ },
+ "model": {
+  "id": "deepseek-ai/DeepSeek-V4.1-Flash",
+  "name": "DeepSeek-V4.1-Flash",
+  "precision": null,
+  "max_model_len": 1048576,
+  "priced_as": "deepseek/deepseek-v4.1-flash"
+ },
+ "engine": {
+  "name": "vLLM",
+  "version": "0.34.0",
+  "build": "release",
+  "commit": null,
+  "image": "vllm/vllm-openai:v0.34.0",
+  "digest": "sha256:20fdb089454afbb324efa4110a2c025ff7b27cc1a086e07aa580b18df8ad1ce1",
+  "inside": {
+   "vllm": "0.34.0",
+   "torch": "2.14.0+cu130",
+   "cuda": "13.0"
+  }
+ },
+ "config": {
+  "label": "s0-tp8-v0.34",
+  "family": "S0",
+  "variant": null,
+  "tp": 8,
+  "dp": 1,
+  "flags": [
+   "--revision",
+   "dba1be0a40aa45a94ad051997016db3960a90277",
+   "--tokenizer-mode",
+   "deepseek_v41",
+   "--tool-call-parser",
+   "deepseek_v41",
+   "--reasoning-parser",
+   "deepseek_v41",
+   "--enable-auto-tool-choice",
+   "--language-model-only",
+   "--engram-config",
+   "{\"cpu_offload\":true}",
+   "--tensor-parallel-size",
+   "8",
+   "--enable-prefix-caching",
+   "--async-scheduling",
+   "--enable-expert-parallel",
+   "--compilation-config",
+   "{\"cudagraph_mode\":\"FULL_AND_PIECEWISE\"}",
+   "--max-num-seqs",
+   "1024",
+   "--max-num-batched-tokens",
+   "8192",
+   "--gpu-memory-utilization",
+   "0.9",
+   "--data-parallel-size",
+   "1",
+   "--speculative-config",
+   "{\"method\":\"dspark\",\"revision\":\"dba1be0a40aa45a94ad051997016db3960a90277\",\"num_speculative_tokens\":5,\"draft_sample_method\":\"probabilistic\",\"rejection_sample_method\":\"block\",\"enable_adaptive_verification\":false,\"disable_eagle_block_drop\":true}"
+  ],
+  "env": [
+   "VLLM_ENGINE_READY_TIMEOUT_S=2700",
+   "VLLM_USE_RUST_FRONTEND=1"
+  ],
+  "patch": null,
+  "server_config": "dsv41f_s0_v1.0_tp8.yaml"
+ },
+ "hardware": {
+  "gpu": "NVIDIA H200",
+  "gpus": 8,
+  "gpus_on_node": 8,
+  "driver": "595.58.03",
+  "power_limit_w": 700.0,
+  "memory_mib": 143771.0,
+  "node": "sith1",
+  "cluster": "HPE"
+ },
+ "workload": {
+  "mix": "chat-mix",
+  "lengths": "log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens",
+  "prompts": "text slices of mlperf_agentic_inference_dataset.jsonl (20,012,361 characters)",
+  "seed": 0,
+  "temperature": null,
+  "arrival": "Poisson"
+ },
+ "method": {
+  "warmup": 45.0,
+  "window": 120.0,
+  "search_warmup": 30.0,
+  "search_window": 60.0,
+  "min_requests": 400,
+  "min_search_requests": 30,
+  "max_window": 900.0,
+  "repeats": 2,
+  "start_rps": 1.0,
+  "growth": 2.0,
+  "bisect_steps": 3,
+  "drain": 120.0,
+  "client_busy_above": {
+   "cpu_pct": 70.0,
+   "loop_lag_p99_ms": 20.0
+  },
+  "metrics": true
+ },
+ "power": {
+  "scope": "GPU boards",
+  "gpus_seen": 8,
+  "notes": [
+   "CPU packages: the RAPL counters are root-only on this kernel",
+   "Node: no ACPI power meter (hwmon power_meter) to read the whole node from",
+   "NvSwitches: dcgmi cannot reach a DCGM host engine (is nv-hostengine running?): unable to establish a connection to the specified host: localhost"
+  ]
+ },
+ "results": [
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 50.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms"
+   },
+   "met": true,
+   "rate_rps": 8.0,
+   "note": "",
+   "probes": 8,
+   "windows": [
+    {
+     "rate_rps": 8.0,
+     "measured": 917,
+     "failed": 0,
+     "input_tok_s": 14734.675,
+     "output_tok_s": 3273.35,
+     "p50_tpot_ms": 15.174115615033628,
+     "p90_tpot_ms": 21.937082268139594,
+     "p99_tpot_ms": 33.041536331176765,
+     "p99_ttft_ms": 691.9849777221684,
+     "p99_tpot_ci_ms": [
+      30.108227962400854,
+      40.1241938273112
+     ],
+     "p99_ttft_ci_ms": [
+      605.9439182281494,
+      811.4926815032959
+     ],
+     "node_power_w": 3791.60525,
+     "tok_per_j": 0.8633150827080429,
+     "window_s": 120.0,
+     "steady": true
+    },
+    {
+     "rate_rps": 8.0,
+     "measured": 957,
+     "failed": 3,
+     "input_tok_s": 14348.816666666668,
+     "output_tok_s": 3195.741666666667,
+     "p50_tpot_ms": 17.47877673326035,
+     "p90_tpot_ms": 39.657147658252015,
+     "p99_tpot_ms": 57.546633012367046,
+     "p99_ttft_ms": 724.6559333801288,
+     "p99_tpot_ci_ms": [
+      50.89841259124617,
+      71.32232713999238
+     ],
+     "p99_ttft_ci_ms": [
+      656.7487716674805,
+      1227.8289794921875
+     ],
+     "node_power_w": 3652.6586666666667,
+     "tok_per_j": 0.8749083772404685,
+     "window_s": 120.0,
+     "steady": false
+    }
+   ]
+  },
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 30.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 30 ms"
+   },
+   "met": true,
+   "rate_rps": 7.2,
+   "note": "",
+   "probes": 8,
+   "windows": [
+    {
+     "rate_rps": 7.2,
+     "measured": 871,
+     "failed": 0,
+     "input_tok_s": 13721.108333333334,
+     "output_tok_s": 3172.6833333333334,
+     "p50_tpot_ms": 13.816420785311996,
+     "p90_tpot_ms": 19.39890739765573,
+     "p99_tpot_ms": 28.57843058092606,
+     "p99_ttft_ms": 990.3739452362055,
+     "p99_tpot_ci_ms": [
+      26.554552037665186,
+      32.88818359375
+     ],
+     "p99_ttft_ci_ms": [
+      750.213623046875,
+      1655.5752754211426
+     ],
+     "node_power_w": 3763.993445378151,
+     "tok_per_j": 0.8429035223823532,
+     "window_s": 120.0,
+     "steady": true
+    },
+    {
+     "rate_rps": 7.2,
+     "measured": 860,
+     "failed": 0,
+     "input_tok_s": 13737.15,
+     "output_tok_s": 2926.9583333333335,
+     "p50_tpot_ms": 11.85318028700067,
+     "p90_tpot_ms": 15.670848140989916,
+     "p99_tpot_ms": 21.693729981738375,
+     "p99_ttft_ms": 623.3440065383901,
+     "p99_tpot_ci_ms": [
+      20.25404729341206,
+      26.278691360915914
+     ],
+     "p99_ttft_ci_ms": [
+      506.5741539001465,
+      797.6028919219971
+     ],
+     "node_power_w": 3749.7074166666666,
+     "tok_per_j": 0.780583125052268,
+     "window_s": 120.0,
+     "steady": true
+    }
+   ]
+  },
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 20.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 20 ms"
+   },
+   "met": true,
+   "rate_rps": 5.187358218604039,
+   "note": "",
+   "probes": 7,
+   "windows": [
+    {
+     "rate_rps": 5.187358218604039,
+     "measured": 607,
+     "failed": 0,
+     "input_tok_s": 9121.175,
+     "output_tok_s": 2291.4166666666665,
+     "p50_tpot_ms": 8.68154497979914,
+     "p90_tpot_ms": 12.428015433073949,
+     "p99_tpot_ms": 17.23024256426593,
+     "p99_ttft_ms": 366.5427970886241,
+     "p99_tpot_ci_ms": [
+      15.424679403435695,
+      19.01705618257876
+     ],
+     "p99_ttft_ci_ms": [
+      288.09142112731934,
+      475.39710998535156
+     ],
+     "node_power_w": 3366.7468907563025,
+     "tok_per_j": 0.6806025938445064,
+     "window_s": 120.0,
+     "steady": true
+    },
+    {
+     "rate_rps": 5.187358218604039,
+     "measured": 616,
+     "failed": 0,
+     "input_tok_s": 10235.983333333334,
+     "output_tok_s": 2360.125,
+     "p50_tpot_ms": 8.854327839372795,
+     "p90_tpot_ms": 12.521266818363616,
+     "p99_tpot_ms": 19.07163841537221,
+     "p99_ttft_ms": 549.7204422950746,
+     "p99_tpot_ci_ms": [
+      17.86133376034823,
+      23.602023720741272
+     ],
+     "p99_ttft_ci_ms": [
+      512.1254920959473,
+      804.0246963500977
+     ],
+     "node_power_w": 3441.031680672269,
+     "tok_per_j": 0.6858771493608876,
+     "window_s": 120.0,
+     "steady": true
+    }
+   ]
+  },
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 10.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 10 ms"
+   },
+   "met": true,
+   "rate_rps": 2.061923373939973,
+   "note": "",
+   "probes": 6,
+   "windows": [
+    {
+     "rate_rps": 2.061923373939973,
+     "measured": 416,
+     "failed": 0,
+     "input_tok_s": 4194.081012804776,
+     "output_tok_s": 1043.9827330764174,
+     "p50_tpot_ms": 4.922984221350103,
+     "p90_tpot_ms": 6.715812709961295,
+     "p99_tpot_ms": 9.79729786121026,
+     "p99_ttft_ms": 262.2091889381409,
+     "p99_tpot_ci_ms": [
+      8.455923048116393,
+      10.964166034351695
+     ],
+     "p99_ttft_ci_ms": [
+      216.5374755859375,
+      591.2234783172607
+     ],
+     "node_power_w": 2736.162279792746,
+     "tok_per_j": 0.381550005563082,
+     "window_s": 193.99362995515705,
+     "steady": true
+    },
+    {
+     "rate_rps": 2.061923373939973,
+     "measured": 388,
+     "failed": 0,
+     "input_tok_s": 3890.11742382698,
+     "output_tok_s": 873.1987748214043,
+     "p50_tpot_ms": 4.728042977554295,
+     "p90_tpot_ms": 6.700188127057306,
+     "p99_tpot_ms": 8.153608191677211,
+     "p99_ttft_ms": 247.42132186889637,
+     "p99_tpot_ci_ms": [
+      7.839574188482566,
+      16.313838958740234
+     ],
+     "p99_ttft_ci_ms": [
+      227.92410850524902,
+      300.33302307128906
+     ],
+     "node_power_w": 2627.8644845360823,
+     "tok_per_j": 0.3322845527080355,
+     "window_s": 193.99362995515705,
+     "steady": true
+    }
+   ]
+  }
+ ],
+ "points": [
+  {
+   "rate_rps": 8.0,
+   "request_s": 7.316666666666666,
+   "input_tok_s": 14541.745833333334,
+   "output_tok_s": 3234.5458333333336,
+   "p50_ttft_ms": 170.72665691375732,
+   "p99_ttft_ms": 708.3204555511486,
+   "p50_tpot_ms": 16.326446174146987,
+   "p99_tpot_ms": 45.294084671771905,
+   "mean_input_tokens": 1861.4960706112586,
+   "mean_output_tokens": 447.0470406415963,
+   "node_power_w": 3722.1319583333334,
+   "tok_per_j": 0.8691117299742557,
+   "failed": 1.5,
+   "client_cpu_pct": 2.0118892612069192,
+   "client_busy": false,
+   "inflight_mean": 56.30165289256198,
+   "inflight_growth": 53.62362823465655,
+   "steady": false,
+   "sm_clock_mhz": 1980.0,
+   "temp_max_c": 64.0,
+   "power": {
+    "gpus_w": 3722.1319583333334,
+    "all_gpus_w": 3722.1319583333334,
+    "gpus_seen": 8,
+    "cpu_w": null,
+    "nvswitch_w": null,
+    "nvswitches": null,
+    "meter_w": null,
+    "total_w": 3722.1319583333334,
+    "scope": "GPU boards"
+   },
+   "tok_per_j_total": 0.8691117299742557,
+   "config": "s0-tp8-v0.34",
+   "source": "measure.json",
+   "gpus": 8,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+   "tpot_limit": 50.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 2.3993579727189864,
+    "p99_tpot_ms": 54.102200891725495,
+    "p99_ttft_ms": 4.612454066788015
+   },
+   "input_known": true,
+   "pooled": {
+    "requests": 1874,
+    "p99_ttft_ms": 704.0014,
+    "p99_ttft_ci_ms": [
+     656.75,
+     807.31
+    ],
+    "p99_tpot_ms": 50.45962,
+    "p99_tpot_ci_ms": [
+     48.443,
+     57.294
+    ],
+    "margin": "marginal"
+   },
+   "server": {
+    "seconds": 120.00085508823395,
+    "prefix_hit_pct": 0.8526080510082263,
+    "spec_accept_pct": 47.260798474823325,
+    "spec_accept_len": 3.363039923741166,
+    "preemptions": 0.0,
+    "output_tok_s": 3234.5227199589326,
+    "input_tok_s": 14541.641890158902,
+    "steps_s": 20.02068847168135,
+    "tokens_per_step": 884.7791494118875,
+    "queue_ms": 37.721402585667676,
+    "prefill_ms": 147.71651652862226,
+    "decode_ms": 6539.208244806547,
+    "kv_usage_pct_mean": 1.4717969330560927,
+    "kv_usage_pct_max": 3.0613578321501524,
+    "running_mean": 55.59836065573771,
+    "running_max": 102.5,
+    "waiting_mean": 0.5,
+    "waiting_max": 3.5,
+    "waiting_growth": -0.5
+   },
+   "requests_failed": 3,
+   "requests_served": 1871,
+   "worth": {
+    "endpoints": 38,
+    "rents": [
+     {
+      "rent": 5.29,
+      "break_even_common": 1.4259565571485195,
+      "break_even_median": 2.286685435399246,
+      "endpoints_above_rent": 3,
+      "margin_common": {
+       "1": -1.5802095624999999,
+       "0.7": -2.69314669375,
+       "0.5": -3.4351047812499997
+      },
+      "cost_per_m_output": {
+       "1": 3.6343759406373812,
+       "0.7": 5.191965629481974,
+       "0.5": 7.2687518812747625
+      }
+     },
+     {
+      "rent": 3.59,
+      "break_even_common": 0.9677096484240425,
+      "break_even_median": 1.5518337831915485,
+      "endpoints_above_rent": 14,
+      "margin_common": {
+       "1": 0.11979043750000029,
+       "0.7": -0.99314669375,
+       "0.5": -1.7351047812499998
+      },
+      "cost_per_m_output": {
+       "1": 2.4664290409996594,
+       "0.7": 3.5234700585709424,
+       "0.5": 4.932858081999319
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.6269545839375,
+     "p25": 1.5778543950000001,
+     "median": 2.3133920906250003,
+     "p75": 3.7097904375,
+     "max": 37.097904375
+    },
+    "common": {
+     "input": 0.3,
+     "output": 1.2,
+     "endpoints": 10,
+     "revenue": 3.7097904375
+    }
+   },
+   "cost": [
+    {
+     "rent": 5.29,
+     "node_hour": 42.32,
+     "node_30d": 30470.4,
+     "per_m_output": {
+      "1": 3.6343759406373812,
+      "0.5": 7.2687518812747625
+     }
+    },
+    {
+     "rent": 3.59,
+     "node_hour": 28.72,
+     "node_30d": 20678.399999999998,
+     "per_m_output": {
+      "1": 2.4664290409996594,
+      "0.5": 4.932858081999319
+     }
+    }
+   ],
+   "output_tokens_30d": 8383942800.0,
+   "accuracy": {
+    "benchmark": "gsm8k",
+    "shots": 5,
+    "items": 50,
+    "seed": 0,
+    "correct": 44,
+    "accuracy": 0.88,
+    "ci95": [
+     0.7619492111337642,
+     0.9438247628937535
+    ],
+    "strict_accuracy": 0.88,
+    "failed": 0,
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash"
+   },
+   "health": {
+    "verdict": "WARN",
+    "warnings": 8,
+    "how": "checked before the measurement and watched during it"
+   },
+   "mbu_pct": null,
+   "mbu_basis": null,
+   "p90_tpot_ms": 30.797114963195803,
+   "p90_ttft_ms": 316.47303104400635
+  },
+  {
+   "rate_rps": 7.2,
+   "request_s": 7.15,
+   "input_tok_s": 13729.129166666666,
+   "output_tok_s": 3049.820833333333,
+   "p50_ttft_ms": 137.21734285354614,
+   "p99_ttft_ms": 806.8589758872978,
+   "p50_tpot_ms": 12.834800536156333,
+   "p99_tpot_ms": 25.13608028133222,
+   "mean_input_tokens": 1901.7845719969027,
+   "mean_output_tokens": 446.85453368221505,
+   "node_power_w": 3756.850431022409,
+   "tok_per_j": 0.8117433237173106,
+   "failed": 0.0,
+   "client_cpu_pct": 1.8576152369096968,
+   "client_busy": false,
+   "inflight_mean": 39.438016528925615,
+   "inflight_growth": 10.433952039019104,
+   "steady": true,
+   "sm_clock_mhz": 1979.9921218487395,
+   "temp_max_c": 64.0,
+   "power": {
+    "gpus_w": 3756.850431022409,
+    "all_gpus_w": 3756.850431022409,
+    "gpus_seen": 8,
+    "cpu_w": null,
+    "nvswitch_w": null,
+    "nvswitches": null,
+    "meter_w": null,
+    "total_w": 3756.850431022409,
+    "scope": "GPU boards"
+   },
+   "tok_per_j_total": 0.8117433237173106,
+   "config": "s0-tp8-v0.34",
+   "source": "measure.json",
+   "gpus": 8,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 30 ms",
+   "tpot_limit": 30.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 8.05703067256683,
+    "p99_tpot_ms": 27.3897143951308,
+    "p99_ttft_ms": 45.48873466942533
+   },
+   "input_known": true,
+   "pooled": {
+    "requests": 1731,
+    "p99_ttft_ms": 774.0250000000001,
+    "p99_ttft_ci_ms": [
+     649.36,
+     986.85
+    ],
+    "p99_tpot_ms": 26.47220000000001,
+    "p99_tpot_ci_ms": [
+     25.402,
+     29.342
+    ],
+    "margin": "clear"
+   },
+   "server": {
+    "seconds": 120.00052499771118,
+    "prefix_hit_pct": 0.5650019581098702,
+    "spec_accept_pct": 47.22904246438087,
+    "spec_accept_len": 3.3614521232190437,
+    "preemptions": 0.0,
+    "output_tok_s": 3049.8080295234386,
+    "input_tok_s": 13729.069067329117,
+    "steps_s": 24.712386163031333,
+    "tokens_per_step": 677.9211326889478,
+    "queue_ms": 36.633772442379566,
+    "prefill_ms": 128.11455756377,
+    "decode_ms": 5094.125633225674,
+    "kv_usage_pct_mean": 1.0779728084108455,
+    "kv_usage_pct_max": 2.37019803020877,
+    "running_mean": 38.86065573770492,
+    "running_max": 58.0,
+    "waiting_mean": 0.45081967213114754,
+    "waiting_max": 4.5,
+    "waiting_growth": -0.5
+   },
+   "requests_failed": 0,
+   "requests_served": 1731,
+   "worth": {
+    "endpoints": 38,
+    "rents": [
+     {
+      "rent": 5.29,
+      "break_even_common": 1.511283623136788,
+      "break_even_median": 2.4238481584101272,
+      "endpoints_above_rent": 1,
+      "margin_common": {
+       "1": -1.7896643125000002,
+       "0.7": -2.8397650187500005,
+       "0.5": -3.53983215625
+      },
+      "cost_per_m_output": {
+       "1": 3.8545069359721036,
+       "0.7": 5.506438479960149,
+       "0.5": 7.709013871944207
+      }
+     },
+     {
+      "rent": 3.59,
+      "break_even_common": 1.0256159181589923,
+      "break_even_median": 1.644917748335039,
+      "endpoints_above_rent": 3,
+      "margin_common": {
+       "1": -0.08966431250000007,
+       "0.7": -1.1397650187500004,
+       "0.5": -1.83983215625
+      },
+      "cost_per_m_output": {
+       "1": 2.6158185066426944,
+       "0.7": 3.7368835809181356,
+       "0.5": 5.231637013285389
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.5915567311875,
+     "p25": 1.4886353362499998,
+     "median": 2.1824799468749996,
+     "p75": 3.5003356875,
+     "max": 35.003356874999994
+    },
+    "common": {
+     "input": 0.3,
+     "output": 1.2,
+     "endpoints": 10,
+     "revenue": 3.5003356875
+    }
+   },
+   "cost": [
+    {
+     "rent": 5.29,
+     "node_hour": 42.32,
+     "node_30d": 30470.4,
+     "per_m_output": {
+      "1": 3.8545069359721036,
+      "0.5": 7.709013871944207
+     }
+    },
+    {
+     "rent": 3.59,
+     "node_hour": 28.72,
+     "node_30d": 20678.399999999998,
+     "per_m_output": {
+      "1": 2.6158185066426944,
+      "0.5": 5.231637013285389
+     }
+    }
+   ],
+   "output_tokens_30d": 7905135600.0,
+   "accuracy": {
+    "benchmark": "gsm8k",
+    "shots": 5,
+    "items": 50,
+    "seed": 0,
+    "correct": 44,
+    "accuracy": 0.88,
+    "ci95": [
+     0.7619492111337642,
+     0.9438247628937535
+    ],
+    "strict_accuracy": 0.88,
+    "failed": 0,
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash"
+   },
+   "health": {
+    "verdict": "WARN",
+    "warnings": 8,
+    "how": "checked before the measurement and watched during it"
+   },
+   "mbu_pct": null,
+   "mbu_basis": null,
+   "p90_tpot_ms": 17.534877769322822,
+   "p90_ttft_ms": 250.78397989273074
+  },
+  {
+   "rate_rps": 5.187358218604039,
+   "request_s": 5.1,
+   "input_tok_s": 9678.579166666666,
+   "output_tok_s": 2325.770833333333,
+   "p50_ttft_ms": 104.22831773757935,
+   "p99_ttft_ms": 458.1316196918493,
+   "p50_tpot_ms": 8.767936409585968,
+   "p99_tpot_ms": 18.15094048981907,
+   "mean_input_tokens": 1898.610210423843,
+   "mean_output_tokens": 477.1761270031451,
+   "node_power_w": 3403.8892857142855,
+   "tok_per_j": 0.6832398716026971,
+   "failed": 0.0,
+   "client_cpu_pct": 1.5941423600026239,
+   "client_busy": false,
+   "inflight_mean": 20.289256198347108,
+   "inflight_growth": 0.9571873729846905,
+   "steady": true,
+   "sm_clock_mhz": 1980.0,
+   "temp_max_c": 62.0,
+   "power": {
+    "gpus_w": 3403.8892857142855,
+    "all_gpus_w": 3403.8892857142855,
+    "gpus_seen": 8,
+    "cpu_w": null,
+    "nvswitch_w": null,
+    "nvswitches": null,
+    "meter_w": null,
+    "total_w": 3403.8892857142855,
+    "scope": "GPU boards"
+   },
+   "tok_per_j_total": 0.6832398716026971,
+   "config": "s0-tp8-v0.34",
+   "source": "measure.json",
+   "gpus": 8,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 20 ms",
+   "tpot_limit": 20.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 2.9542176876841975,
+    "p99_tpot_ms": 10.144906001642871,
+    "p99_ttft_ms": 39.983628575923284
+   },
+   "input_known": true,
+   "pooled": {
+    "requests": 1223,
+    "p99_ttft_ms": 484.60399999999964,
+    "p99_ttft_ci_ms": [
+     408.73,
+     633.62
+    ],
+    "p99_tpot_ms": 18.26682,
+    "p99_tpot_ci_ms": [
+     17.272,
+     20.424
+    ],
+    "margin": "marginal"
+   },
+   "server": {
+    "seconds": 120.00034725666046,
+    "prefix_hit_pct": 1.0598774369852673,
+    "spec_accept_pct": 48.34747041170136,
+    "spec_accept_len": 3.417373520585068,
+    "preemptions": 0.0,
+    "output_tok_s": 2325.5391782416555,
+    "input_tok_s": 9678.552376516298,
+    "steps_s": 35.76656200029463,
+    "tokens_per_step": 333.0891644144203,
+    "queue_ms": 21.60217878946137,
+    "prefill_ms": 102.13352207531655,
+    "decode_ms": 3860.290237787416,
+    "kv_usage_pct_mean": 0.5546886544274108,
+    "kv_usage_pct_max": 1.3245098958288903,
+    "running_mean": 20.024590163934427,
+    "running_max": 34.0,
+    "waiting_mean": 0.13114754098360656,
+    "waiting_max": 1.0,
+    "waiting_growth": 0.0
+   },
+   "requests_failed": 0,
+   "requests_served": 1223,
+   "worth": {
+    "endpoints": 38,
+    "rents": [
+     {
+      "rent": 5.29,
+      "break_even_common": 2.064370556856397,
+      "break_even_median": 3.28379655999614,
+      "endpoints_above_rent": 1,
+      "margin_common": {
+       "1": -2.7274755625,
+       "0.7": -3.4962328937500002,
+       "0.5": -4.00873778125
+      },
+      "cost_per_m_output": {
+       "1": 5.0544771596035964,
+       "0.7": 7.220681656576567,
+       "0.5": 10.108954319207193
+      }
+     },
+     {
+      "rent": 3.59,
+      "break_even_common": 1.4009622493600122,
+      "break_even_median": 2.2285122212450172,
+      "endpoints_above_rent": 3,
+      "margin_common": {
+       "1": -1.0274755624999998,
+       "0.7": -1.79623289375,
+       "0.5": -2.3087377812499996
+      },
+      "cost_per_m_output": {
+       "1": 3.4301650289181307,
+       "0.7": 4.90023575559733,
+       "0.5": 6.860330057836261
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.4330666299375,
+     "p25": 1.0957042012499998,
+     "median": 1.610940234375,
+     "p75": 2.5625244375,
+     "max": 25.625244374999998
+    },
+    "common": {
+     "input": 0.3,
+     "output": 1.2,
+     "endpoints": 10,
+     "revenue": 2.5625244375
+    }
+   },
+   "cost": [
+    {
+     "rent": 5.29,
+     "node_hour": 42.32,
+     "node_30d": 30470.4,
+     "per_m_output": {
+      "1": 5.0544771596035964,
+      "0.5": 10.108954319207193
+     }
+    },
+    {
+     "rent": 3.59,
+     "node_hour": 28.72,
+     "node_30d": 20678.399999999998,
+     "per_m_output": {
+      "1": 3.4301650289181307,
+      "0.5": 6.860330057836261
+     }
+    }
+   ],
+   "output_tokens_30d": 6028397999.999999,
+   "accuracy": {
+    "benchmark": "gsm8k",
+    "shots": 5,
+    "items": 50,
+    "seed": 0,
+    "correct": 44,
+    "accuracy": 0.88,
+    "ci95": [
+     0.7619492111337642,
+     0.9438247628937535
+    ],
+    "strict_accuracy": 0.88,
+    "failed": 0,
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash"
+   },
+   "health": {
+    "verdict": "WARN",
+    "warnings": 8,
+    "how": "checked before the measurement and watched during it"
+   },
+   "mbu_pct": null,
+   "mbu_basis": null,
+   "p90_tpot_ms": 12.474641125718783,
+   "p90_ttft_ms": 192.66592264175415
+  },
+  {
+   "rate_rps": 2.061923373939973,
+   "request_s": 2.108316649853622,
+   "input_tok_s": 4042.099218315878,
+   "output_tok_s": 958.5907539489108,
+   "p50_ttft_ms": 84.31822061538696,
+   "p99_ttft_ms": 254.81525540351865,
+   "p50_tpot_ms": 4.825513599452199,
+   "p99_tpot_ms": 8.975453026443736,
+   "mean_input_tokens": 1949.6994572759713,
+   "mean_output_tokens": 454.38145568992866,
+   "node_power_w": 2682.013382164414,
+   "tok_per_j": 0.3569172791355587,
+   "failed": 0.0,
+   "client_cpu_pct": 1.0869372797989811,
+   "client_busy": false,
+   "inflight_mean": 4.703608247422681,
+   "inflight_growth": 0.46144359632279847,
+   "steady": true,
+   "sm_clock_mhz": 1980.0,
+   "temp_max_c": 57.0,
+   "power": {
+    "gpus_w": 2682.013382164414,
+    "all_gpus_w": 2682.013382164414,
+    "gpus_seen": 8,
+    "cpu_w": null,
+    "nvswitch_w": null,
+    "nvswitches": null,
+    "meter_w": null,
+    "total_w": 2682.013382164414,
+    "scope": "GPU boards"
+   },
+   "tok_per_j_total": 0.3569172791355587,
+   "config": "s0-tp8-v0.34",
+   "source": "measure.json",
+   "gpus": 8,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 10 ms",
+   "tpot_limit": 10.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 17.816149128443943,
+    "p99_tpot_ms": 18.313166641175258,
+    "p99_ttft_ms": 5.803368030625514
+   },
+   "input_known": true,
+   "pooled": {
+    "requests": 804,
+    "p99_ttft_ms": 262.67330000000015,
+    "p99_ttft_ci_ms": [
+     240.14,
+     520.2
+    ],
+    "p99_tpot_ms": 9.313290000000004,
+    "p99_tpot_ci_ms": [
+     8.411,
+     10.518
+    ],
+    "margin": "marginal"
+   },
+   "server": {
+    "seconds": 193.99346315860748,
+    "prefix_hit_pct": 0.7114908223348575,
+    "spec_accept_pct": 48.123848049130004,
+    "spec_accept_len": 3.4061924024565,
+    "preemptions": 0.0,
+    "output_tok_s": 958.5710567866286,
+    "input_tok_s": 4042.1028679164983,
+    "steps_s": 66.03057380983243,
+    "tokens_per_step": 75.4086294874464,
+    "queue_ms": 10.435390786480571,
+    "prefill_ms": 80.60438874845084,
+    "decode_ms": 2218.2723232320495,
+    "kv_usage_pct_mean": 0.1352888627305976,
+    "kv_usage_pct_max": 0.6592011181278168,
+    "running_mean": 4.612244897959183,
+    "running_max": 12.0,
+    "waiting_mean": 0.04591836734693877,
+    "waiting_max": 1.0,
+    "waiting_growth": 0.5
+   },
+   "requests_failed": 0,
+   "requests_served": 804,
+   "worth": {
+    "endpoints": 38,
+    "rents": [
+     {
+      "rent": 5.29,
+      "break_even_common": 4.9749727759096345,
+      "break_even_median": 7.924601652617838,
+      "endpoints_above_rent": 1,
+      "margin_common": {
+       "1": -4.226677598394945,
+       "0.7": -4.545674318876461,
+       "0.5": -4.758338799197473
+      },
+      "cost_per_m_output": {
+       "1": 12.263372567624497,
+       "0.7": 17.519103668034997,
+       "0.5": 24.526745135248994
+      }
+     },
+     {
+      "rent": 3.59,
+      "break_even_common": 3.376210258131491,
+      "break_even_median": 5.377943276540272,
+      "endpoints_above_rent": 1,
+      "margin_common": {
+       "1": -2.5266775983949445,
+       "0.7": -2.8456743188764615,
+       "0.5": -3.058338799197472
+      },
+      "cost_per_m_output": {
+       "1": 8.32240217727258,
+       "0.7": 11.889145967532256,
+       "0.5": 16.64480435454516
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.17970148587125437,
+     "p25": 0.45425187193192884,
+     "median": 0.6675414401747859,
+     "p75": 1.063322401605055,
+     "max": 10.633224016050553
+    },
+    "common": {
+     "input": 0.3,
+     "output": 1.2,
+     "endpoints": 10,
+     "revenue": 1.063322401605055
+    }
+   },
+   "cost": [
+    {
+     "rent": 5.29,
+     "node_hour": 42.32,
+     "node_30d": 30470.4,
+     "per_m_output": {
+      "1": 12.263372567624497,
+      "0.5": 24.526745135248994
+     }
+    },
+    {
+     "rent": 3.59,
+     "node_hour": 28.72,
+     "node_30d": 20678.399999999998,
+     "per_m_output": {
+      "1": 8.32240217727258,
+      "0.5": 16.64480435454516
+     }
+    }
+   ],
+   "output_tokens_30d": 2484667234.2355766,
+   "accuracy": {
+    "benchmark": "gsm8k",
+    "shots": 5,
+    "items": 50,
+    "seed": 0,
+    "correct": 44,
+    "accuracy": 0.88,
+    "ci95": [
+     0.7619492111337642,
+     0.9438247628937535
+    ],
+    "strict_accuracy": 0.88,
+    "failed": 0,
+    "model": "deepseek-ai/DeepSeek-V4.1-Flash"
+   },
+   "health": {
+    "verdict": "WARN",
+    "warnings": 8,
+    "how": "checked before the measurement and watched during it"
+   },
+   "mbu_pct": null,
+   "mbu_basis": null,
+   "p90_tpot_ms": 6.7080004185093,
+   "p90_ttft_ms": 136.53957843780518
+  }
+ ],
+ "curve": {
+  "name": "s0-tp8-v0.34",
+  "points": [
+   {
+    "x": 53.97291666666667,
+    "y": 8.336060743502651,
+    "ttft": 231.3629150390625,
+    "y_ci": [
+     6.58267806558048,
+     null
+    ],
+    "ttft_ci": [
+     164.49499130249023,
+     null
+    ],
+    "rate": 1.0,
+    "probe": 0,
+    "power_w": 258.98210416666666,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 102.34583333333333,
+    "y": 8.66903260602488,
+    "ttft": 262.83859729766846,
+    "y_ci": [
+     7.204712106940452,
+     null
+    ],
+    "ttft_ci": [
+     217.19837188720703,
+     null
+    ],
+    "rate": 2.0,
+    "probe": 1,
+    "power_w": 323.77064583333333,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 219.1,
+    "y": 12.401759388682603,
+    "ttft": 199.39363479614252,
+    "y_ci": [
+     11.111575595581728,
+     null
+    ],
+    "ttft_ci": [
+     161.26108169555664,
+     null
+    ],
+    "rate": 4.0,
+    "probe": 2,
+    "power_w": 382.75379166666664,
+    "failed": 0,
+    "steady": false,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 447.77708333333334,
+    "y": 25.041618908349186,
+    "ttft": 454.10592555999807,
+    "y_ci": [
+     24.341148687592636,
+     36.216627467762336
+    ],
+    "ttft_ci": [
+     376.29103660583496,
+     661.1855030059814
+    ],
+    "rate": 8.0,
+    "probe": 3,
+    "power_w": 475.9505833333334,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 286.3875,
+    "y": null,
+    "ttft": null,
+    "y_ci": [
+     null,
+     null
+    ],
+    "ttft_ci": [
+     null,
+     null
+    ],
+    "rate": 16.0,
+    "probe": 4,
+    "power_w": 353.85577083333334,
+    "failed": 56,
+    "steady": false,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 514.1541666666667,
+    "y": 88.7127386234047,
+    "ttft": 1552.4782896041863,
+    "y_ci": [
+     74.60060760156432,
+     null
+    ],
+    "ttft_ci": [
+     1424.5641231536865,
+     null
+    ],
+    "rate": 11.313708498984761,
+    "probe": 5,
+    "power_w": 489.68531779661015,
+    "failed": 6,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 437.18958333333336,
+    "y": 79.51996847987162,
+    "ttft": 1174.121832847592,
+    "y_ci": [
+     59.62309734426814,
+     null
+    ],
+    "ttft_ci": [
+     896.6927528381348,
+     null
+    ],
+    "rate": 9.513656920021768,
+    "probe": 6,
+    "power_w": 434.67527083333334,
+    "failed": 4,
+    "steady": false,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 428.91041666666666,
+    "y": 60.658570707233935,
+    "ttft": 703.1264829635621,
+    "y_ci": [
+     54.97669562315329,
+     92.81860156492753
+    ],
+    "ttft_ci": [
+     677.4728298187256,
+     822.7834701538086
+    ],
+    "rate": 8.724061861322062,
+    "probe": 7,
+    "power_w": 436.71204166666666,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 409.16875,
+    "y": 33.041536331176765,
+    "ttft": 691.9849777221684,
+    "y_ci": [
+     30.108227962400854,
+     40.1241938273112
+    ],
+    "ttft_ci": [
+     605.9439182281494,
+     811.4926815032959
+    ],
+    "rate": 8.0,
+    "probe": 8,
+    "power_w": 473.95065625,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 399.46770833333335,
+    "y": 57.546633012367046,
+    "ttft": 724.6559333801288,
+    "y_ci": [
+     50.89841259124617,
+     71.32232713999238
+    ],
+    "ttft_ci": [
+     656.7487716674805,
+     1227.8289794921875
+    ],
+    "rate": 8.0,
+    "probe": 9,
+    "power_w": 456.58233333333334,
+    "failed": 3,
+    "steady": false,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 396.5854166666667,
+    "y": 28.57843058092606,
+    "ttft": 990.3739452362055,
+    "y_ci": [
+     26.554552037665186,
+     32.88818359375
+    ],
+    "ttft_ci": [
+     750.213623046875,
+     1655.5752754211426
+    ],
+    "rate": 7.2,
+    "probe": 12,
+    "power_w": 470.4991806722689,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 365.8697916666667,
+    "y": 21.693729981738375,
+    "ttft": 623.3440065383901,
+    "y_ci": [
+     20.25404729341206,
+     26.278691360915914
+    ],
+    "ttft_ci": [
+     506.5741539001465,
+     797.6028919219971
+    ],
+    "rate": 7.2,
+    "probe": 13,
+    "power_w": 468.71342708333333,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 298.46875,
+    "y": 21.853735395205224,
+    "ttft": 606.2219595909118,
+    "y_ci": [
+     19.08497583298456,
+     null
+    ],
+    "ttft_ci": [
+     408.11848640441895,
+     null
+    ],
+    "rate": 5.656854249492381,
+    "probe": 14,
+    "power_w": 439.9910208333333,
+    "failed": 0,
+    "steady": false,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 269.6333333333333,
+    "y": 13.739403039619654,
+    "ttft": 537.915945053098,
+    "y_ci": [
+     13.178777937986414,
+     null
+    ],
+    "ttft_ci": [
+     290.9674644470215,
+     null
+    ],
+    "rate": 4.756828460010884,
+    "probe": 15,
+    "power_w": 412.4159957627119,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 265.74583333333334,
+    "y": 17.041984292177055,
+    "ttft": 299.83310937881475,
+    "y_ci": [
+     15.081506026418586,
+     null
+    ],
+    "ttft_ci": [
+     238.95525932312012,
+     null
+    ],
+    "rate": 5.187358218604039,
+    "probe": 16,
+    "power_w": 412.3678125,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 286.4270833333333,
+    "y": 17.23024256426593,
+    "ttft": 366.5427970886241,
+    "y_ci": [
+     15.424679403435695,
+     19.01705618257876
+    ],
+    "ttft_ci": [
+     288.09142112731934,
+     475.39710998535156
+    ],
+    "rate": 5.187358218604039,
+    "probe": 17,
+    "power_w": 420.8433613445378,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 295.015625,
+    "y": 19.07163841537221,
+    "ttft": 549.7204422950746,
+    "y_ci": [
+     17.86133376034823,
+     23.602023720741272
+    ],
+    "ttft_ci": [
+     512.1254920959473,
+     804.0246963500977
+    ],
+    "rate": 5.187358218604039,
+    "probe": 18,
+    "power_w": 430.1289600840336,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 126.04583333333333,
+    "y": 9.070179533017312,
+    "ttft": 230.13231754302979,
+    "y_ci": [
+     7.345458333806474,
+     null
+    ],
+    "ttft_ci": [
+     188.52925300598145,
+     null
+    ],
+    "rate": 2.8284271247461903,
+    "probe": 19,
+    "power_w": 342.9163125,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 184.12708333333333,
+    "y": 12.715655254281078,
+    "ttft": 272.8676080703732,
+    "y_ci": [
+     10.41832837191495,
+     null
+    ],
+    "ttft_ci": [
+     234.8308563232422,
+     null
+    ],
+    "rate": 3.3635856610148585,
+    "probe": 20,
+    "power_w": 375.20029166666666,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 174.68333333333334,
+    "y": 12.07507388375022,
+    "ttft": 337.0692729949949,
+    "y_ci": [
+     10.953124364217121,
+     null
+    ],
+    "ttft_ci": [
+     292.736291885376,
+     null
+    ],
+    "rate": 3.084421650815882,
+    "probe": 21,
+    "power_w": 369.58845833333334,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 130.49784163455217,
+    "y": 9.79729786121026,
+    "ttft": 262.2091889381409,
+    "y_ci": [
+     8.455923048116393,
+     10.964166034351695
+    ],
+    "ttft_ci": [
+     216.5374755859375,
+     591.2234783172607
+    ],
+    "rate": 2.061923373939973,
+    "probe": 28,
+    "power_w": 342.0202849740933,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 109.14984685267554,
+    "y": 8.153608191677211,
+    "ttft": 247.42132186889637,
+    "y_ci": [
+     7.839574188482566,
+     16.313838958740234
+    ],
+    "ttft_ci": [
+     227.92410850524902,
+     300.33302307128906
+    ],
+    "rate": 2.061923373939973,
+    "probe": 29,
+    "power_w": 328.4830605670103,
+    "failed": 0,
+    "steady": true,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 404.3182291666667,
+    "y": 45.294084671771905,
+    "ttft": 708.3204555511486,
+    "y_ci": [
+     48.443,
+     57.294
+    ],
+    "ttft_ci": [
+     656.75,
+     807.31
+    ],
+    "rate": 8.0,
+    "probe": null,
+    "power_w": 465.2664947916667,
+    "failed": 1.5,
+    "steady": false,
+    "client_busy": false,
+    "final": true,
+    "kind": "confirmed",
+    "target": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+    "margin": "marginal"
+   },
+   {
+    "x": 381.22760416666665,
+    "y": 25.13608028133222,
+    "ttft": 806.8589758872978,
+    "y_ci": [
+     25.402,
+     29.342
+    ],
+    "ttft_ci": [
+     649.36,
+     986.85
+    ],
+    "rate": 7.2,
+    "probe": null,
+    "power_w": 469.6063038778011,
+    "failed": 0.0,
+    "steady": true,
+    "client_busy": false,
+    "final": true,
+    "kind": "confirmed",
+    "target": "TTFT p99 <= 2 s, TPOT p99 <= 30 ms",
+    "margin": "clear"
+   },
+   {
+    "x": 290.72135416666663,
+    "y": 18.15094048981907,
+    "ttft": 458.1316196918493,
+    "y_ci": [
+     17.272,
+     20.424
+    ],
+    "ttft_ci": [
+     408.73,
+     633.62
+    ],
+    "rate": 5.187358218604039,
+    "probe": null,
+    "power_w": 425.4861607142857,
+    "failed": 0.0,
+    "steady": true,
+    "client_busy": false,
+    "final": true,
+    "kind": "confirmed",
+    "target": "TTFT p99 <= 2 s, TPOT p99 <= 20 ms",
+    "margin": "marginal"
+   },
+   {
+    "x": 119.82384424361385,
+    "y": 8.975453026443736,
+    "ttft": 254.81525540351865,
+    "y_ci": [
+     8.411,
+     10.518
+    ],
+    "ttft_ci": [
+     240.14,
+     520.2
+    ],
+    "rate": 2.061923373939973,
+    "probe": null,
+    "power_w": 335.25167277055175,
+    "failed": 0.0,
+    "steady": true,
+    "client_busy": false,
+    "final": true,
+    "kind": "confirmed",
+    "target": "TTFT p99 <= 2 s, TPOT p99 <= 10 ms",
+    "margin": "marginal"
+   }
+  ]
+ },
+ "stability": {
+  "verdict": "PASS",
+  "warnings": 0,
+  "samples": 5895,
+  "seconds": 5913.8150000572205,
+  "interval_s": 1.0033618934606754,
+  "from": null,
+  "rows": [
+   {
+    "check": "GPU 0: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 0: Board power",
+    "result": "446 W on average under load (64 % of the limit), peak 621 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 0: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,965 MHz (100 % and 99 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 0: Throttling",
+    "result": "at the power limit in 0 % of the samples under load: normal at full load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 0: Temperature",
+    "result": "peak 67 °C, 56 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 0: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 0: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 0: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Board power",
+    "result": "398 W on average under load (57 % of the limit), peak 571 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 1: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Temperature",
+    "result": "peak 56 °C, 46 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 1: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 1: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Board power",
+    "result": "387 W on average under load (55 % of the limit), peak 545 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 2: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Temperature",
+    "result": "peak 54 °C, 45 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 2: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 2: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Board power",
+    "result": "429 W on average under load (61 % of the limit), peak 595 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 3: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Temperature",
+    "result": "peak 65 °C, 55 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 3: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 3: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Board power",
+    "result": "413 W on average under load (59 % of the limit), peak 584 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 4: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Temperature",
+    "result": "peak 64 °C, 54 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 4: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 4: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Board power",
+    "result": "406 W on average under load (58 % of the limit), peak 567 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 5: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Temperature",
+    "result": "peak 54 °C, 45 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 5: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 5: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Board power",
+    "result": "406 W on average under load (58 % of the limit), peak 563 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 6: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Temperature",
+    "result": "peak 54 °C, 45 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 6: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 6: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Power limit",
+    "result": "held at 700 W",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Board power",
+    "result": "407 W on average under load (58 % of the limit), peak 579 W",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 7: SM clock under load",
+    "result": "1,980 MHz on average, lowest 1,980 MHz (100 % and 100 % of the 1,980 MHz maximum)",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Throttling",
+    "result": "no thermal or hardware slowdown, never at the power limit",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Temperature",
+    "result": "peak 61 °C, 52 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "GPU 7: PCIe link",
+    "result": "Gen5 x16 throughout the load",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Memory errors",
+    "result": "ECC on; 0 uncorrected and 0 corrected errors during the run",
+    "status": "PASS"
+   },
+   {
+    "check": "GPU 7: Remapped rows",
+    "result": "none pending, no failure, none remapped during the run",
+    "status": "PASS"
+   }
+  ]
+ },
+ "health": {
+  "check": {
+   "version": "0.0.7",
+   "created": "2026-11-17T20:35:30",
+   "verdict": "WARN",
+   "warnings": 8,
+   "gpus": 8,
+   "status": {
+    "PASS": 66,
+    "INFO": 11,
+    "WARN": 8
+   },
+   "rows": [
+    {
+     "check": "GPU 0: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 0: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 1: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 1: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 2: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 2: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 3: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 3: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 4: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 4: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 5: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 5: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 6: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 6: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "GPU 7: Throttling under load",
+     "result": "at the power limit in 100 % of the matmul's samples: normal at full load",
+     "reference": "the power cap is normal at full load; thermal and hardware slowdowns are not",
+     "status": "INFO"
+    },
+    {
+     "check": "GPU 7: Host to GPU copy",
+     "result": "27.8 GB/s from pinned memory, 44 % of the link",
+     "reference": "Gen5 x16: 63.0 GB/s per direction; PASS from 50 % of it",
+     "status": "WARN"
+    },
+    {
+     "check": "Power sources",
+     "result": "GPU boards (NVML); CPU packages: the RAPL counters are root-only on this kernel; NvSwitches: not read (see NvSwitch power); node: no ACPI power meter (hwmon power_meter) to read the whole node from. A measurement counts GPU boards",
+     "reference": "the node's own meter for the node's power; RAPL for the CPU packages and DCGM for the NvSwitches; each readable without root",
+     "status": "INFO"
+    },
+    {
+     "check": "NvSwitch power",
+     "result": "not read: dcgmi cannot reach a DCGM host engine (is nv-hostengine running?): unable to establish a connection to the specified host: localhost",
+     "reference": "each NvSwitch's three rails from DCGM (fields 705 to 707) with its host engine running; each GPU's own NVLink ports are in its board power already, the NvSwitches are not",
+     "status": "INFO"
+    },
+    {
+     "check": "Download",
+     "result": "not measured (no --hf-model or --hf-url, or --offline)",
+     "reference": "",
+     "status": "INFO"
+    }
+   ],
+   "system": {
+    "os": "Red Hat Enterprise Linux 9.4 (Plow)",
+    "kernel": "5.14.0-427.13.1.el9_4.x86_64",
+    "cpu": "INTEL(R) XEON(R) PLATINUM 8562Y+",
+    "sockets": 2,
+    "cores": 64,
+    "threads": 128,
+    "ram_gib": 2014.9619407653809,
+    "driver": "595.58.03",
+    "cuda": "13.2",
+    "docker": "27.4.1",
+    "python": "3.14.8"
+   }
+  },
+  "accuracy": {
+   "benchmark": "gsm8k",
+   "shots": 5,
+   "items": 50,
+   "seed": 0,
+   "correct": 44,
+   "accuracy": 0.88,
+   "ci95": [
+    0.7619492111337642,
+    0.9438247628937535
+   ],
+   "strict_accuracy": 0.88,
+   "failed": 0
+  }
+ },
+ "prices": {
+  "endpoints": 38,
+  "providers": 29,
+  "input": {
+   "min": 0.0507,
+   "p25": 0.12,
+   "median": 0.2025,
+   "p75": 0.3,
+   "max": 3.0
+  },
+  "output": {
+   "min": 0.2028,
+   "p25": 0.591,
+   "median": 0.7949999999999999,
+   "p75": 1.2,
+   "max": 12.0
+  },
+  "common": {
+   "input": 0.3,
+   "output": 1.2,
+   "endpoints": 10
+  },
+  "by_quantization": {
+   "fp4": {
+    "endpoints": 2,
+    "median_output": 0.85
+   },
+   "fp8": {
+    "endpoints": 21,
+    "median_output": 0.66
+   },
+   "mxfp4": {
+    "endpoints": 2,
+    "median_output": 0.6085
+   },
+   "unknown": {
+    "endpoints": 13,
+    "median_output": 1.2
+   }
+  },
+  "model": "deepseek/deepseek-v4.1-flash",
+  "taken": "2026-11-18T16:26Z",
+  "source": "https://openrouter.ai/api/v1/models/deepseek/deepseek-v4.1-flash/endpoints",
+  "by_endpoint": [
+   {
+    "provider": "Baidu",
+    "tag": "baidu/fp8",
+    "quantization": "fp8",
+    "input": 0.0507,
+    "output": 0.2028,
+    "cached_input": 0.001014
+   },
+   {
+    "provider": "Wafer",
+    "tag": "wafer/us",
+    "quantization": "mxfp4",
+    "input": 0.051,
+    "output": 0.567,
+    "cached_input": 0.018
+   },
+   {
+    "provider": "Alibaba",
+    "tag": "alibaba",
+    "quantization": "unknown",
+    "input": 0.09,
+    "output": 0.36,
+    "cached_input": 0.0018
+   },
+   {
+    "provider": "OpenInference",
+    "tag": "open-inference/fp4",
+    "quantization": "fp4",
+    "input": 0.09,
+    "output": 1.2,
+    "cached_input": 0.005
+   },
+   {
+    "provider": "Cloudflare",
+    "tag": "cloudflare",
+    "quantization": "unknown",
+    "input": 0.1,
+    "output": 0.9,
+    "cached_input": 0.03
+   },
+   {
+    "provider": "InferenceNet",
+    "tag": "inference-net/us",
+    "quantization": "fp8",
+    "input": 0.103,
+    "output": 0.6,
+    "cached_input": 0.008
+   },
+   {
+    "provider": "InferenceNet",
+    "tag": "inference-net/fp8",
+    "quantization": "fp8",
+    "input": 0.103,
+    "output": 0.6,
+    "cached_input": 0.008
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8/flex",
+    "quantization": "fp8",
+    "input": 0.112,
+    "output": 0.336,
+    "cached_input": 0.00336
+   },
+   {
+    "provider": "River",
+    "tag": "river",
+    "quantization": "unknown",
+    "input": 0.12,
+    "output": 0.48,
+    "cached_input": 0.0024
+   },
+   {
+    "provider": "Novita",
+    "tag": "novita/fp8",
+    "quantization": "fp8",
+    "input": 0.12,
+    "output": 0.48,
+    "cached_input": 0.0024
+   },
+   {
+    "provider": "Relace",
+    "tag": "relace/fp4",
+    "quantization": "fp4",
+    "input": 0.12,
+    "output": 0.5,
+    "cached_input": 0.003
+   },
+   {
+    "provider": "Reka",
+    "tag": "reka",
+    "quantization": "unknown",
+    "input": 0.12,
+    "output": 0.64,
+    "cached_input": 0.008
+   },
+   {
+    "provider": "CoreWeave",
+    "tag": "coreweave/fp8",
+    "quantization": "fp8",
+    "input": 0.13,
+    "output": 0.65,
+    "cached_input": 0.002
+   },
+   {
+    "provider": "AtlasCloud",
+    "tag": "atlas-cloud/fp8",
+    "quantization": "fp8",
+    "input": 0.135,
+    "output": 0.54,
+    "cached_input": 0.0135
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8",
+    "quantization": "fp8",
+    "input": 0.14,
+    "output": 0.42,
+    "cached_input": 0.0042
+   },
+   {
+    "provider": "StreamLake",
+    "tag": "streamlake/fp8",
+    "quantization": "fp8",
+    "input": 0.147,
+    "output": 0.588,
+    "cached_input": 0.00294
+   },
+   {
+    "provider": "GMICloud",
+    "tag": "gmicloud/fp8",
+    "quantization": "fp8",
+    "input": 0.18,
+    "output": 0.72,
+    "cached_input": 0.0036
+   },
+   {
+    "provider": "Wafer",
+    "tag": "wafer/mxfp4",
+    "quantization": "mxfp4",
+    "input": 0.19,
+    "output": 0.65,
+    "cached_input": 0.012
+   },
+   {
+    "provider": "Cohere",
+    "tag": "cohere/fp8",
+    "quantization": "fp8",
+    "input": 0.195,
+    "output": 0.66,
+    "cached_input": 0.003
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8/priority",
+    "quantization": "fp8",
+    "input": 0.21,
+    "output": 0.63,
+    "cached_input": 0.0063
+   },
+   {
+    "provider": "Fireworks",
+    "tag": "fireworks/spot",
+    "quantization": "unknown",
+    "input": 0.21,
+    "output": 0.84,
+    "cached_input": 0.0042
+   },
+   {
+    "provider": "Mancer 2",
+    "tag": "mancer/fp8",
+    "quantization": "fp8",
+    "input": 0.2125,
+    "output": 0.75,
+    "cached_input": 0.05
+   },
+   {
+    "provider": "DigitalOcean",
+    "tag": "digitalocean",
+    "quantization": "unknown",
+    "input": 0.225,
+    "output": 0.9,
+    "cached_input": 0.006
+   },
+   {
+    "provider": "Makora",
+    "tag": "makora/fp8",
+    "quantization": "fp8",
+    "input": 0.26,
+    "output": 1.17,
+    "cached_input": 0.0058
+   },
+   {
+    "provider": "Crusoe",
+    "tag": "crusoe/fp8",
+    "quantization": "fp8",
+    "input": 0.29,
+    "output": 1.2,
+    "cached_input": 0.007
+   },
+   {
+    "provider": "Nebius",
+    "tag": "nebius/fp8",
+    "quantization": "fp8",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.01
+   },
+   {
+    "provider": "Google",
+    "tag": "google-vertex/global",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.03
+   },
+   {
+    "provider": "BaseTen",
+    "tag": "baseten/us",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.007
+   },
+   {
+    "provider": "Together",
+    "tag": "together",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.006
+   },
+   {
+    "provider": "SiliconFlow",
+    "tag": "siliconflow/fp8",
+    "quantization": "fp8",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.006
+   },
+   {
+    "provider": "Modal",
+    "tag": "modal",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.03
+   },
+   {
+    "provider": "BaseTen",
+    "tag": "baseten",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.007
+   },
+   {
+    "provider": "Parasail",
+    "tag": "parasail/fp8",
+    "quantization": "fp8",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.006
+   },
+   {
+    "provider": "Fireworks",
+    "tag": "fireworks",
+    "quantization": "unknown",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.006
+   },
+   {
+    "provider": "Venice",
+    "tag": "venice/fp8",
+    "quantization": "fp8",
+    "input": 0.3,
+    "output": 1.2,
+    "cached_input": 0.0075
+   },
+   {
+    "provider": "Parasail",
+    "tag": "parasail/fast",
+    "quantization": "fp8",
+    "input": 0.45,
+    "output": 1.8,
+    "cached_input": 0.009
+   },
+   {
+    "provider": "Fireworks",
+    "tag": "fireworks/us",
+    "quantization": "unknown",
+    "input": 0.45,
+    "output": 1.8,
+    "cached_input": 0.009
+   },
+   {
+    "provider": "Venice",
+    "tag": "venice/ultrafast",
+    "quantization": "fp8",
+    "input": 3.0,
+    "output": 12.0,
+    "cached_input": 0.06
+   }
+  ]
+ },
+ "rents": [
+  5.29,
+  3.59
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 0: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 1: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 2: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 3: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 4: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 5: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 6: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "Node check of sith1: GPU 7: Host to GPU copy, 27.8 GB/s from pinned memory, 44 % of the link."
+  },
+  {
+   "level": "WARN",
+   "text": "s0-tp8-v0.34 (TTFT ≤ 2 s, TPOT ≤ 50 ms): the requests in flight grew across a confirmation window, so the rate may be above what the server keeps up with over a longer one."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34 (TTFT ≤ 2 s, TPOT ≤ 50 ms): met, but not with 95 % confidence (a p99's upper bound is above the target, or the windows had too few requests to bound it): a longer measurement may confirm a lower rate."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34 (TTFT ≤ 2 s, TPOT ≤ 20 ms): met, but not with 95 % confidence (a p99's upper bound is above the target, or the windows had too few requests to bound it): a longer measurement may confirm a lower rate."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34 (TTFT ≤ 2 s, TPOT ≤ 10 ms): met, but not with 95 % confidence (a p99's upper bound is above the target, or the windows had too few requests to bound it): a longer measurement may confirm a lower rate."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34: the capacity was measured with quick settings (120 s confirmation windows, 2 repeats). Longer windows meet more of the rare slow requests, so a full measurement (--window 600 --repeats 5) can confirm a lower rate: plan with headroom."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34 (TTFT ≤ 2 s, TPOT ≤ 50 ms): at capacity the TPOT target binds first (p99 50.5 ms, 101 % of its limit; TTFT at 35 %). Decode sets the capacity: more tokens per step (a larger batch, speculative decoding) or faster decode kernels are where to look."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34: the power counted is every GPU board (8 GPUs), 3,722 W at capacity against 3,722 W on the serving GPU boards; with no node meter readable here, the node's CPUs, memory, any NvSwitches, fans, disks, NICs and PSU losses are not in it."
+  },
+  {
+   "level": "INFO",
+   "text": "s0-tp8-v0.34: at the most common price ($0.30 / $1.20 per M tokens) it earns $3.71 per GPU-hour at full load; the $5.29 rent is never paid, even at full load."
+  },
+  {
+   "level": "INFO",
+   "text": "Accuracy 88.0 % on gsm8k 5-shot, 50 items (95 % interval 76.2 to 94.4 %): a gate against a configuration that breaks the model; scores closer than about 9 points are within its noise."
+  }
+ ],
+ "not_covered": [
+  "Lengths: log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens, context limit 1048576 tokens",
+  "Power: GPU boards (no node meter here, so not the node's: no CPUs, memory, any NvSwitches, fans, disks, NICs or PSU losses): CPU packages: the RAPL counters are root-only on this kernel; Node: no ACPI power meter (hwmon power_meter) to read the whole node from; NvSwitches: dcgmi cannot reach a DCGM host engine (is nv-hostengine running?): unable to establish a connection to the specified host: localhost",
+  "Quick settings (120 s windows, 2 repeats): for comparisons, not for publishing",
+  "Queue: in a confirmation window of s0-tp8-v0.34 (TTFT p99 <= 2 s, TPOT p99 <= 50 ms) the requests in flight grew, so that rate may be above what the server keeps up with over a longer window"
+ ],
+ "provenance": {
+  "host": "sith1",
+  "job": "50319",
+  "data_dir": "/hpelustre/krai/krai_gentic/econ/exp3/s0-tp8-v0.34_j50319",
+  "command": "econ measure --server-config /home/users/e70293/econ_exp/configs/dsv41f_s0_v1.0_tp8.yaml --image vllm/vllm-openai:v0.34.0 --gpus 0,1,2,3,4,5,6,7 --label s0-tp8-v0.34 --prompts /hpelustre/krai/krai_gentic/dataset_cache/mlperf_agentic_inference_dataset/mlperf_agentic_inference_dataset.jsonl --slo ttft=2000,tpot=50/30/20/10 --min-requests 400 --max-window 900 --out /hpelustre/krai/krai_gentic/econ/exp3/s0-tp8-v0.34_j50319/measure",
+  "gentic_commit": null,
+  "image": "vllm/vllm-openai:v0.34.0",
+  "server_config": "/home/users/e70293/econ_exp/configs/dsv41f_s0_v1.0_tp8.yaml",
+  "started": "2026-11-17T20:34:56-06:00"
+ },
+ "files": [
+  {
+   "role": "measure",
+   "name": "measure.json",
+   "sha256": "5f592852ec87cfabba42b3360781625cf4dae749f00b37b4125804f014924ffc",
+   "bytes": 156346
+  },
+  {
+   "role": "check",
+   "name": "check.json",
+   "sha256": "c7af94e0f56f45fb5921129d2782eb832c3d8a56dac081e6c0b374f6f1c77157",
+   "bytes": 33483
+  },
+  {
+   "role": "accuracy",
+   "name": "accuracy.json",
+   "sha256": "ca6f591f58d0e9a9f4425c0fc5d33d556b47b30081380a77de83979bf7a0f802",
+   "bytes": 1545
+  },
+  {
+   "role": "prices",
+   "name": "prices_deepseek-v4.1-flash_2026-11-18.json",
+   "sha256": "25e222cd7026086ef80a4a8536708c05e78405259b91e5c77686804b17cfef1b",
+   "bytes": 10804
+  }
+ ]
+}

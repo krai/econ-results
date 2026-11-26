@@ -1,0 +1,5 @@
+job=50319 host=sith1 arm=s0 label=s0-tp8-v0.34 start=2026-11-17T20:34:56-06:00
+econ=/home/users/e70293/econ_exp/econ_31ea28b tree=0f0ee2f1
+image=vllm/vllm-openai:v0.34.0 digest=vllm/vllm-openai@sha256:20fdb089454afbb324efa4110a2c025ff7b27cc1a086e07aa580b18df8ad1ce1
+inside: vllm 0.34.0 | torch 2.14.0+cu130 | CUDA 13.0
+config=/home/users/e70293/econ_exp/configs/dsv41f_s0_v1.0_tp8.yaml gpus=0,1,2,3,4,5,6,7
