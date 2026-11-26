@@ -55,7 +55,7 @@
       const a = have[0], b = have[have.length - 1];
       return `within TPOT ≤ ${fmt.n(l)} ms it went from ${met.show(value(a, l))} (${R.engine(a)}) to ${met.show(value(b, l))} (${R.engine(b)}), ${R.signed(M.change(value(b, l), value(a, l)))}`;
     });
-    return `${name}: ${span}. In ${met.label.toLowerCase()}, ${parts.join("; ") || "no target met"}.`;
+    return `${name}: ${span}. In ${R.lower(met.label)}, ${parts.join("; ") || "no target met"}.`;
   }
   R.views.push({id: "history", title: "History", icon: "history", root: card.root, render});
 })(typeof window !== "undefined" ? window : globalThis);

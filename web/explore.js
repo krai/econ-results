@@ -171,7 +171,7 @@
     const pts = on.flatMap((s) => s.points.map((p) => ({s, p})));
     const best = pts.reduce((a, b) => ((met.lower ? b.p.y < a.p.y : b.p.y > a.p.y) ? b : a)), fast = pts.reduce((a, b) => (b.p.x > a.p.x ? b : a));
     return `As of ${day}, ${R.count(on.length, "curve")} of ${S.model}. ${best.s.label} has the ${met.lower ? "lowest" : "highest"} ` +
-      `${met.label.toLowerCase()}, ${met.show(best.p.y)}, within ${R.target(best.p.p)} at ${fmt.n(best.p.x, 1)} tokens/s per user. ` +
+      `${R.lower(met.label)}, ${met.show(best.p.y)}, within ${R.target(best.p.p)} at ${fmt.n(best.p.x, 1)} tokens/s per user. ` +
       `The fastest per user is ${fast.s.label} within ${R.target(fast.p.p)}: ${fmt.n(fast.p.x, 1)} tokens/s per user, with ${met.show(fast.p.y)}.` +
       (data.skipped ? ` ${R.count(data.skipped, "met target")} of these runs cannot be drawn with these axes (their files lack the number).` : "");
   }

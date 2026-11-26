@@ -29,6 +29,7 @@
   R.target = (p) => `TPOT ≤ ${fmt.n(p.tpot_limit)} ms`;
   R.slo = (text) => String(text || "").replace("TTFT p99 <= ", "TTFT ≤ ").replace(", TPOT p99 <= ", ", TPOT ≤ ");
   R.count = (n, noun) => `${fmt.n(n)} ${noun}${n === 1 ? "" : "s"}`;
+  R.lower = (text) => text.charAt(0).toLowerCase() + text.slice(1);  // inside a sentence: "output tokens/s per GPU"
   R.usd3 = (v) => (has(v) ? (v < 0 ? "-$" : "$") + fmt.n(Math.abs(v), Math.abs(v) < 10 ? 3 : 2) : "-");
   R.signed = (f, d = 1) => (has(f) ? (f > 0 ? "+" : f < 0 ? "−" : "") + fmt.n(Math.abs(100 * f), d) + " %" : "-");
   R.met = (r) => (r.points || []).filter((p) => p.met && has(p.output_tok_s)).sort((a, b) => b.tpot_limit - a.tpot_limit);

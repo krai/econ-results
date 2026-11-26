@@ -49,7 +49,7 @@
     const more = ranked.length > SHOWN ? R.button(S.more ? "Show fewer" : `Show ${ranked.length - SHOWN} more`, null, () => { S.more = S.more ? 0 : 1; R.update(); }, "text") : null;
     const lead = ranked[0], moved = ranked.filter((e) => has(e.change)).sort((a, b) => Math.abs(b.change) - Math.abs(a.change))[0];
     const text = !ranked.length ? `No configuration in the period met ${targetName()}.`
-      : `${R.count(ranked.length, "configuration")} ranked by ${met.label.toLowerCase()} at ${targetName()}. ${R.keyName(lead.r)} leads with ${met.show(lead.v)} ` +
+      : `${R.count(ranked.length, "configuration")} ranked by ${R.lower(met.label)} at ${targetName()}. ${R.keyName(lead.r)} leads with ${met.show(lead.v)} ` +
         `(${R.engine(lead.r)}, ${R.dateText(lead.r.created)}).` + (moved ? ` The largest change against the run before is ${R.signed(moved.change)}, for ${R.keyName(moved.r)}.` : "") +
         (out.length ? ` Not ranked, because they did not meet it: ${out.map(R.keyName).join("; ")}.` : "");
     D.replace(board, items.length ? el("ol", {class: "board"}, items) : el("p", {class: "muted", text: "Nothing to rank here."}), more, R.summary(text));
