@@ -1,0 +1,58 @@
+{
+ "schema": "econ-market/1",
+ "as_of": "2026-11-18",
+ "usage_window": "2026-10-19 to 2026-11-17",
+ "tables": {
+  "models": {
+   "read": "2026-11-18T05:16:05Z",
+   "what": "The 20 open-weight model families with the most OpenRouter tokens over the trailing 30 days, with each family's dated checkpoints and its free and batch variants summed; their parameters and licences from their model cards.",
+   "from": [
+    "https://openrouter.ai/api/frontend/v1/rankings/models?view=month",
+    "https://openrouter.ai/api/v1/models",
+    "https://huggingface.co/api/models/<id>"
+   ]
+  },
+  "prices": {
+   "read": "2026-11-18T05:18:53Z to 05:19:30Z",
+   "what": "Every OpenRouter endpoint of each model with an input price and a non-zero output price, as the API lists them on the day: effective prices, promotions included.",
+   "from": [
+    "https://openrouter.ai/api/v1/models/<slug>/endpoints"
+   ]
+  },
+  "gpus": {
+   "read": "2026-11-17T15:53:16Z",
+   "what": "USD per GPU-hour of nine GPUs: owned at hyperscaler volume and rented on a 3-year commit, from a published TCO model (July 2026 surveys, updated 27 Oct 2026); on demand, the median of the offers in rents.json.",
+   "from": [
+    "https://inferencex.semianalysis.com/infx/profit-estimator"
+   ]
+  },
+  "rents": {
+   "read": "2026-11-17T15:49Z to 16:01Z",
+   "what": "Public on-demand list prices per GPU-hour, from each provider's page or public API; spot, reserved, cluster and managed-endpoint offers left out. Each row has its address.",
+   "from": [
+    "each row's url"
+   ]
+  },
+  "throughput": {
+   "read": "2026-11-18T05:17:05Z to 05:17:26Z",
+   "what": "Published runs of a public agentic benchmark (multi-turn traces, about 130-150K tokens of context per request) on those GPUs, 7 Aug to 18 Nov 2026: tokens per second per GPU and the P90 speed per user of each run. Recipes on engines that have not served production tokens are left out. Each row has the address of its run.",
+   "from": [
+    "https://inferencex.semianalysis.com/api/v1/benchmarks?model=<name>"
+   ]
+  },
+  "mlperf": {
+   "read": "2026-11-17T15:59:05Z",
+   "what": "MLPerf Endpoints v1.0, DeepSeek V4.1 Flash, agentic: every system's output tokens per second at 20, 50 and 100 tokens per second per user. Per GPU = the system's value divided by its GPUs: that division is ours, not an MLPerf metric.",
+   "from": [
+    "https://results.mlcommons.org/endpoints"
+   ]
+  },
+  "reference": {
+   "read": "2026-11-17",
+   "what": "One day of DeepSeek V3 and R1 traffic on H800s, from DeepSeek's own overview of its inference system, published 1 Mar 2025.",
+   "from": [
+    "https://github.com/deepseek-ai/open-infra-index/blob/main/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md"
+   ]
+  }
+ }
+}

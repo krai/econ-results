@@ -1,0 +1,30 @@
+{
+ "deepseek_2025": {
+  "url": "https://github.com/deepseek-ai/open-infra-index/blob/main/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md",
+  "published": "2025-03-01",
+  "window": "24 h, 2025-02-27 12:00 to 2025-02-28 12:00 (UTC+8)",
+  "gpu": "H800 (8 per node)",
+  "nodes_avg": 226.75,
+  "nodes_peak": 278,
+  "usd_gpu_h": 2.0,
+  "cost_day": 87072,
+  "input_tokens": 608000000000.0,
+  "input_cache_hit_tokens": 342000000000.0,
+  "output_tokens": 168000000000.0,
+  "output_speed_tok_s": "20-22",
+  "prefill_node_tok_s": 73700,
+  "decode_node_tok_s": 14800,
+  "prices_r1": {
+   "cached_input": 0.14,
+   "input": 0.55,
+   "output": 2.19
+  },
+  "revenue_day_theoretical": 562027,
+  "margin_pct": 545,
+  "caveats": [
+   "V3 is priced lower than R1",
+   "web and app use is free",
+   "night-time discounts"
+  ]
+ }
+}

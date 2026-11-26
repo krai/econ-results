@@ -1,0 +1,122 @@
+[
+ {
+  "system": "KRAI · H200 · first submission (v1.0)",
+  "submission": "061107c7",
+  "org": "Krai",
+  "chip": "h200",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-10-13",
+  "out_tok_s_gpu_at_20": 685.62,
+  "out_tok_s_gpu_at_50": 370.01,
+  "out_tok_s_gpu_at_100": null
+ },
+ {
+  "system": "KRAI · MI300X · + KRAI MoE and sparse-MLA kernels",
+  "submission": "3525d905",
+  "org": "Krai",
+  "chip": "mi300x",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-11-03",
+  "out_tok_s_gpu_at_20": 818.45,
+  "out_tok_s_gpu_at_50": 549.58,
+  "out_tok_s_gpu_at_100": null
+ },
+ {
+  "system": "Google · GB300 · vLLM + Dynamo, 4 GPUs",
+  "submission": "3fdca196",
+  "org": "Google LLC",
+  "chip": "gb300",
+  "gpus": 4,
+  "status": "Official",
+  "published": "2026-11-04",
+  "out_tok_s_gpu_at_20": 13551.5,
+  "out_tok_s_gpu_at_50": 12549.64,
+  "out_tok_s_gpu_at_100": 5195.88
+ },
+ {
+  "system": "NVIDIA · Vera Rubin · vLLM + Dynamo, 24 GPUs",
+  "submission": "535bb487",
+  "org": "NVIDIA",
+  "chip": "vr200",
+  "gpus": 24,
+  "status": "Provisional",
+  "published": "2026-11-10",
+  "out_tok_s_gpu_at_20": 27490.32,
+  "out_tok_s_gpu_at_50": 26955.88,
+  "out_tok_s_gpu_at_100": 24114.14
+ },
+ {
+  "system": "NVIDIA · Vera Rubin · vLLM + Dynamo, 4 GPUs",
+  "submission": "618254e9",
+  "org": "NVIDIA",
+  "chip": "vr200",
+  "gpus": 4,
+  "status": "Provisional",
+  "published": "2026-10-19",
+  "out_tok_s_gpu_at_20": 25884.25,
+  "out_tok_s_gpu_at_50": 23790.31,
+  "out_tok_s_gpu_at_100": 17263.61
+ },
+ {
+  "system": "KRAI · H200 · vLLM 0.32 + KRAI kernels",
+  "submission": "647657c4",
+  "org": "Krai",
+  "chip": "h200",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-11-10",
+  "out_tok_s_gpu_at_20": 1316.91,
+  "out_tok_s_gpu_at_50": 698.0,
+  "out_tok_s_gpu_at_100": 525.24
+ },
+ {
+  "system": "KRAI · MI300X · + KRAI MoE kernels",
+  "submission": "73c4b6bc",
+  "org": "Krai",
+  "chip": "mi300x",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-10-27",
+  "out_tok_s_gpu_at_20": 659.07,
+  "out_tok_s_gpu_at_50": 444.67,
+  "out_tok_s_gpu_at_100": null
+ },
+ {
+  "system": "KRAI · MI300X · stock vLLM",
+  "submission": "758a50bc",
+  "org": "Krai",
+  "chip": "mi300x",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-10-27",
+  "out_tok_s_gpu_at_20": 382.28,
+  "out_tok_s_gpu_at_50": 245.84,
+  "out_tok_s_gpu_at_100": null
+ },
+ {
+  "system": "KRAI · H200 · stock vLLM 0.32",
+  "submission": "bf6ac0d5",
+  "org": "Krai",
+  "chip": "h200",
+  "gpus": 8,
+  "status": "Provisional",
+  "published": "2026-11-10",
+  "out_tok_s_gpu_at_20": 972.42,
+  "out_tok_s_gpu_at_50": 531.8,
+  "out_tok_s_gpu_at_100": null
+ },
+ {
+  "system": "NVIDIA · GB300 · vLLM + Dynamo, 4 GPUs",
+  "submission": "c0b99dd8",
+  "org": "NVIDIA Corporation",
+  "chip": "gb300",
+  "gpus": 4,
+  "status": "Official",
+  "published": "2026-11-04",
+  "out_tok_s_gpu_at_20": 13784.44,
+  "out_tok_s_gpu_at_50": 12773.27,
+  "out_tok_s_gpu_at_100": 6133.18
+ }
+]
