@@ -77,7 +77,7 @@
     "driver": {"type": ["string", "null"]},
     "power_limit_w": {"type": ["number", "null"], "exclusiveMinimum": 0},
     "memory_mib": {"type": ["number", "null"], "exclusiveMinimum": 0},
-    "node": {"type": "string", "minLength": 1, "description": "An alias of the node, never its host name."}
+    "node": {"type": "string", "minLength": 1, "description": "The node's name as the measurement says it; in a public record, an alias."}
    }
   },
   "workload": {"type": "object", "description": "econ's workload: mix, lengths, prompts, seed, arrival."},

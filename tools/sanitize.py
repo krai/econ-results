@@ -4,7 +4,7 @@
 
 What it does:
 - drops the provenance (host, job, data folder, command line, commits of private repositories);
-- names the node by its alias wherever a text mentions its host name;
+- names the node by its alias, in its hardware and wherever a text mentions it; a node with no alias is an error;
 - keeps only the file name of every path;
 - drops the names of the price list's providers: the arithmetic needs the prices, not who charges them;
 - names an image from a personal namespace by what it is ("vLLM nightly 6e780d14 (custom build)");
@@ -64,6 +64,10 @@ def public(record, aliases, words=frozenset()):
     """The public form of an internal record; Forbidden if anything private is left in it."""
     if record.get("visibility") != "internal":
         raise ValueError("only an internal record is sanitised: this one is already " + str(record.get("visibility")))
+    node = record["hardware"]["node"]
+    if node not in aliases and node not in aliases.values():
+        raise Forbidden(f"{record['id']}: no alias for its node: add one to the aliases (a public record never names "
+                        "a host)")
     rec = copy.deepcopy(record)
     rec.pop("provenance", None)
     rec["visibility"] = "public"

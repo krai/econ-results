@@ -132,7 +132,7 @@ class TestRealFiles(unittest.TestCase):
         return os.path.join(ROOT, "sources", *parts)
 
     def export(self, **spec):
-        rec = export.export(spec, self.econ, self.aliases)
+        rec = export.export(spec, self.econ)
         self.assertEqual(validate.check_record(rec), [])
         return rec
 
@@ -170,9 +170,9 @@ class TestRealFiles(unittest.TestCase):
     def test_a_report_needs_the_version_that_measured_and_a_configuration_it_has(self):
         report = self.source("2026-11-02_h200", "report-0.0.5", "report.json")
         with self.assertRaises(SystemExit):
-            export.export({"report": report, "config": "recipe-tp4-v0.32"}, self.econ, self.aliases)
+            export.export({"report": report, "config": "recipe-tp4-v0.32"}, self.econ)
         with self.assertRaises(SystemExit):
-            export.export({"report": report, "config": "no-such", "measured_with": "0.0.3"}, self.econ, self.aliases)
+            export.export({"report": report, "config": "no-such", "measured_with": "0.0.3"}, self.econ)
 
     def test_report_json_of_econ_0_0_6(self):
         rec = self.export(report=self.source("2026-11-03_a5000", "report-0.0.6", "report.json"), config="qwen3-8b-fp8-a5000-ctx4096",
@@ -200,15 +200,15 @@ class TestRealFiles(unittest.TestCase):
         self.assertEqual([p["tpot_limit"] for p in rec["points"] if p["met"]], [50.0, 30.0, 20.0])
         self.assertEqual(rec["health"]["check"]["status"], {"PASS": 74, "INFO": 12})
         self.assertEqual(rec["prices"]["taken"], "2026-11-23T16:41Z")
-        self.assertEqual(rec["hardware"]["node"], self.aliases[rec["provenance"]["host"]])
-        self.assertNotIn(rec["provenance"]["host"], str({k: v for k, v in rec.items() if k != "provenance"}))
+        self.assertEqual(rec["hardware"]["node"], rec["provenance"]["host"])  # as the measurement says it
+        self.assertEqual(sanitize.public(rec, self.aliases)["hardware"]["node"], self.aliases[rec["provenance"]["host"]])
 
     def test_the_registry_is_what_the_manifest_exports(self):
         """Every record of the registry, and every public form, is byte for byte what its sources give today."""
         words = patterns.load_words(os.path.join(ROOT, "private-words.txt"))
         seen = set()
         for spec in self.specs:
-            rec = export.export(spec, self.econ, self.aliases)
+            rec = export.export(spec, self.econ)
             seen.add(rec["id"])
             with self.subTest(rec["id"]):
                 self.assertEqual(rec, read_json(os.path.join(ROOT, "runs", rec["id"] + ".json")))

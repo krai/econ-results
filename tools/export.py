@@ -1,21 +1,23 @@
 """Export a run of econ as an econ-run/1 record: one JSON file per run, in the standard format of the registry.
 
     python -m tools.export RUN_DIR --econ-src GENTIC/src --prices SNAPSHOT.json --rent 5.29 --rent 3.59 \
-        --aliases ALIASES.json --out RUNS_DIR                      a run folder (measure, check, accuracy)
+        --out RUNS_DIR                                             a run folder (measure, check, accuracy)
     python -m tools.export --measure M.json [--check C.json] [--accuracy A.json] ...       the files one by one
     python -m tools.export --report REPORT.json --config LABEL ...   a configuration of a report.json, when its
                                                                     measure.json is not at hand
     python -m tools.export --manifest MANIFEST.json --econ-src GENTIC/src --out RUNS_DIR [--public-out PUBLIC_DIR]
                                                                     every run of a manifest (a list of the options)
     ... --manifest MANIFEST.json --prune                            and remove the records the manifest no longer gives
-    ... --visibility public --public-out PUBLIC_DIR                 also the sanitised form (tools/sanitize.py)
+    ... --visibility public --public-out PUBLIC_DIR --aliases ALIASES.json
+                                                                    also the sanitised form (tools/sanitize.py)
 
 The points are computed by econ's own code, imported from --econ-src (a checkout of gentic, pinned in the registry):
 report.build reads any measure.json since econ 0.0.3 and prices it, so nothing of econ is written again here. A
 configuration taken from a report.json keeps the report's measured numbers and is priced again with the same code.
 What econ's files do not say (the Slurm job, the image's digest, the family of the configuration) comes from the
-options or from the run's provenance.txt. The record does not depend on when or where it was exported: the same
-files give the same bytes.
+options or from the run's provenance.txt. The record names its node as the measurement does, so a run of any node
+or cluster exports with no table of names; only the public form needs an alias for it. The record does not depend
+on when or where it was exported: the same files give the same bytes.
 """
 from __future__ import annotations
 
@@ -39,7 +41,7 @@ CURVE_KEYS = ("x", "y", "ttft", "y_ci", "ttft_ci", "rate", "probe", "power_w", "
               "final", "kind", "target", "margin")
 SYSTEM_KEYS = ("os", "kernel", "cpu", "sockets", "cores", "threads", "ram_gib", "driver", "cuda", "docker", "python")
 ACCURACY_KEYS = ("benchmark", "shots", "items", "seed", "correct", "accuracy", "ci95", "strict_accuracy", "failed")
-SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "family",
+SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "node", "family",
              "variant", "precision", "tp", "dp", "job", "data_dir", "gentic_commit", "econ_commit", "engine_version",
              "engine_build", "engine_commit", "digest", "weights_gb", "public")
 
@@ -226,14 +228,14 @@ def slim_stability(st):
             "rows": [{k: r.get(k) for k in ("check", "result", "status")} for r in st.get("rows") or []]}
 
 
-def record(rep, results, files, spec, econ, aliases):
+def record(rep, results, files, spec, econ):
     """The econ-run/1 record (internal form) of a one-configuration report."""
     setup, src = rep["setups"][0], rep.pop("_source")
     prov = parse_provenance(spec["provenance"]) if spec.get("provenance") else {}
     host = setup.get("host")
-    if host not in aliases:
-        raise SystemExit(f"no alias for the node of {setup['config']} in --aliases: add it there (a record never "
-                         "names a host outside its provenance)")
+    node = spec.get("node") or host
+    if not node:
+        raise SystemExit(f"the measurement of {setup['config']} does not say its node: state it with --node")
     model = setup["model"]
     quant = re.search(r"(?i)(?<![a-z0-9])(mxfp4|fp4|fp8|bf16|int4|int8|awq)(?![a-z0-9])", model)
     power = setup.get("power") or {}
@@ -260,7 +262,7 @@ def record(rep, results, files, spec, econ, aliases):
         "hardware": {"gpu": setup.get("gpu_name") or "GPU", "gpus": setup["gpus"],
                      "gpus_on_node": power.get("gpus_on_node") or (len(checks[0].get("gpus") or []) if checks else None),
                      "driver": setup.get("driver"), "power_limit_w": setup.get("power_limit_w"),
-                     "memory_mib": src.get("memory_mib"), "node": aliases[host]},
+                     "memory_mib": src.get("memory_mib"), "node": node},
         "workload": setup["workload"], "method": method,
         "power": {"scope": power.get("scope"), "gpus_seen": power.get("gpus_seen"),
                   "notes": list((power.get("sources") or {}).get("notes") or [])} if power else None,
@@ -290,7 +292,7 @@ def _measured_with(src, rep):
                      "--measured-with (or measured_with in the manifest)")
 
 
-def export(spec, econ, aliases):
+def export(spec, econ):
     """The internal record of one run, from its spec: the options of the command line or one entry of a manifest."""
     spec = dict(spec)
     if spec.get("run"):
@@ -301,7 +303,7 @@ def export(spec, econ, aliases):
     if bool(spec.get("measure")) == bool(spec.get("report")):
         raise SystemExit("give a run folder or --measure, or else --report with --config")
     rep, results, files = from_measure(spec, econ) if spec.get("measure") else from_report(spec, econ)
-    return record(rep, results, files, spec, econ, aliases)
+    return record(rep, results, files, spec, econ)
 
 
 def write(rec, out_dir):
@@ -346,7 +348,8 @@ def parser():
     ap.add_argument("--config", help="with --report: the label of the configuration to export")
     ap.add_argument("--measured-with", help="with --report: the version of the econ that measured")
     ap.add_argument("--rent", dest="rents", type=float, action="append", help="USD per GPU-hour; repeat it")
-    ap.add_argument("--aliases", help="a JSON object {host name: alias}")
+    ap.add_argument("--aliases", help="with --visibility public: a JSON object {node's name: alias}")
+    ap.add_argument("--node", help="the node's name, when the measurement does not say it")
     ap.add_argument("--family", help="recipe, S0, S1 or stock (default: from the label)")
     ap.add_argument("--variant", help="what sets the configuration apart inside its family")
     ap.add_argument("--precision", help="the weights' quantisation, when the model's name does not say")
@@ -379,15 +382,13 @@ def main(argv=None):
         specs = [dict({k: getattr(a, k) for k in SPEC_KEYS if getattr(a, k, None) is not None},
                       measured_with=a.measured_with, public=a.visibility == "public")]
         aliases_path = a.aliases
-    if not aliases_path:
-        raise SystemExit("--aliases is needed: the aliases the records name the nodes by")
-    if any(s.get("public") for s in specs) and not a.public_out:
-        raise SystemExit("--public-out is needed for the runs to be written in their public form")
+    if any(s.get("public") for s in specs) and not (a.public_out and aliases_path):
+        raise SystemExit("--public-out and --aliases are needed for the runs to be written in their public form")
     if a.prune and not a.manifest:
         raise SystemExit("--prune goes with --manifest: only a manifest says what the whole registry is")
-    aliases, internal, public = read_json(aliases_path), set(), set()
+    aliases, internal, public = read_json(aliases_path) if aliases_path else {}, set(), set()
     for spec in specs:
-        rec = export(spec, econ, aliases)
+        rec = export(spec, econ)
         internal.add(rec["id"])
         print(f"{write(rec, a.out)}  ({len(rec['points'])} targets, econ {rec['econ']['version']})")
         if spec.get("public"):

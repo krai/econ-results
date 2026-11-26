@@ -33,6 +33,15 @@ class TestSanitize(unittest.TestCase):
         self.assertEqual(sanitize.text("ran on BUILDHOST7 and buildhost70", sample.ALIASES),
                          "ran on Test node A and buildhost70")
 
+    def test_the_node_goes_by_its_alias_and_a_node_without_one_is_refused(self):
+        self.assertEqual((self.rec["hardware"]["node"], self.pub["hardware"]["node"]), ("buildhost7", "Test node A"))
+        with self.assertRaises(sanitize.Forbidden) as caught:
+            sanitize.public(sample.record(host="otherbox3"), sample.ALIASES)
+        self.assertIn("no alias for its node", str(caught.exception))
+        named = sample.record()
+        named["hardware"]["node"] = "Test node A"  # a record that already names its node by the alias
+        self.assertEqual(sanitize.public(named, sample.ALIASES)["hardware"]["node"], "Test node A")
+
     def test_a_path_keeps_only_its_file_name(self):
         for raw, safe in (("see /home/someone/runs/x/measure.json now", "see measure.json now"),
                           ("D:/data/runs/report.json", "report.json"), ("C:\\Users\\me\\prices.json", "prices.json"),
