@@ -1,4 +1,5 @@
-# what tools/build.py writes: the site is built in CI, never committed
+# what tools/build.py and tools/lock.py write: the page is built in CI, never committed
 site/
+locked/
 __pycache__/
 *.pyc
