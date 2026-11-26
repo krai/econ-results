@@ -1,7 +1,7 @@
-/* The page put together: KRAI's header with the self-check and the theme, the scope every section shares (model,
-   precision, engine), the sections named in the side bar, and the foot. When it opens it recomputes every number
-   econ priced in every record and says how many agree. Served locked (web/lock.js), the browser keeps the page's key:
-   About says so and forgets it. */
+/* The page put together: KRAI's header with the self-check and the theme, the sections as tabs (one on the page at a
+   time, drawn when it is opened), the scope the sections on runs share (model, precision, engine), and the foot. When
+   it opens it recomputes every number econ priced in every record and says how many agree. Served locked
+   (web/lock.js), the browser keeps the page's key: About says so and forgets it. */
 (function (root) {
   "use strict";
   const D = root.Dash, R = root.Reg;
@@ -73,35 +73,58 @@
         ["Built", site.built || "-"], key,
       ].filter(Boolean).map(([k, t]) => [el("dt", {text: k}), el("dd", {}, t)])));
   }
-  R.views.push({id: "about", title: "About", icon: "about", root: about.root, render: drawAbout});
-  const empty = !R.records.length;  // a registry with no runs yet: the page says so, and keeps only what it can say
-  if (empty) R.views.splice(0, R.views.length - 1);
+  R.views.push({id: "about", title: "About", icon: "about", scope: false, root: about.root, render: drawAbout});
+  const empty = !R.records.length;  // a registry with no runs yet: the page says so, and keeps what needs none
+  if (empty) for (let i = R.views.length - 1; i >= 0; i--) if (R.views[i].scope !== false) R.views.splice(i, 1);
 
-  const links = new Map();
-  for (const v of R.views.filter((x) => x.nav !== false)) {
-    const b = el("button", {type: "button", class: "navlink", "data-k": "nav:" + v.id}, R.icon(v.icon), el("span", {text: v.title}));
-    b.addEventListener("click", () => R.goto(v.id));
-    links.set(v.id, b);
-    nav.append(b);
+  // --- the tabs: the side bar names the sections, and the one chosen is the only one on the page
+  const ORDER = ["explore", "rankings", "history", "prices", "market", "runs", "assumptions", "about"];
+  const place = (v) => (ORDER.indexOf(v.id) < 0 ? ORDER.length : ORDER.indexOf(v.id));
+  R.views.sort((x, y) => place(x) - place(y));
+  const tabs = el("div", {class: "tabs", role: "tablist", "aria-label": "Sections", "aria-orientation": "vertical"});
+  for (const v of R.views) {
+    v.tab = el("button", {type: "button", class: "navlink", role: "tab", id: "tab-" + v.id, "aria-controls": "panel-" + v.id,
+                          "aria-selected": "false", tabindex: -1, "data-k": "nav:" + v.id}, R.icon(v.icon), el("span", {text: v.title}));
+    v.tab.addEventListener("click", () => R.goto(v.id));
+    v.panel = el("div", {class: "view", role: "tabpanel", id: "panel-" + v.id, "aria-labelledby": "tab-" + v.id, hidden: true}, v.root);
+    tabs.append(v.tab);
   }
-  nav.append(el("p", {class: "navmeta"}, el("span", {class: "tag " + (site.audience === "public" ? "" : "solid"), text: site.audience}),
+  tabs.addEventListener("keydown", (ev) => {  // the arrows walk the tabs, Home and End reach the ends
+    const at = R.views.findIndex((v) => v.tab === document.activeElement), n = R.views.length;
+    const to = {ArrowDown: at + 1, ArrowRight: at + 1, ArrowUp: at - 1, ArrowLeft: at - 1, Home: 0, End: n - 1}[ev.key];
+    if (at < 0 || to === undefined) return;
+    ev.preventDefault();
+    const v = R.views[(to + n) % n];
+    R.goto(v.id);
+    v.tab.focus();
+  });
+  nav.append(tabs, el("p", {class: "navmeta"}, el("span", {class: "tag " + (site.audience === "public" ? "" : "solid"), text: site.audience}),
     el("span", {text: ` ${R.count(R.records.length, "run")}`})));
-  R.goto = function (id) {
-    const target = document.getElementById(id);
-    if (!target) return;
-    S.at = id;
-    D.writeState();
-    const still = root.matchMedia && root.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({behavior: still ? "auto" : "smooth", block: "start"});
-    mark(id);
-  };
-  function mark(id) {
-    const known = links.has(id) ? id : "explore";
-    for (const [k, b] of links) b.setAttribute("aria-current", String(k === known));
-  }
 
-  D.replace(app, empty ? D.notice("info", `No ${site.audience === "public" ? "public " : ""}runs in this registry yet. Each run appears here when its record is added.`) : scope,
-    R.views.map((v) => v.root),
+  // Open a section: R.goto("runs"), or R.goto("runs", "run") to land on the element of that id inside it. An id of a
+  // card inside a section ("sources") opens the section at that card.
+  let shown = null;
+  R.goto = function (id, land) {
+    const v = R.viewOf(id) || R.views[0];
+    if (!v) return;
+    S.at = v.id;
+    for (const x of R.views) {
+      x.panel.hidden = x !== v;
+      x.tab.setAttribute("aria-selected", String(x === v));
+      x.tab.tabIndex = x === v ? 0 : -1;
+    }
+    scope.hidden = v.scope === false;
+    const moved = shown !== null && shown !== v;
+    shown = v;
+    R.update();
+    const target = document.getElementById(land || (id !== v.id ? id : ""));
+    if (target) target.scrollIntoView({block: "start"});
+    else if (moved && layout.getBoundingClientRect().top < 0) layout.scrollIntoView({block: "start"});
+  };
+  const layout = app.closest(".layout") || app;
+
+  D.replace(app, empty ? D.notice("info", `No ${site.audience === "public" ? "public " : ""}runs in this registry yet. Each run appears here when its record is added.`) : null,
+    scope, R.views.map((v) => v.panel),
     el("footer", {}, el("span", {text: "© KRAI · econ results. Revenue assumes list prices and the measured rate whenever the node is in use; a real fleet sells less. "}),
       el("a", {href: "https://krai.ai", rel: "noopener", text: "krai.ai"})));
 
@@ -117,16 +140,5 @@
     }
   };
 
-  // The section in view is the one the side bar marks
-  if ("IntersectionObserver" in root) {
-    const io = new IntersectionObserver((entries) => {
-      const top = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (top) mark(top.target.id);
-    }, {rootMargin: "-20% 0px -65% 0px"});
-    for (const v of R.views) if (v.nav !== false) io.observe(v.root);
-  }
-
-  R.update();
-  if (S.at && S.at !== "explore") setTimeout(() => { const t = document.getElementById(S.at); if (t) t.scrollIntoView({block: "start"}); mark(S.at); }, 0);
-  else mark("explore");
+  R.goto(S.at || "explore");
 })(typeof window !== "undefined" ? window : globalThis);

@@ -27,7 +27,7 @@
     const v = R.value(key, r, p), prev = M.previous(R.scope(), r), pp = prev ? M.at(prev, p.tpot_limit) : null;
     return has(v) ? {r, p, v, prev: pp ? prev : null, change: M.change(v, pp ? R.value(key, prev, pp) : null)} : null;
   }
-  const open = (r) => () => { S.run = r.id; R.update(); R.goto("runs"); };
+  const open = (r) => () => { S.run = r.id; R.goto("runs", "run"); };
   const targetName = () => (S.lbt === "loosest" ? "its loosest met target" : `TPOT ≤ ${S.lbt} ms`);
   const rowsOf = (e, met) => [[met.show(e.v), met.short], [R.target(e.p), "the target met (p99)"], [fmt.n(e.p.rate_rps, 2), "requests/s on " + R.hw(e.r)],
     [R.engine(e.r), "engine"], [R.dateText(e.r.created), "measured"],

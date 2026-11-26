@@ -101,5 +101,5 @@
     drawResults();
     drawSources();
   }
-  R.views.push({id: "assumptions", nav: false, root: el("div", {}, card.root, sources.root), render});
+  R.views.push({id: "assumptions", title: "Assumptions", icon: "assume", also: ["sources"], root: el("div", {}, card.root, sources.root), render});
 })(typeof window !== "undefined" ? window : globalThis);

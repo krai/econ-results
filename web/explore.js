@@ -31,7 +31,7 @@
       x, y, p, tag: `≤ ${fmt.n(p.tpot_limit)} ms`,
       yerr: wy.length > 1 ? [Math.min(...wy), Math.max(...wy)] : null,
       xerr: S.x === "p99" && ci && has(ci[0]) && has(ci[1]) ? [1000 / ci[1], 1000 / ci[0]] : null,
-      pick: () => { S.run = r.id; R.update(); R.goto("runs"); },
+      pick: () => { S.run = r.id; R.goto("runs", "run"); },
       rows: [[R.target(p), "the target met (p99), with TTFT ≤ " + fmt.n((p.ttft_limit || 2000) / 1000) + " s"],
              [fmt.n(x, 1), "tokens/s per user, " + S.x], [met.show(y), met.short],
              S.y !== "out" ? [fmt.n(p.output_tok_s / p.gpus), "output tokens/s per GPU"] : null,
@@ -79,7 +79,7 @@
   function runControl(list) {
     const options = [{value: "", label: `${R.count(list.length, "run")} shown: open one`}].concat(
       list.map(({r}) => ({value: r.id, label: `${R.dateText(r.created, false)} · ${R.config(r)} · ${R.engine(r)}`})));
-    return D.control("Run", D.select("Run", options, "", (v) => { if (v) { S.run = v; R.update(); R.goto("runs"); } }));
+    return D.control("Run", D.select("Run", options, "", (v) => { if (v) { S.run = v; R.goto("runs", "run"); } }));
   }
   function changelog() {
     const box = el("details", {class: "changelog"}, el("summary", {text: "Changelog of econ's versions"}));

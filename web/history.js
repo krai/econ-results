@@ -17,7 +17,7 @@
       R.pick("Value", "hm", Object.entries(R.METRICS).map(([value, m]) => ({value, label: m.label}))));
     if (!runs.length) { D.replace(card.body, el("p", {class: "muted", text: "No runs in scope."})); return; }
     const limits = R.limits.filter((l) => runs.some((r) => M.at(r, l)));
-    const value = (r, l) => R.value(S.hm, r, M.at(r, l)), open = (r) => () => { S.run = r.id; R.update(); R.goto("runs"); };
+    const value = (r, l) => R.value(S.hm, r, M.at(r, l)), open = (r) => () => { S.run = r.id; R.goto("runs", "run"); };
     const series = limits.map((l, i) => ({name: `TPOT ≤ ${fmt.n(l)} ms`, cls: "o" + Math.min(4, i + 1), kind: "line",
       values: runs.map((r) => (M.at(r, l) ? value(r, l) : null)), picks: runs.map(open),
       rows: runs.map((r, j) => {

@@ -84,6 +84,7 @@
     if (!keys.includes(S.hist)) S.hist = keys.slice().sort((a, b) => R.scope().filter((r) => M.key(r) === b).length -
       R.scope().filter((r) => M.key(r) === a).length)[0] || "";
     if (!records.some((r) => r.id === S.run)) S.run = "";
+    if (!R.viewOf(S.at) && R.views.length) S.at = R.views[0].id;
     const priced = Array.from(new Set(R.snapshots.map((s) => s.model)));
     if (!priced.includes(S.pm)) S.pm = (pool.find((r) => r.prices) || {prices: {}}).prices.model || priced[0] || "";
     S.u = Math.min(100, Math.max(5, S.u));
@@ -154,7 +155,8 @@
     prices: "M2 8V2h6l6 6-6 6zM5.5 5.5h.01", runs: "M2 4h12M2 8h12M2 12h12", about: "M8 7v4M8 4.5h.01M8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z",
     link: "M7 9a3 3 0 0 0 4 0l2-2a3 3 0 0 0-4-4l-1 1M9 7a3 3 0 0 0-4 0L3 9a3 3 0 0 0 4 4l1-1", copy: "M5 5V3h8v8h-2M3 5h8v8H3z",
     down: "M8 2v8M5 7l3 3 3-3M3 13h10", check: "M3 8.5l3 3 7-7", cross: "M4 4l8 8M12 4l-8 8", left: "M10 3L5 8l5 5", right: "M6 3l5 5-5 5",
-    theme: "M8 2a6 6 0 1 0 6 6 4.5 4.5 0 0 1-6-6z"};
+    theme: "M8 2a6 6 0 1 0 6 6 4.5 4.5 0 0 1-6-6z", assume: "M2 4h5M11 4h3M2 12h3M9 12h5M7 2v4M5 10v4",
+    market: "M2 13V9l3-2 3 2 3-5 3 2v7zM2 13h12", search: "M7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10zM11 11l3 3"};
   R.icon = function (name) {
     const svg = D.svgEl("svg", {class: "ic", width: 16, height: 16, viewBox: "0 0 16 16", "aria-hidden": "true"});
     svg.append(D.svgEl("path", {d: ICONS[name], fill: "none", stroke: "currentColor", "stroke-width": 1.5,
@@ -227,12 +229,15 @@
     return card;
   };
 
-  // Draw every section again after a change of the view. reason "typing": a number or a slider is being changed, so
-  // the section that holds it keeps its controls as they are.
+  // The section an id opens: its own, or the one that holds a card of that id (also: [...])
+  R.viewOf = (id) => R.views.find((v) => v.id === id || (v.also || []).includes(id)) || null;
+  // Draw the section on the page again after a change of the view; the others are drawn when they are opened. reason
+  // "typing": a number or a slider is being changed, so the section that holds it keeps its controls as they are.
   R.update = function (reason) {
     settle();
     D.writeState();
-    for (const v of R.views) v.render(reason);
+    const v = R.viewOf(S.at);
+    if (v) v.render(reason);
   };
   R.settle = settle;
   root.Reg = R;

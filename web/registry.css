@@ -42,7 +42,10 @@
 .navlink { display: flex; align-items: center; gap: 9px; font: inherit; font-size: 14px; color: var(--ink2); background: none;
            border: 0; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; padding: 7px 10px; cursor: pointer; text-align: left; }
 .navlink:hover { background: var(--wash); color: var(--ink); }
-.navlink[aria-current="true"] { color: var(--ink); background: var(--wash); border-left-color: var(--brand1); font-weight: 600; }
+.navlink[aria-selected="true"] { color: var(--ink); background: var(--wash); border-left-color: var(--brand1); font-weight: 600; }
+.navlink:focus-visible { outline: 2px solid var(--c1); outline-offset: -2px; }
+.tabs { display: flex; flex-direction: column; gap: 2px; }
+[hidden] { display: none !important; }  /* a section that is not the one opened, whatever its own display */
 .navmeta { margin: 14px 10px 0; font-size: 12px; color: var(--muted); }
 .layout .dash { max-width: none; margin: 0; padding-top: 0; }
 .dash .card { scroll-margin-top: 76px; }
@@ -106,7 +109,8 @@ svg.viz { touch-action: pan-y; }
   .side { position: sticky; top: 0; z-index: 6; flex-direction: row; overflow-x: auto; padding: 6px 12px; gap: 4px; background: var(--page);
           border-bottom: 1px solid var(--border); }
   .navlink { border-left: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; padding: 6px 9px; white-space: nowrap; }
-  .navlink[aria-current="true"] { border-bottom-color: var(--brand1); }
+  .navlink[aria-selected="true"] { border-bottom-color: var(--brand1); }
+  .tabs { flex-direction: row; gap: 4px; }
   .navmeta { display: none; }
   .logo { border-right: 0; padding-right: 0; }
   .mark { height: 34px; }
