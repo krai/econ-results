@@ -32,6 +32,7 @@ The dashboard is one page, rebuilt on every push to `main`, so it always holds e
 | Rankings | Each configuration by its latest run, with the change against the run before it; a treemap by latency target; bars by run date |
 | History | One configuration across its runs: other days, other engine versions, other versions of econ |
 | Prices | The model's price list on each day it was taken, against the rent that a million output tokens carries |
+| Market | What providers charge for the twenty most-used open-weight models against what a GPU-hour of serving them costs on nine GPUs: which model and GPU pairs pay, one model on every GPU, hardware against software, and KRAI's own runs of those models. From a dated snapshot of public data: [The Market tab](#the-market-tab) |
 | Runs | Every run in a table, with the cluster and node it ran on, and one of them in full: targets, every probe of the search, the node's check, stability, accuracy, what it does not cover, its provenance, and its record to download |
 
 Throughput, latency, power and accuracy are measured and never change on the page. Revenue, margins and costs are
@@ -87,9 +88,10 @@ by their hash.
 |---|---|
 | `runs/ID.json` | One record per run, in the `econ-run/1` format |
 | `sources/DATE_GPU/LABEL/` | A run's original files, as econ wrote them, and its `export.json`: the rents, the price list, the cluster, and whatever else econ's files do not say. One folder per run, so adding a run edits no file of another |
+| `market/` | The snapshot of public data behind the Market tab, one table per file: [its sources](#the-snapshot-and-its-sources) |
 | `schema/` | The format's JSON Schema |
 | `tools/` | The commands below |
-| `web/` | The page: econ's shell and arithmetic (`web/vendor/`), the registry's sections, and the lock |
+| `web/` | The page: econ's shell and arithmetic (`web/vendor/`), the registry's sections, the Market tab, and the lock |
 | `ECON_REF` | The commit of gentic whose econ exports the records |
 | `aliases.json`, `private-words.txt` | Only for the public form of a record: the alias each node goes by, and words it must never hold |
 
@@ -118,6 +120,43 @@ says less: [`tools/sanitize.py`](tools/sanitize.py) drops the provenance and the
 keeps only the file name of a path and drops the providers' names. It fails closed: whatever
 [`tools/patterns.py`](tools/patterns.py) still finds is an error. No page is built from that form today.
 
+## The Market tab
+
+The Market tab answers one question with public data: do the prices providers charge for open-weight models cover the
+GPU that serves them? It takes the twenty open-weight model families with the most OpenRouter tokens over 30 days and
+every priced endpoint of each. Published benchmark runs give thirteen of them a serving cost on nine GPUs (ten
+measured, three estimated from a model of the same architecture), and the tab sets what a GPU earns in an hour against
+what that hour costs: owned, rented on a 3-year commit, or rented on demand.
+
+Every number there follows six choices: the speed each user gets, how the GPU is paid for, the average load, which
+endpoint's price, which tokens are sold and which cache hits are billed. Throughput comes from benchmark runs, so
+every revenue is a ceiling; the tab's last card says how each number is made. The tab is apart from the registry's
+runs, which are KRAI's own measurements: it lists the ones whose model is on the market, and opens each under Runs.
+
+### The snapshot and its sources
+
+The tab's data is a snapshot read on **18 Nov 2026**, with usage from 19 Oct to 17 Nov 2026. It is kept in
+[`market/`](market), one table per file. The page holds the numbers and none of the addresses below.
+
+| Table | What it holds | Read (UTC) | Source |
+|---|---|---|---|
+| `models.json` | The 20 model families: tokens, share of all tokens and input per output token over the 30 days; parameters and licence | 18 Nov, 05:16 | OpenRouter: `https://openrouter.ai/api/frontend/v1/rankings/models?view=month` and `https://openrouter.ai/api/v1/models`. Model cards: `https://huggingface.co/api/models/<id>` |
+| `prices.json` | 424 endpoints: input, output and cached-input price in USD per million tokens, promotion and precision | 18 Nov, 05:19 | OpenRouter: `https://openrouter.ai/api/v1/models/<slug>/endpoints` |
+| `throughput.json` | 1,147 runs of a public agentic benchmark, 7 Aug to 18 Nov 2026: tokens per second per GPU and the P90 speed per user. Each row has the address of its run | 18 Nov, 05:17 | `https://inferencex.semianalysis.com/api/v1/benchmarks?model=<name>` |
+| `gpus.json` | USD per GPU-hour of nine GPUs, owned at hyperscaler volume and rented on a 3-year commit, from a published model of the total cost of ownership (July 2026 surveys, updated 27 Oct 2026) | 17 Nov, 15:53 | <https://inferencex.semianalysis.com/infx/profit-estimator> |
+| `rents.json` | 44 public on-demand list prices of those GPUs, each with its terms; a GPU's on-demand cost is their median | 17 Nov, 15:49 to 16:01 | The price pages and public APIs of ten GPU clouds: each row's `url` |
+| `mlperf.json` | MLPerf Endpoints v1.0, DeepSeek V4.1 Flash, agentic: ten systems at 20, 50 and 100 tokens per second per user. Per GPU is a system's value divided by its GPUs: that division is ours, not an MLPerf metric | 17 Nov, 15:59 | <https://results.mlcommons.org/endpoints> |
+| `reference.json` | One day of DeepSeek V3 and R1 traffic on H800s, published 1 Mar 2025 | 17 Nov | [DeepSeek's overview of its inference system](https://github.com/deepseek-ai/open-infra-index/blob/main/202502OpenSourceWeek/day_6_one_more_thing_deepseekV3R1_inference_system_overview.md) |
+
+[`market/snapshot.json`](market/snapshot.json) says the same for a program. Left out when reading: endpoints with no
+input price or a zero output price; spot, reserved, cluster and managed-endpoint rents; and recipes on engines that
+have not served production tokens.
+
+A newer snapshot is a pull request that replaces the tables and `snapshot.json` together. `python -m tools.market`
+checks that they hold together (every price belongs to a model, every run to a model and a GPU, every figure is a
+number), and the build stops on a snapshot that does not. [`tests/test_market.py`](tests/test_market.py) holds the
+figures the tab must give for this snapshot, so a new one changes them in the same pull request.
+
 ## Tools
 
 Every tool runs as `python -m tools.NAME` from the repository's root, on Python's standard library (3.10 or later).
@@ -128,7 +167,8 @@ The two that export also import econ from a gentic checkout.
 | `tools.add` | A run into the registry: its files, its options and its record, ready for a pull request |
 | `tools.export` | A run of econ as a record, from its `measure.json` (or a configuration of a `report.json`), with its check, accuracy and price list; `--registry .` exports every run again |
 | `tools.validate` | Checks records: the schema, units and ranges, ids, the priced numbers recomputed, no secret; with `--sources`, that the original files are here and every run folder has its record |
-| `tools.build` | The page from the records: `site/index.html`, one file that works offline |
+| `tools.build` | The page from the records and the market snapshot: `site/index.html`, one file that works offline |
+| `tools.market` | Checks that the market snapshot holds together, and says what it holds |
 | `tools.lock` | The built page, locked: it opens with the key in its link |
 | `tools.sanitize` | The public form of a record |
 | `tools.vendor` | Checks that the files copied from econ are unedited, or copies them again from a new commit |
@@ -142,7 +182,8 @@ python -m tools.build runs --out site
 The unit tests use a made-up run, so they do not change when the registry does. With `ECON_SRC` set to the `src`
 folder of a gentic checkout at `ECON_REF`, the tests also export every run of the registry and compare it with its
 record, and read econ's real files of every version there is. node, where there is one, runs the page's own
-arithmetic against the values econ computed (`tests/golden`) and the page's lock with the WebCrypto a browser has.
+arithmetic against the values econ computed (`tests/golden`), the Market tab's against answers worked out by hand, and
+the page's lock with the WebCrypto a browser has.
 
 ## What is econ's and what is the registry's
 
