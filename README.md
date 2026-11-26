@@ -18,13 +18,18 @@ Whoever runs econ at KRAI, on any node or cluster, adds the run here with one co
 
 ## The dashboard
 
-One page, three ways to open it:
+The dashboard is one HTML file that works offline. **[Download the latest](https://github.com/krai/econ-results/releases/latest/download/econ-results.html)**
+and open it: it is rebuilt on every push to `main`, so it always holds every run that has been merged.
 
-| How | What you need |
+| How | What you get |
 |---|---|
-| **Its link** | The dashboard is served locked, and opens only with its link, which carries the key. The link is this repository's website, in the About box of its front page: who can see the repository can see the link. Do not pass it on outside KRAI |
-| **The artifact** | Every run of the `checks` workflow keeps the page as the artifact `page`: one HTML file that works offline. Actions → a run → Artifacts |
+| **The link above** | The page of `main`, as the file of this repository's release `dashboard`. Only who can see this repository can download it |
+| **A pull request's page** | Every run of the `checks` workflow keeps the page built from its branch as the artifact `page`: Actions → the run → Artifacts |
 | **A checkout** | `python -m tools.build runs --out site`, then open `site/index.html` |
+
+It is a file and not a web page because this repository is private: GitHub Pages does not serve a private repository
+on krai's plan, and a Pages site has no sign-in, so its address would be open to anyone who had it or guessed it.
+[How the dashboard is published](#how-the-dashboard-is-published) says how it can also be a web page without that.
 
 | Section | Contents |
 |---|---|
@@ -74,8 +79,8 @@ wrote. You need Python 3.10 or later, a checkout of this repository, and a check
 3. **Look at it.** `python -m tools.build runs --out site`, and open `site/index.html`.
 
 4. **Open a pull request** with the git commands `tools.add` printed. The checks validate the registry and keep the
-   page built from your branch as the artifact `page`. When the pull request is merged, the dashboard is published
-   again with your run in it.
+   page built from your branch as the artifact `page`. When the pull request is merged, the dashboard is built and
+   published again with your run in it: nobody has to do anything else.
 
 No secrets: a record or a file that holds an access token or a private key fails the checks. If a command line or an
 environment of your run carries one, change the secret; econ's files are not edited, because the record cites them
@@ -153,18 +158,21 @@ goes to econ first. Everything else under `web/` is the registry's: its arithmet
 
 ## How the dashboard is published
 
-On every push to `main`, [`site.yml`](.github/workflows/site.yml) validates the registry, builds the page and locks
-it: the page is compressed and encrypted with AES-256-GCM, inside a small page that opens it in the browser. Only
-that locked page leaves this repository. It goes to the site's repository, which holds nothing else and serves it
-with GitHub Pages; without the key it shows a box to paste the link in, and nothing of the registry.
+On every push to `main`, [`site.yml`](.github/workflows/site.yml) validates the registry, builds the page and
+replaces the file of the release `dashboard` with it. That is all it takes today, and it needs no setting.
 
-The key is not in any file. It is a secret of this repository's Actions and it travels in the link, after the `#`,
-which a browser never sends to a server. A browser that opened the page keeps the key, so the address alone works
-there afterwards; the page's About forgets it.
+**As a web page too (not set up).** A page on GitHub Pages can be reached by anyone who has its address, and these
+runs are internal. So the workflow can also publish the page locked: compressed and encrypted with AES-256-GCM, inside
+a small page that opens it in the browser. Only that locked page leaves this repository. It goes to a second
+repository, which holds nothing else and serves it with Pages; without the key it shows a box to paste the link in,
+and nothing of the registry. It is turned on by naming that repository in the variable `SITE_REPOSITORY`, with the
+secrets `SITE_KEY` and `SITE_DEPLOY_KEY`.
 
-What that gives and what it does not: whoever has the link can open the page and can pass the link on, and nobody's
-access can be taken away alone. A new key (`python -m tools.lock --new-key`, set as the secret, and the page
-published again) leaves every old link without the pages published after it.
+The key is in no file. It travels in the link, after the `#`, which a browser never sends to a server. A browser that
+opened the page keeps the key, so the address alone works there afterwards; the page's About forgets it. Whoever has
+the link can open the page and can pass the link on, and nobody's access can be taken away alone: a new key
+(`python -m tools.lock --new-key`, set as the secret, and the page published again) leaves every old link without the
+pages published after it.
 
 ---
 
