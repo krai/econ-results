@@ -1,17 +1,18 @@
-# The dashboard: on every push to main the registry is validated and the page is built. Then it is published in two
-# ways.
+# The dashboard: on every push to main the registry is validated and the page is built. Then it is published.
 #
-# Always: as the file of this repository's release "dashboard" (econ-results.html), in the clear. A release of a
-# private repository is for who can see the repository, so the link
+# Always: as the file of this repository's release "dashboard" (econ-results.html), which
 #     https://github.com/OWNER/REPO/releases/latest/download/econ-results.html
-# is the dashboard for them: it downloads one file that works offline.
+# downloads: one file that works offline.
 #
-# When the repository variable SITE_REPOSITORY (OWNER/NAME) is set: as a web page. This repository is private, and
-# GitHub Pages serves a private repository only on a paid plan, and then to anyone who has the address. So the page
-# goes, locked, to a second repository that holds nothing else and serves it with Pages. What is public there is the
-# locked page, which shows nothing of the registry without its key. The key is the secret SITE_KEY, and it travels
-# in the link people are given. SITE_DEPLOY_KEY is a deploy key of the site's repository: it can write there and
-# nowhere else.
+# When GitHub Pages is on for this repository (Settings > Pages > Source: GitHub Actions): as the web page
+#     https://OWNER.github.io/REPO/
+# GitHub serves Pages for a public repository, or for a private one on a paid plan. A Pages site has no sign-in:
+# whoever has its address can open it, whatever the repository's visibility.
+#
+# When the repository variable SITE_REPOSITORY (OWNER/NAME) is set: as a locked web page, for a registry that is to
+# stay internal. The page goes, encrypted, to that second repository, which holds nothing else and serves it with
+# Pages; it shows nothing of the registry without its key. The key is the secret SITE_KEY, and it travels in the link
+# people are given. SITE_DEPLOY_KEY is a deploy key of that repository: it can write there and nowhere else.
 name: site
 
 on:
@@ -21,6 +22,8 @@ on:
 
 permissions:
   contents: write  # the release's file
+  pages: write     # the deployment to Pages
+  id-token: write  # which Pages asks of what deploys to it
 
 concurrency:
   group: site
@@ -29,6 +32,8 @@ concurrency:
 jobs:
   site:
     runs-on: ubuntu-latest
+    outputs:
+      pages: ${{ steps.pages.outputs.on }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -45,13 +50,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp site/index.html econ-results.html
-          notes="The dashboard as one file that works offline: download econ-results.html and open it. Built from ${GITHUB_SHA::7} on $(date -u +%Y-%m-%d) at $(date -u +%H:%M) UTC. Internal: do not pass it on."
+          notes="The dashboard as one file that works offline: download econ-results.html and open it. Built from ${GITHUB_SHA::7} on $(date -u +%Y-%m-%d) at $(date -u +%H:%M) UTC."
           if gh release view dashboard >/dev/null 2>&1; then
             gh release upload dashboard econ-results.html --clobber
             gh release edit dashboard --notes "$notes"
           else
             gh release create dashboard econ-results.html --title "Dashboard" --notes "$notes"
           fi
+      - id: pages
+        name: Is GitHub Pages on for this repository?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/pages" >/dev/null 2>&1; then on=true; else on=false; fi
+          echo "on=$on" >> "$GITHUB_OUTPUT"
+          echo "GitHub Pages on: $on"
+      - uses: actions/upload-pages-artifact@v3
+        if: ${{ steps.pages.outputs.on == 'true' }}
+        with:
+          path: site
       - name: Lock it with the site's key
         if: ${{ vars.SITE_REPOSITORY != '' }}
         env:
@@ -85,3 +102,14 @@ jobs:
             commit -q -m "site: the locked page of $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
           echo "published $(git rev-parse --short HEAD)"
+
+  pages:
+    needs: site
+    if: ${{ needs.site.outputs.pages == 'true' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
