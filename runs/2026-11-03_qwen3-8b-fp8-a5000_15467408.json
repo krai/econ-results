@@ -1,0 +1,468 @@
+{
+ "schema": "econ-run/1",
+ "id": "2026-11-03_qwen3-8b-fp8-a5000_15467408",
+ "created": "2026-11-03T03:03:21",
+ "visibility": "internal",
+ "econ": {
+  "version": "0.0.3",
+  "commit": null,
+  "exporter": {
+   "version": "0.0.9",
+   "commit": "bfc3bc75dee20c8a0a99d3b57534b85380ab1296",
+   "source": "measure.json",
+   "source_version": "0.0.3"
+  }
+ },
+ "model": {
+  "id": "Qwen/Qwen3-8B-FP8",
+  "name": "Qwen3-8B-FP8",
+  "precision": "FP8",
+  "max_model_len": 8192,
+  "priced_as": "qwen/qwen3-14b"
+ },
+ "engine": {
+  "name": "vLLM",
+  "version": "0.31.0",
+  "build": "release",
+  "commit": null,
+  "image": null,
+  "digest": null,
+  "inside": null
+ },
+ "config": {
+  "label": "qwen3-8b-fp8-a5000",
+  "family": "stock",
+  "variant": "context 8192",
+  "tp": 1,
+  "dp": null,
+  "flags": null,
+  "env": null,
+  "patch": null,
+  "server_config": null
+ },
+ "hardware": {
+  "gpu": "NVIDIA RTX A5000",
+  "gpus": 1,
+  "gpus_on_node": null,
+  "driver": "580.178.04",
+  "power_limit_w": 230.0,
+  "memory_mib": 24564.0,
+  "node": "chai",
+  "cluster": "CHAI"
+ },
+ "workload": {
+  "mix": "chat-mix",
+  "lengths": "log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens",
+  "prompts": "random token ids in [1000, 100000): no prefix-cache hits",
+  "seed": 0,
+  "temperature": null,
+  "arrival": "Poisson"
+ },
+ "method": {
+  "warmup": 45.0,
+  "window": 120.0,
+  "search_warmup": 30.0,
+  "search_window": 60.0,
+  "min_requests": 100,
+  "min_search_requests": 30,
+  "max_window": 600.0,
+  "repeats": 2,
+  "start_rps": 1.0,
+  "growth": 2.0,
+  "bisect_steps": 3,
+  "drain": 300.0,
+  "client_busy_above": {
+   "cpu_pct": 70.0,
+   "loop_lag_p99_ms": 20.0
+  }
+ },
+ "power": null,
+ "results": [
+  {
+   "slo": {
+    "ttft_p99_ms": 2000.0,
+    "tpot_p99_ms": 50.0,
+    "label": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms"
+   },
+   "met": false,
+   "rate_rps": null,
+   "note": "not confirmed after 4 back-offs",
+   "probes": 5,
+   "windows": [
+    {
+     "rate_rps": 0.32805000000000006,
+     "measured": 83,
+     "failed": 0,
+     "input_tok_s": 503.92416600000007,
+     "output_tok_s": 116.07393150000001,
+     "p50_tpot_ms": 18.4906209581327,
+     "p90_tpot_ms": 24.816919831205006,
+     "p99_tpot_ms": 30.047090741896373,
+     "p99_ttft_ms": 2299.863758087159,
+     "p99_tpot_ci_ms": null,
+     "p99_ttft_ci_ms": null,
+     "node_power_w": 201.94589225589232,
+     "tok_per_j": 0.5747773832057891,
+     "window_s": 304.8315805517451,
+     "steady": null
+    },
+    {
+     "rate_rps": 0.32805000000000006,
+     "measured": 94,
+     "failed": 0,
+     "input_tok_s": 495.29973150000006,
+     "output_tok_s": 117.17617950000002,
+     "p50_tpot_ms": 18.4681072187324,
+     "p90_tpot_ms": 23.526955583821174,
+     "p99_tpot_ms": 35.254623105710145,
+     "p99_ttft_ms": 2351.366362571716,
+     "p99_tpot_ci_ms": null,
+     "p99_ttft_ci_ms": null,
+     "node_power_w": 198.2099326599327,
+     "tok_per_j": 0.5911720867240207,
+     "window_s": 304.8315805517451,
+     "steady": null
+    }
+   ]
+  }
+ ],
+ "points": [
+  {
+   "rate_rps": null,
+   "request_s": null,
+   "input_tok_s": null,
+   "output_tok_s": null,
+   "p50_ttft_ms": null,
+   "p99_ttft_ms": null,
+   "p50_tpot_ms": null,
+   "p99_tpot_ms": null,
+   "mean_input_tokens": null,
+   "mean_output_tokens": null,
+   "node_power_w": null,
+   "tok_per_j": null,
+   "failed": null,
+   "client_cpu_pct": null,
+   "client_busy": null,
+   "inflight_mean": null,
+   "inflight_growth": null,
+   "steady": null,
+   "sm_clock_mhz": null,
+   "temp_max_c": null,
+   "power": null,
+   "tok_per_j_total": null,
+   "config": "qwen3-8b-fp8-a5000",
+   "source": "measure.json",
+   "gpus": 1,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+   "tpot_limit": 50.0,
+   "ttft_limit": 2000.0,
+   "met": false,
+   "note": "not confirmed after 4 back-offs",
+   "repeats": 2,
+   "spread_pct": null,
+   "input_known": true,
+   "pooled": null,
+   "server": null,
+   "accuracy": null,
+   "health": {
+    "verdict": "WARN",
+    "warnings": 1,
+    "how": "watched during the measurement"
+   },
+   "p90_tpot_ms": null,
+   "p90_ttft_ms": null
+  }
+ ],
+ "curve": {
+  "name": "qwen3-8b-fp8-a5000",
+  "points": [
+   {
+    "x": 304.81666666666666,
+    "y": 99.58342942469878,
+    "ttft": 2919.4306850433345,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 1.0,
+    "probe": 0,
+    "power_w": 225.8642372881356,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 169.5,
+    "y": 38.7732534020446,
+    "ttft": 1847.2144126892088,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.5,
+    "probe": 1,
+    "power_w": 215.8979310344827,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 300.3333333333333,
+    "y": 50.80573688247741,
+    "ttft": 1488.2027530670173,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.7071067811865476,
+    "probe": 2,
+    "power_w": 214.31796610169488,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 230.38333333333333,
+    "y": 59.59457449116379,
+    "ttft": 2542.657380104064,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.5946035575013605,
+    "probe": 3,
+    "power_w": 216.50627118644067,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 182.53333333333333,
+    "y": 143.89934017674187,
+    "ttft": 3027.206716537475,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.5452538663326288,
+    "probe": 4,
+    "power_w": 214.86254237288136,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "probe",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 116.07393150000001,
+    "y": 30.047090741896373,
+    "ttft": 2299.863758087159,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.32805000000000006,
+    "probe": 13,
+    "power_w": 201.94589225589232,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   },
+   {
+    "x": 117.17617950000002,
+    "y": 35.254623105710145,
+    "ttft": 2351.366362571716,
+    "y_ci": null,
+    "ttft_ci": null,
+    "rate": 0.32805000000000006,
+    "probe": 14,
+    "power_w": 198.2099326599327,
+    "failed": 0,
+    "steady": null,
+    "client_busy": false,
+    "final": false,
+    "kind": "window",
+    "target": null,
+    "margin": null
+   }
+  ]
+ },
+ "stability": {
+  "verdict": "WARN",
+  "warnings": 1,
+  "samples": 4172,
+  "seconds": 4288.010999917984,
+  "interval_s": 1.0280534643773638,
+  "from": "power.csv",
+  "rows": [
+   {
+    "check": "Power limit",
+    "result": "held at 230 W",
+    "status": "PASS"
+   },
+   {
+    "check": "Board power",
+    "result": "214 W on average under load (93 % of the limit), peak 232 W",
+    "status": "INFO"
+   },
+   {
+    "check": "SM clock under load",
+    "result": "1,375 MHz on average, lowest 1,170 MHz",
+    "status": "INFO"
+   },
+   {
+    "check": "Throttling",
+    "result": "sw thermal slowdown in 85 % of the samples under load",
+    "status": "WARN"
+   },
+   {
+    "check": "Temperature",
+    "result": "peak 89 °C, 87 °C on average under load",
+    "status": "INFO"
+   },
+   {
+    "check": "PCIe link",
+    "result": "not sampled under load",
+    "status": "INFO"
+   },
+   {
+    "check": "Memory errors",
+    "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+    "status": "INFO"
+   },
+   {
+    "check": "Remapped rows",
+    "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+    "status": "INFO"
+   }
+  ]
+ },
+ "health": null,
+ "prices": {
+  "endpoints": 2,
+  "providers": 2,
+  "input": {
+   "min": 0.1,
+   "p25": 0.10500000000000001,
+   "median": 0.11,
+   "p75": 0.11499999999999999,
+   "max": 0.12
+  },
+  "output": {
+   "min": 0.22,
+   "p25": 0.225,
+   "median": 0.22999999999999998,
+   "p75": 0.235,
+   "max": 0.24
+  },
+  "common": {
+   "input": 0.1,
+   "output": 0.22,
+   "endpoints": 1
+  },
+  "by_quantization": {
+   "fp8": {
+    "endpoints": 1,
+    "median_output": 0.24
+   },
+   "int4": {
+    "endpoints": 1,
+    "median_output": 0.22
+   }
+  },
+  "model": "qwen/qwen3-14b",
+  "taken": "2026-11-03T05:13Z",
+  "source": "https://openrouter.ai/api/v1/models/qwen/qwen3-14b/endpoints",
+  "by_endpoint": [
+   {
+    "provider": "NextBit",
+    "tag": "nextbit/int4",
+    "quantization": "int4",
+    "input": 0.1,
+    "output": 0.22,
+    "cached_input": null
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8",
+    "quantization": "fp8",
+    "input": 0.12,
+    "output": 0.24,
+    "cached_input": null
+   }
+  ]
+ },
+ "rents": [
+  0.27,
+  0.16
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "text": "During the measurement of qwen3-8b-fp8-a5000: Throttling, sw thermal slowdown in 85 % of the samples under load. The clocks fell because of heat or a hardware signal, so the capacity is the cooled node's, not the GPU's: check the airflow, the fans and the inlet temperature, then measure again."
+  },
+  {
+   "level": "WARN",
+   "text": "qwen3-8b-fp8-a5000: no target was met (not confirmed after 4 back-offs)."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000: the capacity was measured with quick settings (120 s confirmation windows, 2 repeats). Longer windows meet more of the rare slow requests, so a full measurement (--window 600 --repeats 5) can confirm a lower rate: plan with headroom."
+  },
+  {
+   "level": "INFO",
+   "text": "The node was not checked (econ check): its power limit, clocks under load, matmul and copy probes, PCIe link, memory errors, disk and download are not in this evaluation."
+  },
+  {
+   "level": "INFO",
+   "text": "Accuracy was not measured (econ accuracy): this evaluation cannot tell a configuration that breaks the model from one that does not."
+  }
+ ],
+ "not_covered": [
+  "Accuracy: the outputs are not scored (run the accuracy check of the config separately)",
+  "Lengths: log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens, context limit 8192 tokens",
+  "Power: GPU board power only (NVML): no CPUs, memory, NICs, fans or PSU losses",
+  "Prompts: random token ids, so no prefix-cache hits (real chat and agent traffic has them)",
+  "Quick settings (120 s windows, 2 repeats): for comparisons, not for publishing"
+ ],
+ "provenance": {
+  "host": "chai",
+  "job": null,
+  "data_dir": null,
+  "command": null,
+  "gentic_commit": null,
+  "image": null,
+  "server_config": null,
+  "started": null
+ },
+ "files": [
+  {
+   "role": "measure",
+   "name": "measure.json",
+   "sha256": "b2f057ce7db2fde2aec37f622349e9c44d89c8c586100ac351dc47c48265be68",
+   "bytes": 11463
+  },
+  {
+   "role": "power",
+   "name": "power.csv",
+   "sha256": "b06d508f86b642727a01c50d998d46c8fd6e25c3429d437e0b8cfb5ab89cf8ae",
+   "bytes": 905086
+  },
+  {
+   "role": "prices",
+   "name": "prices_qwen3-14b.json",
+   "sha256": "9fae098b6583bc25af1a7fb03dcb1b2c275530b843733994bdadc01379526c77",
+   "bytes": 704
+  }
+ ]
+}
