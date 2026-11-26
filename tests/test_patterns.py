@@ -1,4 +1,4 @@
-"""What a public record must not hold."""
+"""What a record must not hold: nothing private in a public form, no secret in any."""
 import unittest
 
 from tools import patterns
@@ -41,6 +41,17 @@ class TestPatterns(unittest.TestCase):
         self.assertEqual(len(hits), 2)
         self.assertIn("$.a[0].b", hits[0])
         self.assertIn("$.provenance", hits[1])
+
+    def test_a_secret_is_found_in_any_document_and_never_repeated(self):
+        doc = {"config": {"env": ["HF_TOKEN=hf_abcdefghijklmnopqrstuvwx", "MODE=fast"]}, "ok": ["/home/someone", "plain"],
+               "provenance": {"command": "serve --key -----BEGIN RSA PRIVATE KEY----- ..."}}
+        hits = patterns.secrets(doc)
+        self.assertEqual(len(hits), 2)
+        self.assertIn("$.config.env[0]: an access token", hits)
+        self.assertIn("$.provenance.command: a private key", hits)
+        self.assertNotIn("hf_abc", " ".join(hits))
+        self.assertEqual(patterns.secrets({"where": "/home/someone/x", "who": "someone@example.org"}), [])  # private, not secret
+        self.assertEqual(patterns.secrets_in_text("no token here: --max-tokens 2048, sk-short"), [])
 
     def test_the_digests_are_digests(self):
         self.assertTrue(all(len(d) == 64 and set(d) <= set("0123456789abcdef") for d in patterns.WORD_SHA256))

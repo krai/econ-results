@@ -1,11 +1,11 @@
-"""Check econ-run/1 records: the format, the units and ranges, the ids, the arithmetic and, for a public record,
-everything that must not be in it.
+"""Check econ-run/1 records: the format, the units and ranges, the ids, the arithmetic, that none holds a secret
+and, for a public record, everything else that must not be in it.
 
-    python -m tools.validate runs/                       every *.json under a folder (or files one by one)
-    python -m tools.validate runs/ --public              they must all be public records
-    python -m tools.validate ../econ-runs/public --public --words ../econ-runs/private-words.txt
-    python -m tools.validate ../econ-runs/runs --sources ../econ-runs/sources
-                                                         each record's original files must be under that folder
+    python -m tools.validate runs                        every *.json under a folder (or files one by one)
+    python -m tools.validate runs --sources sources      and the registry's original files: each record's are there,
+                                                         each run folder has its record, none holds a secret
+    python -m tools.validate PUBLIC_DIR --public --words private-words.txt
+                                                         they must all be public forms, with nothing private left
 
 Per record:
 - the JSON Schema (schema/econ-run-1.schema.json, checked by tools/schema.py);
@@ -13,9 +13,12 @@ Per record:
   units, intervals around their value, a power no larger than the boards' limit, accuracy within its interval;
 - its id is the one its own fields give, and its file is named after it;
 - its priced numbers follow from its measured ones and its price snapshot (tools/arith.py);
+- it holds no access token and no private key, whatever its visibility;
 - a public record has no provenance and nothing that tools/patterns.py forbids.
 Across records: no id twice, and no measurement twice under two ids. With --sources, every file a record cites must
-be under that folder, found by its SHA-256 whatever its name: a registry that keeps its originals can prove it.
+be under that folder, found by its SHA-256 whatever its name: a registry that keeps its originals can prove it. Every
+run folder there (one with an export.json) must have the record of its measurement, and no file there may hold a
+secret.
 
 Exit status 0 when every record passes, 1 otherwise; every problem is printed with its file and its path.
 """
@@ -26,7 +29,7 @@ import hashlib
 import os
 import sys
 
-from . import arith, patterns, read_json, run_id, schema
+from . import arith, export, patterns, read_json, run_id, schema
 
 SCHEMA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "schema",
                            "econ-run-1.schema.json")
@@ -138,25 +141,46 @@ def check_record(rec, path=None, public=False, words=frozenset(), schema_doc=Non
         out.append("$.visibility: an internal record where only public ones may be")
     if rec["visibility"] == "public":
         out += patterns.scan(rec, words)
-    elif "provenance" not in rec:
-        out.append("$.provenance: an internal record keeps where it was run")
+    else:
+        out += [f"{hit}: no record may hold a secret" for hit in patterns.secrets(rec)]
+        if "provenance" not in rec:
+            out.append("$.provenance: an internal record keeps where it was run")
     return out
 
 
-def hashes(folder):
-    """The SHA-256 of every file under a folder."""
-    out = set()
+def originals(folder):
+    """The original files under a folder: {path: SHA-256}, and the problems of the files themselves (a secret)."""
+    have, bad = {}, {}
     for root, _, names in os.walk(folder):
         for name in names:
-            with open(os.path.join(root, name), "rb") as f:
-                out.add(hashlib.sha256(f.read()).hexdigest())
+            path = os.path.normpath(os.path.join(root, name))
+            with open(path, "rb") as f:
+                data = f.read()
+            have[path] = hashlib.sha256(data).hexdigest()
+            found = patterns.secrets_in_text(data.decode("utf-8", "replace"))
+            if found:
+                bad[path] = [f"{what}: no file of the registry may hold a secret" for what in found]
+    return have, bad
+
+
+def unrecorded(folder, have, cited):
+    """{export.json: [problem]} for the run folders whose measurement no record cites."""
+    out = {}
+    for root, _, names in os.walk(folder):
+        if export.EXPORT_FILE in names:
+            measure = export.discover(root)["measure"]
+            if measure and have[os.path.normpath(measure)] not in cited:
+                out[os.path.join(root, export.EXPORT_FILE)] = [
+                    "this run has no record: export it (python -m tools.export --registry . --econ-src GENTIC/src)"]
     return out
 
 
 def check_all(paths, public=False, words=frozenset(), sources=None):
     """{file: [problems]} for the files with problems, and the number of records and of values re-computed."""
     schema_doc, bad, seen, same, values = schema.load(SCHEMA_PATH), {}, {}, {}, 0
-    files, have = record_files(paths), hashes(sources) if sources else None
+    files, cited = record_files(paths), set()
+    have, bad_files = originals(sources) if sources else (None, {})
+    held = set(have.values()) if sources else None
     for path in files:
         try:
             rec = read_json(path)
@@ -173,11 +197,15 @@ def check_all(paths, public=False, words=frozenset(), sources=None):
                 problems.append(f"the same measurement ({key[0]}, {key[1]}) is also in {same[key]}")
             seen.setdefault(rec["id"], path)
             same.setdefault(key, path)
-            if have is not None:
+            cited.update(f["sha256"] for f in rec["files"])
+            if held is not None:
                 problems += [f"$.files: {f['name']} ({f['role']}) is not under {sources}: no file there has its SHA-256"
-                             for f in rec["files"] if f["sha256"] not in have]
+                             for f in rec["files"] if f["sha256"] not in held]
         if problems:
             bad[path] = problems
+    if sources:
+        bad.update(bad_files)
+        bad.update(unrecorded(sources, have, cited))
     return bad, len(files), values
 
 
@@ -198,7 +226,9 @@ def main(argv=None):
     if count == 0 and not a.allow_empty:
         print("no records found")
         return 1
-    print(f"{count - len(bad)} of {count} records pass" + (f"; {values} priced values re-computed" if values else ""))
+    failed = sum(1 for path in bad if path in set(record_files(a.paths)))
+    print(f"{count - failed} of {count} records pass" + (f"; {values} priced values re-computed" if values else "") +
+          (f"; {len(bad) - failed} problem(s) under {a.sources}" if len(bad) > failed else ""))
     return 1 if bad else 0
 
 

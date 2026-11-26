@@ -1,4 +1,5 @@
-"""The validator: format, ranges, ids, arithmetic, and what a public record must not hold."""
+"""The validator: format, ranges, ids, arithmetic, secrets, what a public record must not hold, and the registry's
+original files."""
 import contextlib
 import io
 import os
@@ -61,6 +62,14 @@ class TestRecord(unittest.TestCase):
         rec = sample.record()
         del rec["provenance"]
         self.assertTrue(problems(rec))
+
+    def test_no_record_may_hold_a_secret(self):
+        rec = sample.record()
+        rec["config"]["env"] = ["HF_TOKEN=hf_abcdefghijklmnopqrstuvwx"]
+        found = problems(rec)
+        self.assertEqual(len(found), 1)
+        self.assertIn("$.config.env[0]: an access token: no record may hold a secret", found[0])
+        self.assertNotIn("hf_abc", found[0])
 
     def test_an_internal_record_is_refused_where_only_public_ones_may_be(self):
         self.assertTrue(any("internal" in p for p in problems(sample.record(), public=True)))
@@ -145,6 +154,45 @@ class TestFolder(unittest.TestCase):
         self.put(rec)
         self.assertEqual(self.run_main(runs, "--sources", top)[0], 0)
         self.assertEqual(self.run_main(runs)[0], 0)
+
+    def registry(self):
+        """A registry of one run: its folder under sources/ with a measurement and its options, and its record."""
+        import hashlib
+        rec, run = sample.record(), os.path.join(self.tmp.name, "sources", "day", "sample-tp2")
+        os.makedirs(run)
+        with open(os.path.join(run, "measure.json"), "wb") as f:
+            f.write(b'{"label": "sample-tp2"}\n')
+        write_json(os.path.join(run, "export.json"), {"rents": [2.0, 1.0]})
+        rec["files"][0]["sha256"] = hashlib.sha256(b'{"label": "sample-tp2"}\n').hexdigest()
+        return rec, run, os.path.join(self.tmp.name, "runs"), os.path.join(self.tmp.name, "sources")
+
+    def test_a_run_folder_without_its_record_is_a_problem(self):
+        rec, run, runs, sources = self.registry()
+        other = sample.record(label="sample-tp4", gpus=4)
+        self.put(other)
+        code, out = self.run_main(runs)
+        self.assertEqual(code, 0, out)                       # the records alone are fine
+        code, out = self.run_main(runs, "--sources", sources)
+        self.assertEqual(code, 1)
+        self.assertIn("this run has no record", out)         # the folder's measurement is cited by none
+        self.assertIn("is not under", out)                   # and the other record's file is not there
+        os.remove(os.path.join(runs, other["id"] + ".json"))
+        self.put(rec)
+        code, out = self.run_main(runs, "--sources", sources)
+        self.assertEqual(code, 0, out)
+        self.assertIn("1 of 1 records pass", out)
+
+    def test_an_original_file_with_a_secret_is_a_problem(self):
+        rec, run, runs, sources = self.registry()
+        self.put(rec)
+        with open(os.path.join(run, "provenance.txt"), "w", encoding="utf-8") as f:
+            f.write("job=1 token=ghp_abcdefghijklmnopqrstuvwx\n")
+        code, out = self.run_main(runs, "--sources", sources)
+        self.assertEqual(code, 1)
+        self.assertIn("an access token: no file of the registry may hold a secret", out)
+        self.assertIn("1 of 1 records pass", out)
+        self.assertIn("; 1 problem(s) under", out)
+        self.assertNotIn("ghp_abc", out)
 
     def test_public_only_and_a_private_word_list(self):
         pub = sanitize.public(sample.record(), sample.ALIASES)

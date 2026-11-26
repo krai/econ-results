@@ -1,17 +1,19 @@
-"""What a public record must not hold: the patterns checked in every string and key of a record before it may enter
-this repository, and in CI on everything under runs/.
+"""What a record must not hold. A public form must hold nothing private; any record, internal too, must hold no
+secret: an access token or a private key is not for a repository, however private.
 
-    hits = scan(record)                     [] when nothing forbidden is in it
+    hits = scan(record)                     [] when nothing forbidden for a public record is in it
     hits = scan(record, words={"name"})     with a private list of extra words, lower case
+    hits = secrets(record)                  [] when no access token or private key is in it
+    whats = secrets_in_text(text)           the same, of one text (an original file)
 
 Three kinds of rule:
 - patterns of things that are private wherever they appear: home and mount paths, drive paths, GPU UUIDs, IPv4
-  addresses, e-mail addresses, access tokens and private keys;
+  addresses, e-mail addresses, access tokens and private keys. The last two (SECRETS) are forbidden everywhere;
 - field names that only an internal record has (KEYS);
-- words: the names of hosts, accounts and storage trees. This file is public, so it does not name them: it keeps the
-  SHA-256 of each word (WORD_SHA256), and a string's words are hashed and compared. `python -m tools.patterns WORD ...`
-  prints the digests to add. A word is checked as written and without its trailing digits, so a numbered host is
-  covered by its name.
+- words: the names of hosts, accounts and storage trees. This file does not name them: it keeps the SHA-256 of each
+  word (WORD_SHA256), and a string's words are hashed and compared, so the check can travel with a public form's
+  tooling. `python -m tools.patterns WORD ...` prints the digests to add. A word is checked as written and without
+  its trailing digits, so a numbered host is covered by its name.
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ REGEXES = (
                         r"|\bxox[abpr]-|\bAKIA[0-9A-Z]{16}"),
     ("a private key", r"-----BEGIN [A-Z ]*PRIVATE KEY"),
 )
+SECRETS = ("an access token", "a private key")  # of REGEXES: what no record and no original file may hold
 KEYS = ("provenance", "command", "host", "hostname", "uuid", "job", "data_dir", "endpoint", "user")
 WORD_SHA256 = frozenset((
     "d888830fbb8bf967ae22a47ac5f093b3a7e6435027aab7266310cfbf1d257359",
@@ -44,6 +47,7 @@ WORD_SHA256 = frozenset((
     "1505e1f8fa878cdc44dec9aded681d7891b63a28249dccd2180a96359a92658d",
 ))
 _COMPILED = tuple((name, re.compile(rx)) for name, rx in REGEXES)
+_SECRET = tuple((name, rx) for name, rx in _COMPILED if name in SECRETS)
 _WORD = re.compile(r"[A-Za-z0-9_]+")
 
 
@@ -81,6 +85,26 @@ def scan(doc, words=frozenset(), path="$"):
             hits += scan(value, words, f"{path}[{i}]")
     elif isinstance(doc, str):
         hits += [f"{path}: {h}" for h in in_text(doc, words)]
+    return hits
+
+
+def secrets_in_text(text):
+    """The kinds of secret in one text: [what], never repeating the secret."""
+    return [name for name, rx in _SECRET if rx.search(text)]
+
+
+def secrets(doc, path="$"):
+    """Every access token or private key in a JSON document: ["path: what"], through all its keys and strings."""
+    hits = []
+    if isinstance(doc, dict):
+        for key, value in doc.items():
+            hits += [f"{path}.{key} (the field's name): {h}" for h in secrets_in_text(key)]
+            hits += secrets(value, f"{path}.{key}")
+    elif isinstance(doc, list):
+        for i, value in enumerate(doc):
+            hits += secrets(value, f"{path}[{i}]")
+    elif isinstance(doc, str):
+        hits += [f"{path}: {h}" for h in secrets_in_text(doc)]
     return hits
 
 
