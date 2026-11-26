@@ -1,0 +1,114 @@
+/* The registry's own look on top of econ's shell: KRAI's header, the side bar of sections, and the controls and marks
+   the registry adds (buttons, switches, chips, a change against the run before, the cursor of a chart). The palette's
+   chrome and its eight categorical slots are the shell's; this file adds KRAI's navy and cyan for the header, the
+   ink of a change up or down, and one blue ramp for ordered groups. */
+:root {
+  --navy1: #021528; --navy2: #04203a; --brand1: #0d83cc; --brand2: #2ef9fb; --brandink: #9fb2c3;
+  --up: #0f7b3e; --down: #b42318;
+  --o1: #86b6ef; --o2: #5598e7; --o3: #2a78d6; --o4: #1c5cab; --o1i: #0b0b0b; --o2i: #0b0b0b; --o3i: #ffffff; --o4i: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --up: #5fd08f; --down: #f2877c;
+    --o1: #9ec5f4; --o2: #6da7ec; --o3: #3987e5; --o4: #256abf; --o1i: #0b0b0b; --o2i: #0b0b0b; --o3i: #ffffff; --o4i: #ffffff;
+  }
+}
+:root[data-theme="dark"] {
+  --up: #5fd08f; --down: #f2877c;
+  --o1: #9ec5f4; --o2: #6da7ec; --o3: #3987e5; --o4: #256abf; --o1i: #0b0b0b; --o2i: #0b0b0b; --o3i: #ffffff; --o4i: #ffffff;
+}
+
+/* KRAI's header: navy, with the cyan rule above it, in both themes */
+.brand { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; padding: 14px max(16px, env(safe-area-inset-left, 0px));
+         background: linear-gradient(180deg, var(--navy1), var(--navy2)); color: #fff; position: relative; }
+.brand::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--brand1), var(--brand2)); }
+.logo { display: inline-flex; align-items: center; gap: 6px; padding-right: 20px; border-right: 1px solid #3a4f63; }
+.wordmark { height: 22px; width: auto; }
+.mark { height: 44px; width: auto; }
+.btitle { flex: 1 1 260px; min-width: 0; }
+.btitle h1 { font-size: 20px; line-height: 1.25; font-weight: 600; margin: 0; letter-spacing: -0.2px; }
+.btitle p { margin: 2px 0 0; color: var(--brandink); font-size: 13px; }
+.bside { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: #fff; cursor: pointer;
+         background: rgba(255, 255, 255, .06); border: 1px solid #3a4f63; border-radius: 999px; padding: 4px 10px; }
+.badge.good .ic { color: #5fd08f; }
+.badge.bad { border-color: #f2877c; }
+.badge.bad .ic { color: #f2877c; }
+.brand .btn { color: #fff; border-color: #3a4f63; background: rgba(255, 255, 255, .06); }
+
+/* the side bar of sections beside the page; a row above it on a narrow screen */
+.layout { display: grid; grid-template-columns: 188px minmax(0, 1fr); align-items: start; max-width: 1480px; margin: 0 auto; }
+.side { position: sticky; top: 0; align-self: start; padding: 18px 8px 18px 16px; display: flex; flex-direction: column; gap: 2px; }
+.navlink { display: flex; align-items: center; gap: 9px; font: inherit; font-size: 14px; color: var(--ink2); background: none;
+           border: 0; border-left: 2px solid transparent; border-radius: 0 6px 6px 0; padding: 7px 10px; cursor: pointer; text-align: left; }
+.navlink:hover { background: var(--wash); color: var(--ink); }
+.navlink[aria-current="true"] { color: var(--ink); background: var(--wash); border-left-color: var(--brand1); font-weight: 600; }
+.navmeta { margin: 14px 10px 0; font-size: 12px; color: var(--muted); }
+.layout .dash { max-width: none; margin: 0; padding-top: 0; }
+.dash .card { scroll-margin-top: 76px; }
+.card h2 { display: flex; align-items: center; gap: 8px; }
+.card h2 .btn { border: 0; padding: 2px; color: var(--muted); }
+
+/* controls */
+.ic { flex: none; }
+.btn { display: inline-flex; align-items: center; gap: 5px; font: inherit; font-size: 12px; line-height: 16px; color: var(--ink2);
+       background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.btn:hover:not(:disabled) { color: var(--ink); background: var(--wash); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.done { color: var(--up); border-color: var(--up); }
+.btnrow { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.btnrow .clabel { margin-right: 2px; }
+.linkish { font: inherit; font-size: 12px; color: var(--c1); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+.choices { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: flex-end; margin: 10px 0 14px; }
+.choices:empty { display: none; }
+.segment { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.segment button { font: inherit; font-size: 13px; color: var(--ink2); background: var(--surface); border: 0; padding: 4px 11px; cursor: pointer; }
+.segment button + button { border-left: 1px solid var(--border); }
+.segment button[aria-pressed="true"] { background: var(--wash); color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--brand1); }
+.switch { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch .track { position: relative; flex: none; width: 30px; height: 17px; border-radius: 999px; background: var(--axis); transition: background .12s; }
+.switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--surface); transition: left .12s; }
+.switch input:checked + .track { background: var(--c1); }
+.switch input:checked + .track::after { left: 15px; }
+.switch input:focus-visible + .track { outline: 2px solid var(--c1); outline-offset: 2px; }
+.chip { font: inherit; font-size: 12px; color: var(--ink2); background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+        padding: 2px 9px; cursor: pointer; }
+.chip[aria-pressed="true"] { color: var(--ink); border-color: var(--ink2); background: var(--wash); font-weight: 600; }
+.filters .assumed .val { min-width: 0; color: var(--ink2); }
+@media (prefers-reduced-motion: reduce) { .switch .track, .switch .track::after { transition: none; } }
+
+/* a sentence under a chart, a change against the run before, a list of notes */
+.summary { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--ink2); margin: 10px 0 0; max-width: 980px; }
+.summary .btn { border: 0; padding: 1px 2px; color: var(--muted); }
+.delta { font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.delta.up { color: var(--up); } .delta.down { color: var(--down); } .delta.flat, .delta.none { color: var(--muted); }
+details.changelog { margin-top: 14px; font-size: 13px; color: var(--ink2); }
+details.changelog summary { cursor: pointer; color: var(--ink); }
+details.changelog p { margin: 6px 0 0 14px; max-width: 900px; }
+table.rents input[type="number"] { font: inherit; font-size: 13px; width: 78px; color: var(--ink); background: var(--surface);
+                                   border: 1px solid var(--border); border-radius: 6px; padding: 3px 6px; text-align: right; }
+table.rents { width: auto; }
+.assume .choices { margin-top: 14px; }
+
+/* marks the registry's charts add to the shell's */
+.cursor { stroke: var(--ink2); stroke-width: 1; pointer-events: none; }
+.line.far { stroke-width: 1; opacity: .45; }
+.line.old, .hollow.old { opacity: .55; }
+svg .tlabel { fill: var(--muted); font-size: 11px; }
+.o1 { fill: var(--o1); } .o2 { fill: var(--o2); } .o3 { fill: var(--o3); } .o4 { fill: var(--o4); }
+.lk .o1, .lk .o2, .lk .o3, .lk .o4 { stroke: none; }
+svg.viz { touch-action: pan-y; }
+.plot { position: relative; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .side { position: sticky; top: 0; z-index: 6; flex-direction: row; overflow-x: auto; padding: 6px 12px; gap: 4px; background: var(--page);
+          border-bottom: 1px solid var(--border); }
+  .navlink { border-left: 0; border-bottom: 2px solid transparent; border-radius: 6px 6px 0 0; padding: 6px 9px; white-space: nowrap; }
+  .navlink[aria-current="true"] { border-bottom-color: var(--brand1); }
+  .navmeta { display: none; }
+  .logo { border-right: 0; padding-right: 0; }
+  .mark { height: 34px; }
+  .dash .card { scroll-margin-top: 52px; }
+}

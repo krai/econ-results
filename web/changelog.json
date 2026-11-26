@@ -1,0 +1,16 @@
+[
+ {"version": "0.0.9", "date": "2026-11-20",
+  "text": "A check stops with a clear answer when GPUs are held by someone else, and a measurement stopped by the scheduler leaves no server behind."},
+ {"version": "0.0.8", "date": "2026-11-18",
+  "text": "The host-to-GPU copy is measured one GPU at a time; each target says the tokens of its mean request; configurations are compared at the same speed per user."},
+ {"version": "0.0.7", "date": "2026-11-12",
+  "text": "Power has a stated scope: the serving GPU boards, every board of the node, and the CPU packages or a node meter where they can be read."},
+ {"version": "0.0.6", "date": "2026-11-08",
+  "text": "The node is checked before a run and watched during it (power limit, clocks, throttling, links, memory errors), and accuracy is scored."},
+ {"version": "0.0.5", "date": "2026-11-05",
+  "text": "Every p99 carries its 95 % interval and a margin; the server's own counters are read for each window; one run can sweep several latency targets."},
+ {"version": "0.0.4", "date": "2026-11-05",
+  "text": "A report keeps every priced endpoint, so a page can price it again."},
+ {"version": "0.0.3", "date": "2026-11-02",
+  "text": "The first measurements: the request rate confirmed within a p99 target for the time to first token and the time per output token, with board power."}
+]

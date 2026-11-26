@@ -1,0 +1,5 @@
+{
+ "title": "KRAI econ results",
+ "styles": ["vendor/shell.css", "registry.css"],
+ "scripts": ["vendor/shell.js", "vendor/math.js", "regmath.js", "core.js", "charts.js", "app.js"]
+}
