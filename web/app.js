@@ -1,6 +1,7 @@
 /* The page put together: KRAI's header with the self-check and the theme, the scope every section shares (model,
    precision, engine), the sections named in the side bar, and the foot. When it opens it recomputes every number
-   econ priced in every record and says how many agree. */
+   econ priced in every record and says how many agree. Served locked (web/lock.js), the browser keeps the page's key:
+   About says so and forgets it. */
 (function (root) {
   "use strict";
   const D = root.Dash, R = root.Reg;
@@ -43,11 +44,24 @@
           ` · rent ${rent ? D.fmt.usd(rent) : "not set"} · ${S.u} % utilisation`}), jump)));
   }
 
+  // --- the key a locked page left in this browser (web/lock.js keeps it under the same name)
+  const LOCK = "econ-results-key";
+  function keyKept() {
+    try { return Boolean(root.localStorage.getItem(LOCK) || root.sessionStorage.getItem(LOCK)); } catch (e) { return false; }
+  }
+  const forget = R.button("Forget the key on this browser", null, () => {
+    try { root.localStorage.removeItem(LOCK); root.sessionStorage.removeItem(LOCK); } catch (e) { /* nothing is kept */ }
+    root.location.reload();  // served locked, the page now asks for its link again
+  }, "text");
+
   // --- the sections, and the side bar that names them
   const about = R.section("about", "About this page", null);
   function drawAbout() {
     const v = site.vendored || {}, by = {};
     for (const r of R.records) by[r.econ.version] = (by[r.econ.version] || 0) + 1;
+    const who = site.audience === "public" ? null
+      : ["Who it is for", "KRAI's internal use. Its runs are not cleared to leave the company: do not pass on the page, its link or what it shows."];
+    const key = keyKept() ? ["This browser", ["It keeps the key of this page, so the address alone opens it here. ", forget]] : null;
     D.replace(about.body,
       D.notice(ok ? "good" : "critical", ok
         ? `This page's arithmetic gives econ's numbers: ${D.fmt.n(check.checked)} values of ${R.count(R.records.length, "record")} checked when the page opened.`
@@ -58,8 +72,8 @@
         ["Records", `${R.count(R.records.length, "run")} in the econ-run/1 format (${site.audience}); measured with econ ` +
           Object.entries(by).map(([ver, n]) => `${ver} (${n})`).join(", ") + ". Each run's record downloads from its detail under Runs."],
         ["The page", `One file that works offline: nothing is fetched. Its shell and arithmetic are econ's own, copied from econ ${v.econ || "?"} at commit ${(v.commit || "?").slice(0, 10)}; the sections are the registry's.`],
-        ["Built", site.built || "-"],
-      ].map(([k, t]) => [el("dt", {text: k}), el("dd", {text: t})])));
+        ["Built", site.built || "-"], who, key,
+      ].filter(Boolean).map(([k, t]) => [el("dt", {text: k}), el("dd", {}, t)])));
   }
   R.views.push({id: "about", title: "About", icon: "about", root: about.root, render: drawAbout});
   const empty = !R.records.length;  // a registry with no runs yet: the page says so, and keeps only what it can say
