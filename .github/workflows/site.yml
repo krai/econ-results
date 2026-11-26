@@ -1,0 +1,69 @@
+# The dashboard: on every push to main the registry is validated, the page is built, locked with the site's key and
+# published to the site's repository, from which GitHub Pages serves it.
+#
+# This repository is private, and Pages serves a private repository only on a paid plan. So the page goes, locked, to
+# a second repository that holds nothing else: the one named by the repository variable SITE_REPOSITORY (OWNER/NAME).
+# What is public there is the locked page, which shows nothing of the registry without its key. The key is the secret
+# SITE_KEY, and it travels in the link people are given. SITE_DEPLOY_KEY is a deploy key of the site's repository:
+# it can write there and nowhere else. Until the variable is set, this workflow builds the page and stops.
+name: site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The files copied from econ are unedited
+        run: python -m tools.vendor
+      - name: Every record is valid, its original files are here and nothing holds a secret
+        run: python -m tools.validate runs --sources sources
+      - name: Build the page
+        run: python -m tools.build runs --out site --audience internal
+      - name: Lock it with the site's key
+        if: ${{ vars.SITE_REPOSITORY != '' }}
+        env:
+          ECON_SITE_KEY: ${{ secrets.SITE_KEY }}
+        run: python -m tools.lock site/index.html --out locked/index.html
+      - name: The locked page opens with its key, and names no run without it
+        if: ${{ vars.SITE_REPOSITORY != '' }}
+        env:
+          ECON_SITE_KEY: ${{ secrets.SITE_KEY }}
+        run: |
+          python -m tools.lock locked/index.html --open --out opened.html
+          cmp site/index.html opened.html
+          for id in $(ls runs | sed 's/\.json$//'); do
+            if grep -q -F "$id" locked/index.html; then echo "the locked page names a run"; exit 1; fi
+          done
+      - uses: actions/checkout@v4
+        if: ${{ vars.SITE_REPOSITORY != '' }}
+        with:
+          repository: ${{ vars.SITE_REPOSITORY }}
+          ssh-key: ${{ secrets.SITE_DEPLOY_KEY }}
+          path: published
+      - name: Publish the locked page
+        if: ${{ vars.SITE_REPOSITORY != '' }}
+        run: |
+          cp locked/index.html published/index.html
+          touch published/.nojekyll
+          cd published
+          git add index.html .nojekyll
+          if git diff --cached --quiet; then echo "the site already has this page"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "site: the locked page of $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
+          echo "published $(git rev-parse --short HEAD)"
