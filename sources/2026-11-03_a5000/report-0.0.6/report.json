@@ -1,0 +1,621 @@
+{
+ "tool": "econ",
+ "version": "0.0.6",
+ "status": "experimental",
+ "kind": "report",
+ "title": "Qwen3-8B-FP8 on one RTX A5000: a node evaluation (measured 3 Nov)",
+ "created": "2026-11-10T06:17:04",
+ "command": "econ report D:/KRAi/gentic-main/reports/econ_chai/datos/measure_qwen3-8b_ctx4096/measure.json --prices D:/KRAi/gentic-main/reports/econ_chai/datos/prices_qwen3-14b.json --rent 0.27 --rent 0.89 --weights-gb 8.19 --title Qwen3-8B-FP8 on one RTX A5000: a node evaluation (measured 3 Nov) --out D:/KRAi/gentic-main/reports/econ_chai/report_v006 --html",
+ "prices": {
+  "endpoints": 2,
+  "providers": 2,
+  "input": {
+   "min": 0.1,
+   "p25": 0.10500000000000001,
+   "median": 0.11,
+   "p75": 0.11499999999999999,
+   "max": 0.12
+  },
+  "output": {
+   "min": 0.22,
+   "p25": 0.225,
+   "median": 0.22999999999999998,
+   "p75": 0.235,
+   "max": 0.24
+  },
+  "common": {
+   "input": 0.1,
+   "output": 0.22,
+   "endpoints": 1
+  },
+  "by_quantization": {
+   "fp8": {
+    "endpoints": 1,
+    "median_output": 0.24
+   },
+   "int4": {
+    "endpoints": 1,
+    "median_output": 0.22
+   }
+  },
+  "model": "qwen/qwen3-14b",
+  "taken": "2026-11-03T05:13Z",
+  "source": "https://openrouter.ai/api/v1/models/qwen/qwen3-14b/endpoints",
+  "by_endpoint": [
+   {
+    "provider": "NextBit",
+    "tag": "nextbit/int4",
+    "quantization": "int4",
+    "input": 0.1,
+    "output": 0.22,
+    "cached_input": null
+   },
+   {
+    "provider": "DeepInfra",
+    "tag": "deepinfra/fp8",
+    "quantization": "fp8",
+    "input": 0.12,
+    "output": 0.24,
+    "cached_input": null
+   }
+  ]
+ },
+ "rents": [
+  0.27,
+  0.89
+ ],
+ "points": [
+  {
+   "rate_rps": 0.4585020216023356,
+   "request_s": 0.49288967322251076,
+   "input_tok_s": 656.3662765147155,
+   "output_tok_s": 230.16342982415645,
+   "p50_ttft_ms": 360.5803847312927,
+   "p99_ttft_ms": 1194.5014286041242,
+   "p50_tpot_ms": 21.204778325654534,
+   "p99_tpot_ms": 38.44493760193459,
+   "mean_input_tokens": 1350.2166100482746,
+   "mean_output_tokens": 471.0286518862864,
+   "node_power_w": 210.86011792452837,
+   "tok_per_j": 1.0924393529027516,
+   "failed": 0.0,
+   "client_cpu_pct": 4.668666258831607,
+   "client_busy": false,
+   "inflight_mean": null,
+   "inflight_growth": null,
+   "steady": null,
+   "sm_clock_mhz": 1355.4127358490566,
+   "temp_max_c": 88.0,
+   "config": "qwen3-8b-fp8-a5000-ctx4096",
+   "source": "D:\\KRAi\\gentic-main\\reports\\econ_chai\\datos\\measure_qwen3-8b_ctx4096\\measure.json",
+   "gpus": 1,
+   "slo": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+   "tpot_limit": 50.0,
+   "ttft_limit": 2000.0,
+   "met": true,
+   "note": "",
+   "repeats": 2,
+   "spread_pct": {
+    "output_tok_s": 31.681906014064033,
+    "p99_tpot_ms": 31.77215860373893,
+    "p99_ttft_ms": 14.02002640217664
+   },
+   "input_known": true,
+   "pooled": null,
+   "server": null,
+   "requests_failed": 0,
+   "requests_served": 213,
+   "worth": {
+    "endpoints": 2,
+    "rents": [
+     {
+      "rent": 0.27,
+      "break_even_common": 0.6450359884735801,
+      "break_even_median": 0.5993389086807023,
+      "endpoints_above_rent": 2,
+      "margin_common": {
+       "1": 0.14858129596602948,
+       "0.7": 0.023006907176220615,
+       "0.5": -0.06070935201698527
+      },
+      "cost_per_m_output": {
+       "1": 0.32585541524689465,
+       "0.7": 0.4655077360669924,
+       "0.5": 0.6517108304937893
+      }
+     },
+     {
+      "rent": 0.89,
+      "break_even_common": 2.1262297397832826,
+      "break_even_median": 1.975598624910463,
+      "endpoints_above_rent": 0,
+      "margin_common": {
+       "1": -0.4714187040339705,
+       "0.7": -0.5969930928237794,
+       "0.5": -0.6807093520169852
+      },
+      "cost_per_m_output": {
+       "1": 1.0741159984064306,
+       "0.7": 1.5344514262949007,
+       "0.5": 2.148231996812861
+      }
+     }
+    ],
+    "revenue": {
+     "min": 0.4185812959660295,
+     "p25": 0.43453883068012916,
+     "median": 0.4504963653942289,
+     "p75": 0.46645390010832855,
+     "max": 0.4824114348224282
+    },
+    "common": {
+     "input": 0.1,
+     "output": 0.22,
+     "endpoints": 1,
+     "revenue": 0.4185812959660295
+    }
+   },
+   "cost": [
+    {
+     "rent": 0.27,
+     "node_hour": 0.27,
+     "node_30d": 194.4,
+     "per_m_output": {
+      "1": 0.32585541524689465,
+      "0.5": 0.6517108304937893
+     }
+    },
+    {
+     "rent": 0.89,
+     "node_hour": 0.89,
+     "node_30d": 640.8,
+     "per_m_output": {
+      "1": 1.0741159984064306,
+      "0.5": 2.148231996812861
+     }
+    }
+   ],
+   "output_tokens_30d": 596583610.1042135,
+   "check": null,
+   "accuracy": null,
+   "health": {
+    "verdict": "WARN",
+    "warnings": 1,
+    "how": "watched during the measurement"
+   },
+   "mbu_pct": 50.290846413131874,
+   "mbu_basis": "47.2 steps/s (1,000 / the median TPOT) x 8.19 GB of weights (given with --weights-gb) over 1 x 768 GB/s (RTX A5000's datasheet); KV-cache reads not counted"
+  }
+ ],
+ "curves": [
+  {
+   "name": "qwen3-8b-fp8-a5000-ctx4096",
+   "points": [
+    {
+     "x": 504.2,
+     "y": 69.67978740901269,
+     "ttft": 2027.4385833740248,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 1.0,
+     "probe": 0,
+     "power_w": 223.19551724137932,
+     "failed": 0,
+     "client_cpu_pct": 7.86119977331054,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 245.66666666666666,
+     "y": 65.12074889363464,
+     "ttft": 1617.2014141082761,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.5,
+     "probe": 1,
+     "power_w": 214.99135593220336,
+     "failed": 0,
+     "client_cpu_pct": 4.814642517052614,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 100.75,
+     "y": 19.841961279916706,
+     "ttft": 1063.4871792793276,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.25,
+     "probe": 2,
+     "power_w": 202.22060344827588,
+     "failed": 0,
+     "client_cpu_pct": 2.9290213130266536,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 87.75195154525056,
+     "y": 28.901905296268044,
+     "ttft": 1142.6539611816406,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.3535533905932738,
+     "probe": 3,
+     "power_w": 191.25597560975612,
+     "failed": 0,
+     "client_cpu_pct": 2.5369261525023283,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 227.9389882947736,
+     "y": 43.9596911708704,
+     "ttft": 1534.6549987792969,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.4204482076268573,
+     "probe": 4,
+     "power_w": 204.3084057971014,
+     "failed": 0,
+     "client_cpu_pct": 5.063300439708574,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 173.5735819779242,
+     "y": 27.54077762229257,
+     "ttft": 1076.8929719924924,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.4585020216023356,
+     "probe": 5,
+     "power_w": 208.17468750000003,
+     "failed": 0,
+     "client_cpu_pct": 4.008555663137753,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "probe"
+    },
+    {
+     "x": 266.6235105819742,
+     "y": 44.55233087693215,
+     "ttft": 1278.236136436462,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.4585020216023356,
+     "probe": 6,
+     "power_w": 209.80363207547168,
+     "failed": 0,
+     "client_cpu_pct": 5.113280292246263,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "window"
+    },
+    {
+     "x": 193.70334906633872,
+     "y": 32.33754432693703,
+     "ttft": 1110.7667207717866,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.4585020216023356,
+     "probe": 7,
+     "power_w": 211.91660377358505,
+     "failed": 0,
+     "client_cpu_pct": 4.224052225416951,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": false,
+     "kind": "window"
+    },
+    {
+     "x": 230.16342982415645,
+     "y": 38.44493760193459,
+     "ttft": 1194.5014286041242,
+     "y_ci": null,
+     "ttft_ci": null,
+     "rate": 0.4585020216023356,
+     "probe": null,
+     "power_w": 210.86011792452837,
+     "failed": 0.0,
+     "client_cpu_pct": 4.668666258831607,
+     "client_busy": false,
+     "inflight_mean": null,
+     "inflight_growth": null,
+     "steady": null,
+     "server": null,
+     "final": true,
+     "kind": "confirmed",
+     "target": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+     "margin": null
+    }
+   ]
+  }
+ ],
+ "setups": [
+  {
+   "config": "qwen3-8b-fp8-a5000-ctx4096",
+   "source": "D:\\KRAi\\gentic-main\\reports\\econ_chai\\datos\\measure_qwen3-8b_ctx4096\\measure.json",
+   "host": "chai",
+   "model": "Qwen/Qwen3-8B-FP8",
+   "gpus": 1,
+   "gpu_name": "NVIDIA RTX A5000",
+   "driver": "580.178.04",
+   "power_limit_w": 230.0,
+   "image": null,
+   "flags": null,
+   "env": null,
+   "server_config": null,
+   "patch": null,
+   "endpoint": "http://127.0.0.1:8123/v1",
+   "max_model_len": 4096,
+   "workload": {
+    "mix": "chat-mix",
+    "lengths": "log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens",
+    "prompts": "random token ids in [1000, 100000): no prefix-cache hits",
+    "seed": 0,
+    "temperature": null,
+    "arrival": "Poisson"
+   },
+   "method": {
+    "warmup": 45.0,
+    "window": 120.0,
+    "search_warmup": 30.0,
+    "search_window": 60.0,
+    "min_requests": 100,
+    "min_search_requests": 30,
+    "max_window": 600.0,
+    "repeats": 2,
+    "start_rps": 1.0,
+    "growth": 2.0,
+    "bisect_steps": 3,
+    "drain": 300.0,
+    "client_busy_above": {
+     "cpu_pct": 70.0,
+     "loop_lag_p99_ms": 20.0
+    }
+   },
+   "created": "2026-11-03T04:36:17",
+   "command": null,
+   "gpu_indices": [
+    0
+   ],
+   "node": null,
+   "stability": {
+    "seconds": 1444.6630001068115,
+    "samples": 1406,
+    "interval_s": 1.0282298933144567,
+    "per_gpu": {
+     "0": {
+      "all": {
+       "samples": 1406,
+       "limit_w_min": 230.0,
+       "limit_w_max": 230.0,
+       "power_w_min": 24.67,
+       "power_w_max": 230.94,
+       "power_w_mean": 205.2709957325747,
+       "sm_mhz_min": 1140.0,
+       "sm_mhz_max": 1800.0,
+       "sm_mhz_mean": 1385.6543385490754,
+       "temp_c_min": 58.0,
+       "temp_c_max": 89.0,
+       "temp_c_mean": 86.33854907539119,
+       "util_pct_min": 0.0,
+       "util_pct_max": 100.0,
+       "util_pct_mean": 92.54551920341395,
+       "reasons": {
+        "sw_power_cap": 0.17994310099573257,
+        "sw_thermal_slowdown": 0.7788051209103841
+       }
+      },
+      "busy": {
+       "samples": 1302,
+       "limit_w_min": 230.0,
+       "limit_w_max": 230.0,
+       "power_w_min": 115.91,
+       "power_w_max": 230.94,
+       "power_w_mean": 212.56834101382486,
+       "sm_mhz_min": 1140.0,
+       "sm_mhz_max": 1800.0,
+       "sm_mhz_mean": 1360.9562211981568,
+       "temp_c_min": 66.0,
+       "temp_c_max": 89.0,
+       "temp_c_mean": 86.73118279569893,
+       "util_pct_min": 59.0,
+       "util_pct_max": 100.0,
+       "util_pct_mean": 99.88325652841782,
+       "reasons": {
+        "sw_power_cap": 0.19047619047619047,
+        "sw_thermal_slowdown": 0.8271889400921659
+       }
+      }
+     }
+    },
+    "rows": [
+     {
+      "gpu": 0,
+      "check": "Power limit",
+      "result": "held at 230 W",
+      "status": "PASS"
+     },
+     {
+      "gpu": 0,
+      "check": "Board power",
+      "result": "213 W on average under load (92 % of the limit), peak 231 W",
+      "status": "INFO"
+     },
+     {
+      "gpu": 0,
+      "check": "SM clock under load",
+      "result": "1,361 MHz on average, lowest 1,140 MHz",
+      "status": "INFO"
+     },
+     {
+      "gpu": 0,
+      "check": "Throttling",
+      "result": "sw thermal slowdown in 83 % of the samples under load",
+      "status": "WARN"
+     },
+     {
+      "gpu": 0,
+      "check": "Temperature",
+      "result": "peak 89 \u00b0C, 87 \u00b0C on average under load",
+      "status": "INFO"
+     },
+     {
+      "gpu": 0,
+      "check": "PCIe link",
+      "result": "not sampled under load",
+      "status": "INFO"
+     },
+     {
+      "gpu": 0,
+      "check": "Memory errors",
+      "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+      "status": "INFO"
+     },
+     {
+      "gpu": 0,
+      "check": "Remapped rows",
+      "result": "not recorded (measured before econ 0.0.6): no GPU state at the end of the run",
+      "status": "INFO"
+     }
+    ],
+    "verdict": "WARN",
+    "warnings": 1,
+    "from": "power.csv"
+   }
+  }
+ ],
+ "not_covered": [
+  "Accuracy: the outputs are not scored (run the accuracy check of the config separately)",
+  "Lengths: log-normal lengths: input median 1,024 / p90 4,096, output median 256 / p90 1,024 tokens, context limit 4096 tokens",
+  "Power: GPU board power only (NVML): no CPUs, memory, NICs, fans or PSU losses",
+  "Prompts: random token ids, so no prefix-cache hits (real chat and agent traffic has them)",
+  "Quick settings (120 s windows, 2 repeats): for comparisons, not for publishing"
+ ],
+ "checks": [],
+ "accuracy": [],
+ "headline": [
+  {
+   "config": "qwen3-8b-fp8-a5000-ctx4096",
+   "hardware": "1x NVIDIA RTX A5000",
+   "gpus": 1,
+   "rent": 0.27,
+   "node_price": 0.27,
+   "health": {
+    "verdict": "WARN",
+    "warnings": 1,
+    "how": "watched during the measurement"
+   },
+   "met": true,
+   "target": "TTFT p99 <= 2 s, TPOT p99 <= 50 ms",
+   "note": null,
+   "rate_rps": 0.4585020216023356,
+   "output_tok_s": 230.16342982415645,
+   "input_tok_s": 656.3662765147155,
+   "cost_per_m": 0.32585541524689465,
+   "cost_per_m_half": 0.6517108304937893,
+   "node_30d": 194.4,
+   "output_tokens_30d": 596583610.1042135,
+   "tok_per_j": 1.0924393529027516,
+   "power_w": 210.86011792452837,
+   "accuracy": null,
+   "mbu_pct": 50.290846413131874,
+   "revenue": 0.4185812959660295,
+   "others": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "text": "During the measurement of qwen3-8b-fp8-a5000-ctx4096: Throttling, sw thermal slowdown in 83 % of the samples under load. The clocks fell because of heat or a hardware signal, so the capacity is the cooled node's, not the GPU's: check the airflow, the fans and the inlet temperature, then measure again."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: the capacity was measured with quick settings (120 s confirmation windows, 2 repeats). Longer windows meet more of the rare slow requests, so a full measurement (--window 600 --repeats 5) can confirm a lower rate: plan with headroom."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096 (TTFT \u2264 2 s, TPOT \u2264 50 ms): at capacity the TPOT target binds first (p99 38.4 ms, 77 % of its limit; TTFT at 60 %). Decode sets the capacity: more tokens per step (a larger batch, speculative decoding) or faster decode kernels are where to look."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: at capacity, decode steps read the weights at about 50 % of the GPUs' memory bandwidth (an estimate, weights only: the KV cache's reads come on top)."
+  },
+  {
+   "level": "INFO",
+   "text": "qwen3-8b-fp8-a5000-ctx4096: at the most common price ($0.10 / $0.22 per M tokens) it earns $0.42 per GPU-hour at full load; the $0.27 rent is paid from 65 % utilisation."
+  },
+  {
+   "level": "INFO",
+   "text": "The node was not checked (econ check): its power limit, clocks under load, matmul and copy probes, PCIe link, memory errors, disk and download are not in this evaluation."
+  },
+  {
+   "level": "INFO",
+   "text": "Accuracy was not measured (econ accuracy): this evaluation cannot tell a configuration that breaks the model from one that does not."
+  }
+ ],
+ "reproduce": [
+  {
+   "what": "Serve Qwen/Qwen3-8B-FP8 on 1 GPU as an OpenAI-compatible server at http://127.0.0.1:8123/v1 (econ measured a server already running)",
+   "command": null,
+   "recorded": false
+  },
+  {
+   "what": "Measure qwen3-8b-fp8-a5000-ctx4096",
+   "command": "econ measure --endpoint http://127.0.0.1:8123/v1 --gpus 0 --label qwen3-8b-fp8-a5000-ctx4096 --slo ttft=2000,tpot=50 --mix chat-mix --seed 0 --window 120 --repeats 2 --min-requests 100 --max-window 600 --drain 300",
+   "recorded": false
+  },
+  {
+   "what": "Today's prices",
+   "command": "econ prices --model qwen/qwen3-14b --out prices.json",
+   "recorded": false
+  },
+  {
+   "what": "This report",
+   "command": "econ report D:/KRAi/gentic-main/reports/econ_chai/datos/measure_qwen3-8b_ctx4096/measure.json --prices D:/KRAi/gentic-main/reports/econ_chai/datos/prices_qwen3-14b.json --rent 0.27 --rent 0.89 --weights-gb 8.19 --title Qwen3-8B-FP8 on one RTX A5000: a node evaluation (measured 3 Nov) --out D:/KRAi/gentic-main/reports/econ_chai/report_v006 --html",
+   "recorded": true
+  }
+ ],
+ "method": [
+  "Open-loop Poisson arrivals at a fixed rate; the rate grows until a probe misses the target, then bisects, then the best rate is confirmed over full windows. TTFT counts from the request's send (queueing included); TPOT per request is (last token - first token) / (output tokens - 1); a failed request is an infinite latency. Requests keep arriving until the last measured one finishes, so the load stays steady for all of them. Board power is nvidia-smi's every second, averaged over each window.",
+  "Stability: nvidia-smi every second over the whole measurement (power, SM clock, temperature, utilisation, clock-event reasons and, from econ 0.0.6, the PCIe link), with each GPU's state at the start and the end; under load means at 50 % utilisation or above.",
+  "MBU (an estimate): engine steps per second times the bytes of weights a step reads, over the GPUs' datasheet bandwidth; the KV cache's reads are not counted."
+ ]
+}
