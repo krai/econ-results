@@ -5,9 +5,13 @@
     python -m tools.export --measure M.json [--check C.json] [--accuracy A.json] ...       the files one by one
     python -m tools.export --report REPORT.json --config LABEL ...   a configuration of a report.json, when its
                                                                     measure.json is not at hand
-    python -m tools.export --manifest MANIFEST.json --econ-src GENTIC/src --out RUNS_DIR
-                                                                    every run of a manifest (a list of the options)
-    ... --manifest MANIFEST.json --prune                            and remove the records the manifest no longer gives
+    python -m tools.export --registry . --econ-src GENTIC/src       every run of the registry again: each folder under
+                                                                    sources/ that has an export.json, into runs/
+    ... --registry . --prune                                        and remove the records no run folder gives
+
+In the registry a run is a folder under sources/ with econ's files as they were written and an export.json: the
+options this command would take for it (the rents, the price list, what econ's files do not say), with paths taken
+from the folder. One file per run, so two people adding runs never edit the same file.
 
 The points are computed by econ's own code, imported from --econ-src (a checkout of gentic, pinned in the registry):
 report.build reads any measure.json since econ 0.0.3 and prices it, so nothing of econ is written again here. A
@@ -42,6 +46,8 @@ ACCURACY_KEYS = ("benchmark", "shots", "items", "seed", "correct", "accuracy", "
 SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "node", "cluster",
              "family", "variant", "precision", "tp", "dp", "job", "data_dir", "gentic_commit", "econ_commit", "engine_version",
              "engine_build", "engine_commit", "digest", "weights_gb")
+EXPORT_FILE = "export.json"  # a run's options, in its folder of the registry
+PATH_KEYS = ("measure", "check", "accuracy", "prices", "report", "provenance")
 
 
 class Econ:
@@ -287,11 +293,11 @@ def _measured_with(src, rep):
     if src["file"] == "measure.json" and src.get("version"):
         return src["version"]
     raise SystemExit("a record from a report.json needs the version of the econ that measured: state it with "
-                     "--measured-with (or measured_with in the manifest)")
+                     "--measured-with (or measured_with in the run's export.json)")
 
 
 def export(spec, econ):
-    """The internal record of one run, from its spec: the options of the command line or one entry of a manifest."""
+    """The internal record of one run, from its spec: the options of the command line or a run folder's export.json."""
     spec = dict(spec)
     if spec.get("run"):
         found = discover(spec["run"])
@@ -311,18 +317,24 @@ def write(rec, out_dir):
     return path
 
 
-def manifest_specs(path):
-    """The runs of a manifest: {"runs": [spec, ...]}, with paths taken from the manifest's folder."""
-    doc, base = read_json(path), os.path.dirname(os.path.abspath(path))
+def registry_specs(sources):
+    """The runs of a registry: one spec per folder under `sources` that has an export.json, sorted by path. The
+    folder is the run's, and the paths its export.json gives are taken from it."""
     specs = []
-    for entry in doc["runs"]:
-        unknown = set(entry) - set(SPEC_KEYS) - {"measured_with", "note"}
-        if unknown:
-            raise SystemExit(f"{path}: unknown fields {sorted(unknown)} in the run {entry.get('config') or entry}")
-        spec = dict(entry)
-        for key in ("run", "measure", "check", "accuracy", "prices", "report", "provenance"):
+    for root, dirs, names in os.walk(sources):
+        dirs.sort()
+        if EXPORT_FILE not in names:
+            continue
+        path = os.path.join(root, EXPORT_FILE)
+        entry = read_json(path)
+        unknown = set(entry) - set(SPEC_KEYS) - {"measured_with", "note"} if isinstance(entry, dict) else {"not an object"}
+        if unknown or (isinstance(entry, dict) and "run" in entry):
+            raise SystemExit(f"{path}: " + (f"unknown fields {sorted(unknown)}" if unknown else
+                                            "the run is the folder itself: it takes no \"run\""))
+        spec = dict(entry, run=root)
+        for key in PATH_KEYS:
             if spec.get(key):
-                spec[key] = os.path.normpath(os.path.join(base, spec[key]))
+                spec[key] = os.path.normpath(os.path.join(root, spec[key]))
         specs.append(spec)
     return specs
 
@@ -339,11 +351,19 @@ def parser():
     ap = argparse.ArgumentParser(prog="python -m tools.export", description="Export runs of econ as econ-run/1 records.")
     ap.add_argument("run", nargs="?", help="a run folder: measure.json, check.json, accuracy.json, provenance.txt")
     ap.add_argument("--econ-src", required=True, help="the src folder of a gentic checkout, to import econ from")
-    ap.add_argument("--manifest", help="a JSON file listing several runs, instead of one run's options")
-    for name in ("measure", "check", "accuracy", "prices", "report", "provenance"):
+    ap.add_argument("--registry", help="a registry's folder: export every run folder under its sources/ into its runs/")
+    for name in PATH_KEYS:
         ap.add_argument("--" + name, help=f"the run's {name} file")
     ap.add_argument("--config", help="with --report: the label of the configuration to export")
     ap.add_argument("--measured-with", help="with --report: the version of the econ that measured")
+    add_options(ap)
+    ap.add_argument("--out", help="the folder for the records (with --registry: its runs/ folder)")
+    ap.add_argument("--prune", action="store_true", help="with --registry: remove from --out the records no run folder gives")
+    return ap
+
+
+def add_options(ap):
+    """What econ's files do not say about a run: the options of this command and the fields of an export.json."""
     ap.add_argument("--rent", dest="rents", type=float, action="append", help="USD per GPU-hour; repeat it")
     ap.add_argument("--node", help="the node's name, when the measurement does not say it")
     ap.add_argument("--cluster", help="the cluster or site the node belongs to, as its people call it")
@@ -355,33 +375,38 @@ def parser():
     ap.add_argument("--job", help="the scheduler's job id")
     ap.add_argument("--data-dir", help="the folder that holds the run's files")
     ap.add_argument("--gentic-commit", help="the commit of gentic the run used")
+    ap.add_argument("--econ-commit", help="the commit of the econ that measured, when the run's files do not say")
     ap.add_argument("--engine-version")
     ap.add_argument("--engine-build", choices=("release", "nightly", "custom"))
     ap.add_argument("--engine-commit")
     ap.add_argument("--digest", help="the image's digest (sha256:...)")
     ap.add_argument("--weights-gb", type=float, help="as econ report's --weights-gb")
-    ap.add_argument("--out", required=True, help="the folder for the records")
-    ap.add_argument("--prune", action="store_true", help="with --manifest: remove from --out the records it no longer gives")
-    return ap
+
+
+def options(a):
+    """The spec of the run the command line describes."""
+    return dict({k: getattr(a, k) for k in SPEC_KEYS if getattr(a, k, None) is not None},
+                **({"measured_with": a.measured_with} if getattr(a, "measured_with", None) else {}))
 
 
 def main(argv=None):
     a = parser().parse_args(argv)
+    if a.registry and (a.run or any(getattr(a, k) for k in PATH_KEYS)):
+        raise SystemExit("--registry exports every run of the registry: it takes no run of its own")
+    if a.prune and not a.registry:
+        raise SystemExit("--prune goes with --registry: only the registry says which records there should be")
+    out = a.out or (os.path.join(a.registry, "runs") if a.registry else None)
+    if not out:
+        raise SystemExit("--out is needed: the folder for the record")
     econ = Econ(a.econ_src)
-    if a.manifest:
-        specs = manifest_specs(a.manifest)
-    else:
-        specs = [dict({k: getattr(a, k) for k in SPEC_KEYS if getattr(a, k, None) is not None},
-                      measured_with=a.measured_with)]
-    if a.prune and not a.manifest:
-        raise SystemExit("--prune goes with --manifest: only a manifest says what the whole registry is")
+    specs = registry_specs(os.path.join(a.registry, "sources")) if a.registry else [options(a)]
     written = set()
     for spec in specs:
         rec = export(spec, econ)
         written.add(rec["id"])
-        print(f"{write(rec, a.out)}  ({len(rec['points'])} targets, econ {rec['econ']['version']})")
-    for run in prune(a.out, written) if a.prune else []:
-        print(f"{os.path.join(a.out, run + '.json')}  removed: the manifest does not give it")
+        print(f"{write(rec, out)}  ({len(rec['points'])} targets, econ {rec['econ']['version']})")
+    for run in prune(out, written) if a.prune else []:
+        print(f"{os.path.join(out, run + '.json')}  removed: no run folder gives it")
 
 
 if __name__ == "__main__":

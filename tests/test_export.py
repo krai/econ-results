@@ -11,8 +11,8 @@ from tools import export, patterns, read_json, sanitize, validate, write_json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ECON_SRC = os.environ.get("ECON_SRC")
-REAL = bool(ECON_SRC) and os.path.isfile(os.path.join(ROOT, "manifest.json"))
-WHY = "needs ECON_SRC (the src folder of a gentic checkout) and the registry's own files (manifest.json, sources/)"
+REAL = bool(ECON_SRC) and os.path.isdir(os.path.join(ROOT, "sources"))
+WHY = "needs ECON_SRC (the src folder of a gentic checkout) and the registry's original files (sources/)"
 
 
 class TestPieces(unittest.TestCase):
@@ -77,16 +77,29 @@ class TestPieces(unittest.TestCase):
         self.assertTrue(export.discover(os.path.join(self.tmp.name, "b"))["measure"])
         self.assertIsNone(export.discover(os.path.join(self.tmp.name, "c"))["measure"])
 
-    def test_a_manifest_resolves_its_paths_from_its_own_folder(self):
-        path = self.path("reg", "manifest.json")
-        write_json(path, {"runs": [{"run": "sources/x", "prices": "sources/p.json", "rents": [1.0], "note": "why"}]})
-        specs = export.manifest_specs(path)
-        base = os.path.dirname(path)
-        self.assertEqual(specs[0]["run"], os.path.join(base, "sources", "x"))
-        self.assertEqual(specs[0]["prices"], os.path.join(base, "sources", "p.json"))
-        write_json(path, {"runs": [{"run": "x", "typo_field": 1}]})
-        with self.assertRaises(SystemExit):
-            export.manifest_specs(path)
+    def test_a_registry_run_is_a_folder_with_its_options_and_its_paths_are_taken_from_it(self):
+        sources = os.path.join(self.tmp.name, "reg", "sources")
+        write_json(self.path("reg", "sources", "day-b", "second", "export.json"), {"rents": [2.0]})
+        write_json(self.path("reg", "sources", "day-a", "first", "export.json"),
+                   {"prices": "../prices.json", "rents": [1.0], "cluster": "Lab", "note": "why"})
+        write_json(self.path("reg", "sources", "day-a", "first", "measure.json"), {})
+        write_json(self.path("reg", "sources", "day-a", "no-options", "measure.json"), {})  # not a registered run
+        specs = export.registry_specs(sources)
+        first = os.path.join(sources, "day-a", "first")
+        self.assertEqual([s["run"] for s in specs], [first, os.path.join(sources, "day-b", "second")])
+        self.assertEqual(specs[0]["prices"], os.path.join(sources, "day-a", "prices.json"))
+        self.assertEqual((specs[0]["rents"], specs[0]["cluster"]), ([1.0], "Lab"))
+        for bad in ({"typo_field": 1}, {"run": "elsewhere"}, ["not", "an", "object"]):
+            write_json(self.path("reg", "sources", "day-b", "second", "export.json"), bad)
+            with self.assertRaises(SystemExit):
+                export.registry_specs(sources)
+
+    def test_the_command_line_gives_the_same_spec_as_an_export_file(self):
+        a = export.parser().parse_args(["run-folder", "--econ-src", "x", "--out", "runs", "--rent", "5.29", "--rent", "3.59",
+                                        "--cluster", "Lab", "--job", "42", "--tp", "4", "--prices", "p.json"])
+        self.assertEqual(export.options(a), {"run": "run-folder", "prices": "p.json", "rents": [5.29, 3.59],
+                                             "cluster": "Lab", "tp": 4, "job": "42"})
+        self.assertLessEqual(set(export.options(a)), set(export.SPEC_KEYS))
 
     def test_a_report_can_stand_in_for_its_price_snapshot(self):
         path = self.path("report.json")
@@ -125,7 +138,7 @@ class TestRealFiles(unittest.TestCase):
     def setUpClass(cls):
         cls.econ = export.Econ(ECON_SRC)
         cls.aliases = read_json(os.path.join(ROOT, "aliases.json"))
-        cls.specs = export.manifest_specs(os.path.join(ROOT, "manifest.json"))
+        cls.specs = export.registry_specs(os.path.join(ROOT, "sources"))
 
     def source(self, *parts):
         return os.path.join(ROOT, "sources", *parts)
@@ -202,7 +215,7 @@ class TestRealFiles(unittest.TestCase):
         self.assertEqual(rec["hardware"]["node"], rec["provenance"]["host"])  # as the measurement says it
         self.assertEqual(sanitize.public(rec, self.aliases)["hardware"]["node"], self.aliases[rec["provenance"]["host"]])
 
-    def test_the_registry_is_what_the_manifest_exports(self):
+    def test_the_registry_is_what_its_original_files_export(self):
         """Every record of the registry is byte for byte what its original files give today, and has a public form
         with nothing private left in it."""
         words = patterns.load_words(os.path.join(ROOT, "private-words.txt"))
