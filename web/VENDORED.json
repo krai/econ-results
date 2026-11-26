@@ -1,0 +1,11 @@
+{
+ "from": "krai/gentic, src/econ/web",
+ "commit": "bfc3bc75dee20c8a0a99d3b57534b85380ab1296",
+ "econ": "0.0.9",
+ "note": "econ's page shell and arithmetic, copied as they are. They are not edited here: a change goes to econ in gentic, and then `python -m tools.vendor --econ-src GENTIC/src` copies the new files and their hashes.",
+ "files": {
+  "vendor/shell.js": "84f116ae05f302cd76fe2207d35fa202281dad3928bcac82485c3a996b61b1c4",
+  "vendor/shell.css": "783f078bcdd88402aabb28a5e7f6ee9150282f11ac009afb1a04121f0aa4b9f2",
+  "vendor/math.js": "305cb3b7bb36ee9fdc050ec07de8ee60c001f96d9965fbc9bc3f1d9c38c3fcf8"
+ }
+}
