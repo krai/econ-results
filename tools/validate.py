@@ -4,6 +4,8 @@ everything that must not be in it.
     python -m tools.validate runs/                       every *.json under a folder (or files one by one)
     python -m tools.validate runs/ --public              they must all be public records
     python -m tools.validate ../econ-runs/public --public --words ../econ-runs/private-words.txt
+    python -m tools.validate ../econ-runs/runs --sources ../econ-runs/sources
+                                                         each record's original files must be under that folder
 
 Per record:
 - the JSON Schema (schema/econ-run-1.schema.json, checked by tools/schema.py);
@@ -12,13 +14,15 @@ Per record:
 - its id is the one its own fields give, and its file is named after it;
 - its priced numbers follow from its measured ones and its price snapshot (tools/arith.py);
 - a public record has no provenance and nothing that tools/patterns.py forbids.
-Across records: no id twice, and no measurement twice under two ids.
+Across records: no id twice, and no measurement twice under two ids. With --sources, every file a record cites must
+be under that folder, found by its SHA-256 whatever its name: a registry that keeps its originals can prove it.
 
 Exit status 0 when every record passes, 1 otherwise; every problem is printed with its file and its path.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 import sys
 
@@ -139,10 +143,20 @@ def check_record(rec, path=None, public=False, words=frozenset(), schema_doc=Non
     return out
 
 
-def check_all(paths, public=False, words=frozenset()):
+def hashes(folder):
+    """The SHA-256 of every file under a folder."""
+    out = set()
+    for root, _, names in os.walk(folder):
+        for name in names:
+            with open(os.path.join(root, name), "rb") as f:
+                out.add(hashlib.sha256(f.read()).hexdigest())
+    return out
+
+
+def check_all(paths, public=False, words=frozenset(), sources=None):
     """{file: [problems]} for the files with problems, and the number of records and of values re-computed."""
     schema_doc, bad, seen, same, values = schema.load(SCHEMA_PATH), {}, {}, {}, 0
-    files = record_files(paths)
+    files, have = record_files(paths), hashes(sources) if sources else None
     for path in files:
         try:
             rec = read_json(path)
@@ -159,6 +173,9 @@ def check_all(paths, public=False, words=frozenset()):
                 problems.append(f"the same measurement ({key[0]}, {key[1]}) is also in {same[key]}")
             seen.setdefault(rec["id"], path)
             same.setdefault(key, path)
+            if have is not None:
+                problems += [f"$.files: {f['name']} ({f['role']}) is not under {sources}: no file there has its SHA-256"
+                             for f in rec["files"] if f["sha256"] not in have]
         if problems:
             bad[path] = problems
     return bad, len(files), values
@@ -169,10 +186,11 @@ def main(argv=None):
     ap.add_argument("paths", nargs="+", help="record files, or folders of them")
     ap.add_argument("--public", action="store_true", help="every record must be a public one")
     ap.add_argument("--words", help="a private list of words a public record must not hold, one per line")
+    ap.add_argument("--sources", help="a folder that must hold every original file the records cite")
     ap.add_argument("--allow-empty", action="store_true", help="no records at all is not an error")
     a = ap.parse_args(argv)
     words = patterns.load_words(a.words) if a.words else frozenset()
-    bad, count, values = check_all(a.paths, a.public, words)
+    bad, count, values = check_all(a.paths, a.public, words, a.sources)
     for path, problems in bad.items():
         print(f"{path}:")
         for p in problems:

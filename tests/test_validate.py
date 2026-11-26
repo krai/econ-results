@@ -129,6 +129,23 @@ class TestFolder(unittest.TestCase):
         self.assertIn("not readable as JSON", out)
         self.assertIn("0 of 3 records pass", out)
 
+    def test_the_original_files_a_record_cites_must_be_in_the_sources(self):
+        rec, sources = sample.record(), os.path.join(self.tmp.name, "sources", "deep", "er")
+        os.makedirs(sources)
+        with open(os.path.join(sources, "any-name.json"), "wb") as f:
+            f.write(b"the original file\n")
+        rec["files"][0]["sha256"] = "7e4ddc9a7c2d0a40c0ab5a5ebd8fd2fb5d1f0c0e0d0c6f0b1a0b0c0d0e0f1a2b"
+        self.put(rec)
+        runs, top = os.path.join(self.tmp.name, "runs"), os.path.join(self.tmp.name, "sources")
+        code, out = self.run_main(runs, "--sources", top)
+        self.assertEqual(code, 1)
+        self.assertIn("measure.json (measure) is not under", out)
+        import hashlib
+        rec["files"][0]["sha256"] = hashlib.sha256(b"the original file\n").hexdigest()
+        self.put(rec)
+        self.assertEqual(self.run_main(runs, "--sources", top)[0], 0)
+        self.assertEqual(self.run_main(runs)[0], 0)
+
     def test_public_only_and_a_private_word_list(self):
         pub = sanitize.public(sample.record(), sample.ALIASES)
         pub["not_covered"].append("measured in the zzlab room")
