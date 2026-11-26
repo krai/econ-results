@@ -1,0 +1,9 @@
+{
+ "prices": "../prices_deepseek-v4.1-flash_2026-11-02.json",
+ "rents": [
+  5.29,
+  3.59
+ ],
+ "cluster": "HPE",
+ "note": "2 Nov, priced with the list taken that day."
+}
