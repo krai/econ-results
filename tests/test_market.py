@@ -1,9 +1,16 @@
-"""The market snapshot: what makes one hold together, what the page takes of it, and the repository's own."""
+"""The market snapshot: what makes one hold together, what the page takes of it, the repository's own, and the
+section's arithmetic.
+
+The last test runs web/market-math.js under node on a made-up snapshot, whose answers are worked out by hand in
+tests/market_check.js, and on the repository's snapshot against the figures the study reported for it. It needs node,
+which CI has; without node it is skipped, and fails where CI is set."""
 import contextlib
 import copy
 import io
 import json
 import os
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -147,6 +154,34 @@ class TestOurs(unittest.TestCase):
         text = json.dumps(market.page(market.load()))
         self.assertNotIn("http", text)
         self.assertLess(len(text), 400_000)
+
+
+class TestArithmetic(unittest.TestCase):
+    # What the study reported for the snapshot of 18 Nov 2026 at its own settings: each user at 50 tokens per second or
+    # more, GPUs owned, 60 % load, the median endpoint's price, the benchmark's own token mix.
+    REPORTED = [["pairs", 86], ["covered", 72], ["top", "gb300"], ["top_models", 8], ["models", 13], ["families", [100, 64, 72]],
+                ["flash", [73, 31, 6.6, 4.9, 3.6, 2.9, 78, 44, 12]]]
+
+    def test_the_sections_javascript_gives_the_worked_answers_and_the_studys_figures(self):
+        node = shutil.which("node")
+        if not node:
+            if os.environ.get("CI"):
+                self.fail("node is needed to check the Market section's arithmetic, and CI has none")
+            self.skipTest("needs node (CI has it): it runs web/market-math.js")
+        ours = market.load()
+        dated = ours is not None and ours["snapshot"]["as_of"] == "2026-11-18"
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "input.json")
+            write_json(path, {"made_up": market.page(snapshot()), "ours": market.page(ours) if dated else None,
+                              "expect_ours": self.REPORTED})
+            done = subprocess.run([node, os.path.join(ROOT, "tests", "market_check.js"), path], capture_output=True,
+                                  text=True, timeout=120, encoding="utf-8")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        summary = json.loads(done.stdout)
+        self.assertEqual(summary["bad"], [])
+        self.assertEqual(summary["made_up_pairs"], 2)
+        if dated:
+            self.assertEqual(summary["ours"]["covered"], 72)
 
 
 if __name__ == "__main__":
