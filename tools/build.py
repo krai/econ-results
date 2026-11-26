@@ -11,6 +11,9 @@ It writes, in --out:
     schema/econ-run-1.schema.json
     .nojekyll                   so that GitHub Pages serves the folder as it is
 
+The page also holds the market snapshot of the repository's market/ folder, when there is one (tools/market.py): what
+the Market section shows. A snapshot that does not hold together stops the build.
+
 Every record is validated first (tools/validate.py). The page is the internal one unless a public one is asked for,
 and a public page takes only public forms: one internal record, or anything forbidden in a public one, stops the
 build. The internal page says that it is internal; to put it where anyone can reach it, lock it (tools/lock.py).
@@ -28,7 +31,7 @@ import shutil
 import sys
 import time
 
-from . import patterns, read_json, validate, vendor, write_json
+from . import market, patterns, read_json, validate, vendor, write_json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
@@ -40,13 +43,26 @@ def read_text(path):
         return f.read()
 
 
-def site_data(records, audience, built):
-    """What the page holds: the records, oldest first, the changelog of econ's versions and what was vendored."""
+def site_data(records, audience, built, snapshot=None):
+    """What the page holds: the records, oldest first, the changelog of econ's versions, what was vendored and, when
+    there is one, the market snapshot as the page takes it."""
     pin = read_json(os.path.join(WEB, "VENDORED.json"))
-    return {"schema": SITE_SCHEMA, "audience": audience, "built": built,
+    data = {"schema": SITE_SCHEMA, "audience": audience, "built": built,
             "records": sorted(records, key=lambda r: (r["created"], r["id"])),
             "changelog": read_json(os.path.join(WEB, "changelog.json")),
             "vendored": {"econ": pin["econ"], "commit": pin["commit"]}}
+    if snapshot:
+        data["market"] = market.page(snapshot)
+    return data
+
+
+def market_snapshot(folder):
+    """The market snapshot of a folder, checked; None when the folder has none. SystemExit when it does not hold."""
+    snapshot = market.load(folder)
+    problems = market.check(snapshot) if snapshot else []
+    if problems:
+        raise SystemExit("the site is not built: the market snapshot does not hold together\n  " + "\n  ".join(problems))
+    return snapshot
 
 
 def inert(data):
@@ -81,13 +97,13 @@ def load(paths, audience, words=frozenset()):
     return [read_json(path) for path in validate.record_files(paths)]
 
 
-def build(paths, out, audience="internal", built=None, words=frozenset(), title=None):
+def build(paths, out, audience="internal", built=None, words=frozenset(), title=None, market_dir=market.FOLDER):
     """Write the site to `out`; returns {records, bytes} of index.html."""
     problems = vendor.check()
     if problems:
         raise SystemExit("the site is not built: " + "; ".join(problems))
     records = load(paths, audience, words)
-    data = site_data(records, audience, built or time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime()))
+    data = site_data(records, audience, built or time.strftime("%Y-%m-%dT%H:%MZ", time.gmtime()), market_snapshot(market_dir))
     text = page(data, title)
     os.makedirs(os.path.join(out, "runs"), exist_ok=True)
     os.makedirs(os.path.join(out, "schema"), exist_ok=True)
@@ -113,9 +129,10 @@ def main(argv=None):
     ap.add_argument("--words", help="a private list of words a public record must not hold")
     ap.add_argument("--built", help="the build's time stamp, to make two builds the same bytes")
     ap.add_argument("--title", help="the page's title")
+    ap.add_argument("--market", default=market.FOLDER, help="the folder of the market snapshot (default: market/)")
     a = ap.parse_args(argv)
     words = patterns.load_words(a.words) if a.words else frozenset()
-    done = build(a.paths, a.out, a.audience, a.built, words, a.title)
+    done = build(a.paths, a.out, a.audience, a.built, words, a.title, a.market)
     print(f"{a.out}/index.html: {done['records']} records, {done['bytes']:,} bytes, {a.audience}")
     return 0
 

@@ -7,8 +7,8 @@ import re
 import tempfile
 import unittest
 
-from tests import sample
-from tools import build, read_json, sanitize, write_json
+from tests import sample, test_market
+from tools import build, market, read_json, sanitize, write_json
 
 DATA = re.compile(r'<script type="application/json" id="data">(.*?)</script>', re.S)
 STAMP = "2026-01-06T00:00Z"
@@ -124,6 +124,33 @@ class TestBuild(unittest.TestCase):
         self.assertEqual(json.loads(DATA.search(self.page()).group(1))["audience"], "internal")
         with self.assertRaises(SystemExit):
             build.main([self.runs, "--out", self.out, "--built", STAMP, "--audience", "public"])
+
+    def market_folder(self, snapshot):
+        folder = os.path.join(self.tmp.name, "market")
+        os.makedirs(folder, exist_ok=True)
+        for name in market.TABLES + ("reference", "snapshot"):
+            write_json(os.path.join(folder, name + ".json"), snapshot[name])
+        return folder
+
+    def test_the_page_holds_the_market_snapshot_as_the_page_takes_it(self):
+        self.put(self.internal)
+        snapshot = test_market.snapshot()
+        build.build([self.runs], self.out, built=STAMP, market_dir=self.market_folder(snapshot))
+        data = json.loads(DATA.search(self.page()).group(1))
+        self.assertEqual(data["market"], market.page(snapshot))
+        self.assertNotIn("example.org", self.page())                     # no address of a source in the page
+        self.assertNotIn("Cheap Cloud", self.page())                     # nor who sells an endpoint
+        build.build([self.runs], self.out, built=STAMP, market_dir=os.path.join(self.tmp.name, "no-such-folder"))
+        self.assertNotIn("market", json.loads(DATA.search(self.page()).group(1)))
+
+    def test_a_market_snapshot_that_does_not_hold_stops_the_build(self):
+        self.put(self.internal)
+        snapshot = test_market.snapshot()
+        snapshot["prices"][0]["model"] = "gamma-3"
+        with self.assertRaises(SystemExit) as caught:
+            build.build([self.runs], self.out, built=STAMP, market_dir=self.market_folder(snapshot))
+        self.assertIn("market snapshot", str(caught.exception))
+        self.assertFalse(os.path.exists(os.path.join(self.out, "index.html")))
 
     def test_no_records_still_builds_a_page(self):
         with contextlib.redirect_stdout(io.StringIO()):
