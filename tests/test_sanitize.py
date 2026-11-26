@@ -1,10 +1,14 @@
 """The public form of a record."""
+import contextlib
 import copy
+import io
 import json
+import os
+import tempfile
 import unittest
 
 from tests import sample
-from tools import patterns, sanitize
+from tools import patterns, read_json, sanitize, write_json
 
 
 class TestSanitize(unittest.TestCase):
@@ -92,6 +96,48 @@ class TestSanitize(unittest.TestCase):
 
     def test_the_public_form_has_nothing_forbidden(self):
         self.assertEqual(patterns.scan(self.pub), [])
+
+
+class TestCommand(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.aliases = os.path.join(self.tmp.name, "aliases.json")
+        write_json(self.aliases, sample.ALIASES)
+        self.out = os.path.join(self.tmp.name, "public")
+
+    def put(self, rec):
+        path = os.path.join(self.tmp.name, rec["id"] + ".json")
+        write_json(path, rec)
+        return path
+
+    def run_main(self, *args):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = sanitize.main(list(args))
+        return code, out.getvalue()
+
+    def test_it_writes_the_public_form_of_each_record(self):
+        recs = [sample.record(), sample.record(label="sample-tp4", gpus=4)]
+        code, out = self.run_main(*[self.put(r) for r in recs], "--aliases", self.aliases, "--out", self.out)
+        self.assertEqual(code, 0, out)
+        for rec in recs:
+            pub = read_json(os.path.join(self.out, rec["id"] + ".json"))
+            self.assertEqual(pub, sanitize.public(rec, sample.ALIASES))
+            self.assertEqual(pub["visibility"], "public")
+
+    def test_one_record_that_is_not_safe_stops_them_all(self):
+        bad = sample.record(label="sample-tp4", gpus=4)
+        bad["not_covered"].append("measured in the zzlab room")
+        words = os.path.join(self.tmp.name, "words.txt")
+        with open(words, "w", encoding="utf-8") as f:
+            f.write("zzlab\n")
+        code, out = self.run_main(self.put(sample.record()), self.put(bad), "--aliases", self.aliases, "--words", words,
+                                  "--out", self.out)
+        self.assertEqual(code, 1)
+        self.assertIn("refused", out)
+        self.assertNotIn("zzlab", out)
+        self.assertFalse(os.path.exists(self.out))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 """The public form of a record: what may leave the private registry.
 
     pub = public(record, aliases)       a new record, visibility "public"; the internal one is not changed
+    python -m tools.sanitize runs/ID.json [...] --aliases aliases.json [--words WORDS] --out PUBLIC_DIR
+                                        the public form of each record, as PUBLIC_DIR/ID.json
 
 What it does:
 - drops the provenance (host, job, data folder, command line, commits of private repositories);
@@ -16,10 +18,13 @@ found is an error, never a warning. Nothing here guesses that a string is safe.
 """
 from __future__ import annotations
 
+import argparse
 import copy
+import os
 import re
+import sys
 
-from . import patterns
+from . import patterns, read_json, write_json
 
 PERSONAL = re.compile(r"^(?!vllm/|nvcr\.io/|ghcr\.io/vllm-project/)[^/\s]+/\S+$")  # an image outside the official ones
 PATH = re.compile(r"(?<![\w.:/])(?:~|[A-Za-z]:)?(?:[\\/][\w.+@-]+){2,}")  # two or more segments from a root
@@ -83,3 +88,27 @@ def public(record, aliases, words=frozenset()):
     if hits:
         raise Forbidden(f"{rec['id']}: not safe to publish, {len(hits)} thing(s) left:\n  " + "\n  ".join(hits[:40]))
     return rec
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="python -m tools.sanitize", description="Write the public form of records.")
+    ap.add_argument("paths", nargs="+", help="internal records")
+    ap.add_argument("--aliases", required=True, help="a JSON object {node's name: alias}")
+    ap.add_argument("--words", help="a private list of words a public record must not hold, one per line")
+    ap.add_argument("--out", required=True, help="the folder for the public forms")
+    a = ap.parse_args(argv)
+    aliases, words = read_json(a.aliases), patterns.load_words(a.words) if a.words else frozenset()
+    try:
+        forms = [public(read_json(path), aliases, words) for path in a.paths]  # all of them, before one is written
+    except Forbidden as e:
+        print(f"refused: {e}")
+        return 1
+    os.makedirs(a.out, exist_ok=True)
+    for pub in forms:
+        write_json(os.path.join(a.out, pub["id"] + ".json"), pub)
+        print(f"{os.path.join(a.out, pub['id'] + '.json')}  (public form)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

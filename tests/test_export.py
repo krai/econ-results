@@ -79,12 +79,11 @@ class TestPieces(unittest.TestCase):
 
     def test_a_manifest_resolves_its_paths_from_its_own_folder(self):
         path = self.path("reg", "manifest.json")
-        write_json(path, {"aliases": "aliases.json", "runs": [{"run": "sources/x", "prices": "sources/p.json", "rents": [1.0],
-                                                            "public": True, "note": "why"}]})
-        specs, aliases = export.manifest_specs(path)
+        write_json(path, {"runs": [{"run": "sources/x", "prices": "sources/p.json", "rents": [1.0], "note": "why"}]})
+        specs = export.manifest_specs(path)
         base = os.path.dirname(path)
         self.assertEqual(specs[0]["run"], os.path.join(base, "sources", "x"))
-        self.assertEqual(aliases, os.path.join(base, "aliases.json"))
+        self.assertEqual(specs[0]["prices"], os.path.join(base, "sources", "p.json"))
         write_json(path, {"runs": [{"run": "x", "typo_field": 1}]})
         with self.assertRaises(SystemExit):
             export.manifest_specs(path)
@@ -126,7 +125,7 @@ class TestRealFiles(unittest.TestCase):
     def setUpClass(cls):
         cls.econ = export.Econ(ECON_SRC)
         cls.aliases = read_json(os.path.join(ROOT, "aliases.json"))
-        cls.specs = export.manifest_specs(os.path.join(ROOT, "manifest.json"))[0]
+        cls.specs = export.manifest_specs(os.path.join(ROOT, "manifest.json"))
 
     def source(self, *parts):
         return os.path.join(ROOT, "sources", *parts)
@@ -204,7 +203,8 @@ class TestRealFiles(unittest.TestCase):
         self.assertEqual(sanitize.public(rec, self.aliases)["hardware"]["node"], self.aliases[rec["provenance"]["host"]])
 
     def test_the_registry_is_what_the_manifest_exports(self):
-        """Every record of the registry, and every public form, is byte for byte what its sources give today."""
+        """Every record of the registry is byte for byte what its original files give today, and has a public form
+        with nothing private left in it."""
         words = patterns.load_words(os.path.join(ROOT, "private-words.txt"))
         seen = set()
         for spec in self.specs:
@@ -212,12 +212,8 @@ class TestRealFiles(unittest.TestCase):
             seen.add(rec["id"])
             with self.subTest(rec["id"]):
                 self.assertEqual(rec, read_json(os.path.join(ROOT, "runs", rec["id"] + ".json")))
-                twin = os.path.join(ROOT, "public", rec["id"] + ".json")
-                self.assertEqual(os.path.isfile(twin), bool(spec.get("public")))
-                if spec.get("public"):
-                    pub = sanitize.public(rec, self.aliases, words)
-                    self.assertEqual(pub, read_json(twin))
-                    self.assertEqual(validate.check_record(pub, public=True, words=words), [])
+                pub = sanitize.public(rec, self.aliases, words)
+                self.assertEqual(validate.check_record(pub, public=True, words=words), [])
         on_disk = {n[:-5] for n in os.listdir(os.path.join(ROOT, "runs")) if n.endswith(".json")}
         self.assertEqual(seen, on_disk)
 

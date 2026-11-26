@@ -5,19 +5,17 @@
     python -m tools.export --measure M.json [--check C.json] [--accuracy A.json] ...       the files one by one
     python -m tools.export --report REPORT.json --config LABEL ...   a configuration of a report.json, when its
                                                                     measure.json is not at hand
-    python -m tools.export --manifest MANIFEST.json --econ-src GENTIC/src --out RUNS_DIR [--public-out PUBLIC_DIR]
+    python -m tools.export --manifest MANIFEST.json --econ-src GENTIC/src --out RUNS_DIR
                                                                     every run of a manifest (a list of the options)
     ... --manifest MANIFEST.json --prune                            and remove the records the manifest no longer gives
-    ... --visibility public --public-out PUBLIC_DIR --aliases ALIASES.json
-                                                                    also the sanitised form (tools/sanitize.py)
 
 The points are computed by econ's own code, imported from --econ-src (a checkout of gentic, pinned in the registry):
 report.build reads any measure.json since econ 0.0.3 and prices it, so nothing of econ is written again here. A
 configuration taken from a report.json keeps the report's measured numbers and is priced again with the same code.
 What econ's files do not say (the Slurm job, the image's digest, the family of the configuration) comes from the
 options or from the run's provenance.txt. The record names its node as the measurement does, so a run of any node
-or cluster exports with no table of names; only the public form needs an alias for it. The record does not depend
-on when or where it was exported: the same files give the same bytes.
+or cluster exports with no table of names. The record does not depend on when or where it was exported: the same
+files give the same bytes. It is the internal form, with its provenance; tools/sanitize.py writes the public one.
 """
 from __future__ import annotations
 
@@ -30,7 +28,7 @@ import re
 import subprocess
 import sys
 
-from . import SCHEMA, read_json, run_id, sanitize, write_json
+from . import SCHEMA, read_json, run_id, write_json
 
 OFFICIAL_IMAGES = ("vllm/vllm-openai",)  # release images: their tag is the engine's version
 FAMILIES = {"recipe": "recipe", "s0": "S0", "s1": "S1"}  # a token of the label -> the configuration's family
@@ -43,7 +41,7 @@ SYSTEM_KEYS = ("os", "kernel", "cpu", "sockets", "cores", "threads", "ram_gib", 
 ACCURACY_KEYS = ("benchmark", "shots", "items", "seed", "correct", "accuracy", "ci95", "strict_accuracy", "failed")
 SPEC_KEYS = ("run", "measure", "check", "accuracy", "prices", "report", "config", "provenance", "rents", "node", "cluster",
              "family", "variant", "precision", "tp", "dp", "job", "data_dir", "gentic_commit", "econ_commit", "engine_version",
-             "engine_build", "engine_commit", "digest", "weights_gb", "public")
+             "engine_build", "engine_commit", "digest", "weights_gb")
 
 
 class Econ:
@@ -314,7 +312,7 @@ def write(rec, out_dir):
 
 
 def manifest_specs(path):
-    """The runs of a manifest: {"aliases": FILE, "runs": [spec, ...]}, with paths taken from the manifest's folder."""
+    """The runs of a manifest: {"runs": [spec, ...]}, with paths taken from the manifest's folder."""
     doc, base = read_json(path), os.path.dirname(os.path.abspath(path))
     specs = []
     for entry in doc["runs"]:
@@ -326,8 +324,7 @@ def manifest_specs(path):
             if spec.get(key):
                 spec[key] = os.path.normpath(os.path.join(base, spec[key]))
         specs.append(spec)
-    aliases = os.path.join(base, doc["aliases"]) if doc.get("aliases") else None
-    return specs, aliases
+    return specs
 
 
 def prune(folder, keep):
@@ -348,7 +345,6 @@ def parser():
     ap.add_argument("--config", help="with --report: the label of the configuration to export")
     ap.add_argument("--measured-with", help="with --report: the version of the econ that measured")
     ap.add_argument("--rent", dest="rents", type=float, action="append", help="USD per GPU-hour; repeat it")
-    ap.add_argument("--aliases", help="with --visibility public: a JSON object {node's name: alias}")
     ap.add_argument("--node", help="the node's name, when the measurement does not say it")
     ap.add_argument("--cluster", help="the cluster or site the node belongs to, as its people call it")
     ap.add_argument("--family", help="recipe, S0, S1 or stock (default: from the label)")
@@ -364,12 +360,8 @@ def parser():
     ap.add_argument("--engine-commit")
     ap.add_argument("--digest", help="the image's digest (sha256:...)")
     ap.add_argument("--weights-gb", type=float, help="as econ report's --weights-gb")
-    ap.add_argument("--visibility", choices=("internal", "public"), default="internal",
-                    help="public: also write the sanitised form to --public-out")
-    ap.add_argument("--out", required=True, help="the folder for the internal records")
-    ap.add_argument("--public-out", help="the folder for the public forms")
-    ap.add_argument("--prune", action="store_true",
-                    help="with --manifest: remove from --out and --public-out the records it no longer gives")
+    ap.add_argument("--out", required=True, help="the folder for the records")
+    ap.add_argument("--prune", action="store_true", help="with --manifest: remove from --out the records it no longer gives")
     return ap
 
 
@@ -377,28 +369,19 @@ def main(argv=None):
     a = parser().parse_args(argv)
     econ = Econ(a.econ_src)
     if a.manifest:
-        specs, aliases_path = manifest_specs(a.manifest)
-        aliases_path = a.aliases or aliases_path
+        specs = manifest_specs(a.manifest)
     else:
         specs = [dict({k: getattr(a, k) for k in SPEC_KEYS if getattr(a, k, None) is not None},
-                      measured_with=a.measured_with, public=a.visibility == "public")]
-        aliases_path = a.aliases
-    if any(s.get("public") for s in specs) and not (a.public_out and aliases_path):
-        raise SystemExit("--public-out and --aliases are needed for the runs to be written in their public form")
+                      measured_with=a.measured_with)]
     if a.prune and not a.manifest:
         raise SystemExit("--prune goes with --manifest: only a manifest says what the whole registry is")
-    aliases, internal, public = read_json(aliases_path) if aliases_path else {}, set(), set()
+    written = set()
     for spec in specs:
         rec = export(spec, econ)
-        internal.add(rec["id"])
+        written.add(rec["id"])
         print(f"{write(rec, a.out)}  ({len(rec['points'])} targets, econ {rec['econ']['version']})")
-        if spec.get("public"):
-            public.add(rec["id"])
-            print(f"{write(sanitize.public(rec, aliases), a.public_out)}  (public form)")
-    if a.prune:
-        for folder, keep in ((a.out, internal), (a.public_out, public)):
-            for run in prune(folder, keep) if folder else []:
-                print(f"{os.path.join(folder, run + '.json')}  removed: the manifest does not give it")
+    for run in prune(a.out, written) if a.prune else []:
+        print(f"{os.path.join(a.out, run + '.json')}  removed: the manifest does not give it")
 
 
 if __name__ == "__main__":
