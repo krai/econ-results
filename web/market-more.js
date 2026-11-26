@@ -131,13 +131,13 @@
     const open = (_, row) => { const b = el("button", {type: "button", class: "linkish", text: "open"}); b.addEventListener("click", () => { S.run = row._r.id; R.goto("runs", "run"); }); return b; };
     D.replace(ours.body, rows.length ? D.table([
       {key: "created", label: "Measured", cell: (v) => R.dateText(v)}, {key: "model", label: "Model"}, {key: "run", label: "Configuration"}, {key: "hw", label: "GPU × N"},
-      {key: "where", label: "Cluster · node"}, {key: "target", label: "Target, TPOT p99", num: true, cell: (v) => (has(v) ? `≤ ${fmt.n(v)} ms` : "none met")},
-      {key: "rate", label: "Requests/s", num: true, cell: (v) => fmt.n(v, 2)}, {key: "out", label: "Output tok/s per GPU", num: true, cell: (v) => fmt.n(v)},
-      {key: "inp", label: "Input tok/s per GPU", num: true, cell: (v) => fmt.n(v)}, {key: "tpot", label: "TPOT p99", num: true, cell: (v) => fmt.ms(v, 1)},
       {key: "rev", label: "Revenue per GPU-hour", num: true, cell: (v) => X.usd(v), title: "At full load, at the most common price of the run's own price list"},
       {key: "cost", label: `GPU-hour, ${X.basis().label.toLowerCase()}`, num: true, cell: (v) => X.usd(v), title: "This market's cost of that GPU, as chosen above"},
       {key: "breakeven", label: "Pays it from", num: true, cell: (v) => X.load(v), title: "The load from which the run's revenue covers that cost"},
-      {key: "open", label: "", cell: open}], rows, {caption: `${R.count(rows.length, "run")} of the registry, each at its loosest met latency target`})
+      {key: "open", label: "", cell: open}, {key: "out", label: "Output tok/s per GPU", num: true, cell: (v) => fmt.n(v)},
+      {key: "inp", label: "Input tok/s per GPU", num: true, cell: (v) => fmt.n(v)}, {key: "target", label: "Target, TPOT p99", num: true, cell: (v) => (has(v) ? `≤ ${fmt.n(v)} ms` : "none met")},
+      {key: "tpot", label: "TPOT p99", num: true, cell: (v) => fmt.ms(v, 1)}, {key: "rate", label: "Requests/s", num: true, cell: (v) => fmt.n(v, 2)},
+      {key: "where", label: "Cluster · node"}], rows, {caption: `${R.count(rows.length, "run")} of the registry, each at its loosest met latency target`})
       : el("p", {class: "muted", text: "The registry has no run of a model in this market yet."}));
   }
 

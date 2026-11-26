@@ -98,7 +98,8 @@
       tile("Prices that pay a Blackwell GPU", pc(h.blackwell), "of the endpoint prices, on B200, B300, GB200 and GB300"),
       tile("Prices that pay a Hopper GPU", pc(h.hopper), "on H100 and H200"),
       tile("Prices that pay an AMD GPU", pc(h.amd), "on MI300X, MI325X and MI355X"));
-    asof.textContent = `Snapshot of ${R.dateText(market.as_of)}: usage of ${market.usage_window}; ${R.count(Object.values(market.prices).reduce((a, l) => a + l.length, 0), "priced endpoint")}; ` +
+    const [from, to] = market.usage_window.split(" to ");
+    asof.textContent = `Snapshot of ${R.dateText(market.as_of)}: usage from ${R.dateText(from, false)} to ${R.dateText(to)}; ${R.count(Object.values(market.prices).reduce((a, l) => a + l.length, 0), "priced endpoint")}; ` +
       `${R.count(market.curves.reduce((a, c) => a + c.runs.length, 0), "benchmark run")} on ${R.count(market.gpus.length, "GPU")}. Each user gets at least ${S.mt} tokens per second (P90), at ${X.PRICES[S.mp]}.`;
   }
 
@@ -127,13 +128,13 @@
     D.replace(list.body, rows.length ? D.table([
       {key: "rank", label: "#", num: true}, {key: "name", label: "Model", cell: pick}, {key: "author", label: "Lab"},
       {key: "tokens", label: "Tokens, 30 days", num: true, cell: (v) => X.big(v)}, {key: "share", label: "Share of all tokens", num: true, cell: (v) => fmt.n(v, 1) + " %"},
-      {key: "mix", label: "Input per output", num: true, cell: (v) => fmt.n(v) + " : 1", title: "Input tokens per output token in its OpenRouter traffic"},
-      {key: "size", label: "Parameters"}, {key: "license", label: "Licence"},
-      {key: "endpoints", label: "Endpoints", num: true, cell: (v, row) => `${v} of ${R.count(row._m.providers, "provider")}`},
-      {key: "output", label: "Output price, median (range)", num: true, cell: (v, row) => (row.range ? `${X.usd(v)} (${X.usd(row.range.min)} to ${X.usd(row.range.max)})` : "-"), title: "USD per million output tokens"},
       {key: "source", label: "Serving cost", cell: (_, row) => X.source(row._m)},
       {key: "best", label: "Pays the GPU from", num: true, title: "The lowest break-even load among the GPUs, at the choices above",
-       cell: (v, row) => (row.bestPair ? `${X.load(v)} on ${X.gpuName(row.bestPair.chip)}` : "-")}],
+       cell: (v, row) => (row.bestPair ? `${X.load(v)} on ${X.gpuName(row.bestPair.chip)}` : "-")},
+      {key: "output", label: "Output price, median (range)", num: true, cell: (v, row) => (row.range ? `${X.usd(v)} (${X.usd(row.range.min)} to ${X.usd(row.range.max)})` : "-"), title: "USD per million output tokens"},
+      {key: "endpoints", label: "Endpoints", num: true, cell: (v, row) => `${v} of ${R.count(row._m.providers, "provider")}`},
+      {key: "mix", label: "Input per output", num: true, cell: (v) => fmt.n(v) + " : 1", title: "Input tokens per output token in its OpenRouter traffic"},
+      {key: "size", label: "Parameters"}, {key: "license", label: "Licence"}],
       rows, {caption: `${R.count(rows.length, "model")}; the one chosen is ${X.model(S.mm).name}`}) : el("p", {class: "muted", text: "No model matches."}));
   }
 
